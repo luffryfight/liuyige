@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>背景音乐探针</title>
+<style>
+  body{margin:0;padding:28px;background:#fff;color:#111;font:20px/1.9 Consolas,monospace}
+  h1{font-size:20px;margin:0 0 14px}
+  .no{color:#b00;font-weight:bold}
+  .yes{color:#070;font-weight:bold}
+</style>
+<script src="../music.js"></script>
+</head>
+<body>
+<h1>背景音乐探针 · 真实浏览器 / 真实 AudioContext</h1>
+<pre id="out">running…</pre>
+<script>
+// tools/music-check.cjs 用的是假 AudioContext，只能验「排了什么音符」。
+// 这个探针验的是另一半：真实的 Web Audio 能不能把这条音频图建起来——
+// ConvolverNode 的脉冲响应、DynamicsCompressor 的参数、以及那些指数斜坡在真实实现里会不会抛。
+// 跑法见 tools/music-probe.md 或直接：chrome --headless=new --dump-dom <这个文件>
+const out = document.getElementById('out');
+const M = window.KeepsakeMusic;
+const L = [];
+const say = (k, v, ok) => L.push(`${k.padEnd(22, '.')} <span class="${ok === false ? 'no' : ok ? 'yes' : ''}">${v}</span>`);
+
+say('music.js 已加载', M ? 'yes' : 'NO', !!M);
+if (M) {
+  say('supported()', String(M.supported()), M.supported());
+  let err = '';
+  let on = false;
+  try { on = M.set(true); } catch (e) { err = e && e.message || String(e); }
+  say('set(true) 返回', String(on), on);
+  say('enabled()', String(M.enabled()), M.enabled());
+  say('playing()', String(M.playing()), M.playing());
+  say('抛出的异常', err || 'none', !err);
+
+  setTimeout(() => {
+    // 让前瞻调度器醒几次，把后面几小节的节点也真的建出来。
+    say('300ms 后 playing()', String(M.playing()), M.playing());
+    try { M.set(false); say('set(false)', 'ok', true); }
+    catch (e) { say('set(false)', '抛出 ' + (e && e.message), false); }
+    say('关闭后 playing()', String(M.playing()), M.playing() === false);
+    out.innerHTML = L.join('\n');
+    document.title = 'done';
+  }, 300);
+} else {
+  out.innerHTML = L.join('\n');
+  document.title = 'done';
+}
+</script>
+</body>
+</html>

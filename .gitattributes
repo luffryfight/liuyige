@@ -1,0 +1,9 @@
+# 纯静态前端项目：统一用 LF 存/取。
+# 本机 core.autocrlf 是 true，不写死的话 Windows 克隆出来会变 CRLF，
+# 之后每次 diff 都可能整片显示为已修改。
+* text=auto eol=lf
+
+# 二进制，别做换行转换
+*.png binary
+*.jpg binary
+*.zip binary

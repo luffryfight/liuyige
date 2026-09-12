@@ -1,0 +1,30 @@
+# ---- 验证截图 ----
+# tools/shots/ 里的图由 `node tools/shots.cjs` 生成，属于可再生成的产物：
+# 逐轮迭代会在同一个目录里堆下大量近似同名图。只保留文档真正引用的那一组，
+# 其余不进仓库；需要全部截图时跑一次脚本即可重建。
+tools/shots/*
+!tools/shots/lv1.png
+!tools/shots/lv9-auto.png
+!tools/shots/lv13-auto.png
+!tools/shots/lv31-auto.png
+!tools/shots/lv45-auto.png
+!tools/shots/lv87-auto.png
+!tools/shots/lv99-auto.png
+!tools/shots/lv100-auto.png
+!tools/shots/music-probe.png
+
+# ---- 脚手架临时输出 ----
+# 下划线开头的都是 tools/ 里比对、试跑时留下的中间文件，不是交付物。
+tools/_*.txt
+
+# ---- 依赖 ----
+# 本项目零依赖，留个口子以防以后引入工具链。
+node_modules/
+
+# ---- 编辑器与系统 ----
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini
+*.log
