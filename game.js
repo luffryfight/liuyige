@@ -1,7 +1,7 @@
 (()=>{
   'use strict';
   const K=Keepsake,A=KeepsakeArt,$=id=>document.getElementById(id),canvas=$('game'),ctx=canvas.getContext('2d');
-  const W=640,H=640,KEY='liuyige-mvp-v1';let levelIndex=0,placed={},rotations={},history=[],selected=null,ghost=null,drag=null,hint=null,moves=0,hints=0,started=Date.now(),finished=false,scheduled=false,audio=null,muted=false,flashUntil=0,locked=new Set();
+  const W=640,H=640,KEY='liuyige-mvp-v1',CONSENT_KEY='liuyige-privacy-v1';let levelIndex=0,placed={},rotations={},history=[],selected=null,ghost=null,drag=null,hint=null,moves=0,hints=0,started=Date.now(),finished=false,scheduled=false,audio=null,muted=false,flashUntil=0,locked=new Set();
   // 看广告换来的两种帮忙，都按本关记账：
   //   freeHints —— 每关自带一次免费提示，用完之后再点就要看广告；
   //   removed   —— 「消除」掉的旧物。消掉一件，这一关就不再需要安顿它。
@@ -9,6 +9,13 @@
   const FREE_HINTS=1,MAX_CLEARS=2;
   let removed=new Set(),freeHints=0,clears=0;
   let saved={version:1,completed:{},sessions:{},events:[],codex:{},sound:true},storageOK=true;
+  // 隐私同意状态：'yes' = 已同意（存进度）／'no' = 已拒绝（不存进度，其余照旧）／null = 还没问过。
+  // 这一条读在存档之前，因为「拒绝」本身也要记住，否则每次开都弹。
+  let consent=null;
+  try{const c=localStorage.getItem(CONSENT_KEY);if(c==='yes'||c==='no')consent=c;}catch{storageOK=false;}
+  // 用户拒绝隐私政策后，一切写入都停掉——不只不弹窗，是真的不落盘。
+  // 但游戏必须照常能玩：TapTap 审核明确要求「无论用户拒绝任何权限，都需提供基础功能」。
+  const canPersist=()=>consent==='yes';
   try{const raw=JSON.parse(localStorage.getItem(KEY)||'null');if(raw&&raw.version===1&&raw.completed&&raw.sessions&&typeof raw.completed==='object'&&typeof raw.sessions==='object')saved={version:1,current:raw.current,completed:raw.completed,sessions:raw.sessions,events:Array.isArray(raw.events)?raw.events.slice(-200):[],codex:raw.codex&&typeof raw.codex==='object'?raw.codex:{},sound:raw.sound!==false};}catch{storageOK=false;}
   // BGM 默认开。存档里明确关过就尊重存档；读不出存档（或存档坏了）按「没关过」处理。
   muted=saved.sound===false;
@@ -27,7 +34,9 @@
   const board=()=>{const l=level(),cell=Math.max(28,Math.min(52,Math.floor(275/l.rows),Math.floor(530/l.cols))),w=l.cols*cell,h=l.rows*cell;return{x:(W-w)/2,y:64,cell,w,h};};
   const clone=x=>JSON.parse(JSON.stringify(x));
   function event(name,data={}){saved.events.push({name,level:level().id,at:Date.now(),...data});saved.events=saved.events.slice(-200);}
-  function persist(){saved.current=levelIndex;saved.sessions[level().id]={placed:clone(placed),rotations:{...rotations},moves,hints,removed:[...removed],freeHints,clears};try{localStorage.setItem(KEY,JSON.stringify(saved));storageOK=true;}catch{storageOK=false;}}
+  // 同意之前、以及用户拒绝之后，都不写盘。内存里的进度照常走，玩法一点不受影响，
+  // 只是关掉页面就没了——这一点在弹窗里跟玩家说清楚了。
+  function persist(){if(!canPersist())return;saved.current=levelIndex;saved.sessions[level().id]={placed:clone(placed),rotations:{...rotations},moves,hints,removed:[...removed],freeHints,clears};try{localStorage.setItem(KEY,JSON.stringify(saved));storageOK=true;}catch{storageOK=false;}}
   function status(text){$('status').textContent=text;}
   // ---- 整齐度评分：随摆随算。不做星级门槛（各关可达上限不同，星级会给出够不到的目标），
   //      只给一个分数 + 一条「下一步动什么」的建议。 ----
@@ -295,14 +304,38 @@
   K.levels.forEach((l,i)=>{const n=chapterNo[l.group]=(chapterNo[l.group]||0)+1,b=document.createElement('button');b.className='level-button';b.innerHTML=`<span class="number">${String(n).padStart(2,'0')}</span><span class="level-name"></span><span class="tick"></span>`;b.querySelector('.level-name').textContent=l.title;b.setAttribute('data-no',String(n));b.setAttribute('data-group',l.group);b.setAttribute('aria-label',`${chapterName[l.group]} 第 ${n} 关：${l.title}`);b.onclick=()=>load(i);$('levels').appendChild(b);});
   // Debug access is opt-in and never changes the normal player flow.
   if(new URLSearchParams(location.search).has('test'))window.GameDebug={getState:()=>({levelIndex,placed:clone(placed),rotations:{...rotations},locked:[...locked],selected,ghost:ghost?{...ghost}:null,drag:drag?clone(drag):null,finished,moves,history:history.length,storageOK,board:board()}),load,loadId:id=>{const i=K.levels.findIndex(l=>l.id===id);load(i);return i;},place,select,itemRect,tileRect,solve:()=>K.solve(level(),placed),events:()=>saved.events,score:()=>K.scoreLayout(level(),placed),codex:()=>({...saved.codex}),met:()=>K.metRelations(level(),placed),levelId:()=>level().id};
+  // ---- 首次启动的隐私政策弹窗 ----
+  // TapTap 审核口径里有三条是硬要求，这里逐条对上：
+  //   1. 首次启动必须先弹窗、后服务：所以弹窗是 showModal()，同意之前玩家点不到棋盘。
+  //   2. 必须有明确的「同意」和「拒绝」两个按钮，不能用「好的，我知道了」这种含糊文案。
+  //   3. 拒绝之后基础功能照常可用——这里拒绝只等于「不保存进度」，游戏本体一点不减。
+  // 另外：弹窗只在没有记录时出现，玩家点过同意或拒绝都记住了，不会反复打扰。
+  const PRIVACY_DIALOG=$('privacy-dialog');
+  function rememberConsent(value){
+    consent=value;
+    try{localStorage.setItem(CONSENT_KEY,value);}catch{storageOK=false;}
+    if(value==='no'){status('好的，这次不保存进度。整理照样可以进行，随时可以在「玩法说明」里改主意。');return;}
+    persist();
+  }
+  function askPrivacy(){if(consent!==null)return;try{PRIVACY_DIALOG.showModal();}catch{/* 老浏览器：直接用普通属性兜底 */}}
+  $('privacy-accept').onclick=()=>{rememberConsent('yes');PRIVACY_DIALOG.close();status('谢谢。你的整理进度会保存在这台设备上，不会上传。');};
+  $('privacy-decline').onclick=()=>{rememberConsent('no');PRIVACY_DIALOG.close();};
+  // 从「玩法说明」里随时能再看一遍，也允许在那里改主意。
+  $('privacy-open').onclick=e=>{e.preventDefault();if($('help-dialog').open)$('help-dialog').close();PRIVACY_DIALOG.showModal();};
+  if(window.GameDebug)window.GameDebug.consent=()=>consent;
   // 允许用 ?level=7 直接打开某一份委托，方便分享和验收。
   const wanted=Number(new URLSearchParams(location.search).get('level'));
   const initial=Number.isInteger(wanted)&&wanted>=1&&wanted<=K.levels.length?wanted-1:Number.isInteger(saved.current)&&saved.current>=0&&saved.current<K.levels.length?saved.current:0;load(initial);new ResizeObserver(resize).observe(canvas);resize();if(!storageOK)status('浏览器暂不允许本机存档；本次仍可正常游玩。');
   // 验收用的两个入口：?test=1&solve=1 直接摆上参考解（截图用），?codex=1 直接打开图鉴。
-  if(new URLSearchParams(location.search).has('test')&&new URLSearchParams(location.search).has('solve')){
+  const params=new URLSearchParams(location.search);
+  if(params.has('test')&&params.has('solve')){
     const s=K.solve(level()).solution;
     for(const[id,p]of Object.entries(s))place(id,p.x,p.y,p.rot);
     if($('complete-dialog').open)$('complete-dialog').close();
   }
-  if(new URLSearchParams(location.search).has('codex'))$('codex').onclick();
+  if(params.has('codex'))$('codex').onclick();
+  // 截图／自动化要能跳过弹窗，否则每张图都会盖一层遮罩。
+  // 同意状态本来就是玩家的选择，这里只提供「本来就已经同意过」的效果，不放行任何默认同意。
+  if(params.has('consent'))rememberConsent(params.get('consent')==='no'?'no':'yes');
+  else askPrivacy();
 })();

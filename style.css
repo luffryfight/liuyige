@@ -37,3 +37,21 @@ body{overscroll-behavior:none;-webkit-user-select:none;user-select:none;-webkit-
 canvas{touch-action:none}
 /* 按钮只关掉双击缩放和 300ms 延迟，双指缩放仍可用：小字号的正文还要能放大 */
 button,a{touch-action:manipulation}
+
+/* ---- 首次启动的隐私政策弹窗 ----
+   审核口径里有两条直接影响这里的写法：
+   1. 「同意」和「拒绝」必须是两个并列、都看得见的按钮，不能用「好的，我知道了」这种含糊说法——
+      所以 .dialog-actions 里放两个等宽按钮，拒绝不是次要的纯文字链接。
+   2. 隐私说明本身要能读完再决定，所以正文用列表分段，不塞成一整段。 */
+.privacy-points{margin:14px 0 0;padding-left:20px;font-size:13px;line-height:1.85}
+.privacy-points li{margin-bottom:7px}
+.privacy-points strong{color:var(--green)}
+.privacy-note{font-size:12px;line-height:1.75;color:#6c7364;margin:16px 0 0;padding:10px 12px;background:#f2f0e4;border-left:3px solid #c9cfbc;border-radius:0 8px 8px 0}
+#privacy-dialog a{color:var(--green);text-underline-offset:3px}
+#privacy-dialog .dialog-actions{margin-top:20px}
+#privacy-dialog .dialog-actions button{flex:1}
+/* 「玩法说明」里的常驻入口：玩家随时能回头再看一遍政策 */
+.privacy-entry{font-size:11px;line-height:1.8;color:#7c8271;margin:14px 0 4px;padding-top:12px;border-top:1px dashed var(--line)}
+.privacy-entry a{color:var(--green);text-underline-offset:3px}
+@media(max-width:650px){.privacy-points{font-size:12px;padding-left:17px}#privacy-dialog .dialog-actions{flex-direction:column}}
+

@@ -5,7 +5,14 @@ const vm = require('node:vm');
 
 // Exercise the shipped event handlers without a browser. Rendering and native
 // event delivery remain browser checks; the fake DOM only supplies their inputs.
-function game(initialSave) {
+//
+// 第二个参数是环境设置，目前只用来预置隐私同意状态：
+//   game()                     —— 全新安装，还没弹过窗（同意前不写盘）
+//   game(null, 'yes')          —— 已经同意过（正常写盘）
+//   game(null, 'no')           —— 已经拒绝过（不写盘，但照常能玩）
+// 大部分老测试关心的是「存档里有没有东西」，所以默认按「已同意」起步，
+// 免得每条都要重复写一次同意；隐私相关的行为由 privacy.test.cjs 专门守。
+function game(initialSave, consent = 'yes') {
   class Element {
     constructor() { this.listeners = new Map(); this.children = []; this.parts = new Map(); this.captures = new Set(); }
     addEventListener(type, listener) {
@@ -51,6 +58,8 @@ function game(initialSave) {
   };
   const storage = new Map();
   if (initialSave) storage.set('liuyige-mvp-v1', initialSave);
+  // 预置隐私选择。null = 全新安装，留给测试自己走一次弹窗流程。
+  if (consent === 'yes' || consent === 'no') storage.set('liuyige-privacy-v1', consent);
   const window = new Element();
   const context = vm.createContext({
     window, document,
