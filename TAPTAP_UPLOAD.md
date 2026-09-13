@@ -1,6 +1,6 @@
 # TapTap 上传说明
 
-对应版本 **V0.5.0**（2026-09-13）
+对应版本 **V1.0.1**（2026-09-13）
 
 ---
 
@@ -157,9 +157,9 @@ ad.show();          // 返回 Promise，没加载完会 reject，要 ad.load() �
 H5 包跑在 WebView 里，APK 也跑在 WebView 里 —— **同一份游戏文件**，区别只是容器归谁。所以这条路没改游戏代码，`android/` 下那一个 Java 文件就是全部。
 
 ```
-dist/liuyige.apk   81 KB
+dist/liuyige.apk   89 KB
 包名               com.liuyige.game
-版本               0.5.0 (versionCode 500)
+版本               1.0.1 (versionCode 1001)
 minSdk / targetSdk 24 (Android 7.0) / 34
 签名               v1 + v2 + v3，自签名
 ```
@@ -281,10 +281,19 @@ taptap-cli upload-h5-package dist/liuyige.zip --screen-orientation 1 --yes
 |---|---|
 | 创建游戏 → 游玩提供方式 | 小游戏（H5） |
 | 包体管理 → 上传包体 | 路线 A 交目录给 MCP；路线 C 传 `dist/liuyige.zip` |
-| 版本设置 → 版本号 | `V0.5.0`（格式 `V x.y.z`，每段是整数） |
+| 版本设置 → 版本号 | `V1.0.1`（格式 `V x.y.z`，每段是整数） |
 | 商店 → 商店资料 | 走完基础信息 + 物料，再提交审核 |
 
-版本号规则：新版本必须**高于**旧版本，且提审／发布的版本号不能与已上线或审核中的重复。所以 0.4.1 用掉了，这次传的是 0.5.0，下次再传就得从 0.5.1 起。
+版本号规则：新版本必须**高于**旧版本，且提审／发布的版本号不能与已上线或审核中的重复。所以 0.4.1 和 0.5.0 都用掉了，这次传的是 1.0.1，下次再传就得从 1.0.2 起。
+
+当前版本号散在 8 个文件里（README / 本文件 / TEST_REPORT / DEVELOPMENT_PLAN / NEXT_VERSION_PROPOSAL / android/README / pack-taptap / build-apk），手工改必漏。用升档器一次改齐：
+
+```bash
+node tools/bump-version.cjs 1.0.2 1002           # 升到 1.0.2 / versionCode 1002
+node tools/bump-version.cjs 1.0.2 1002 --check   # 只体检引用点，不写文件
+```
+
+它要求每条替换**精确命中恰好 1 次**，对不上就整批中止（退出码 1），不会改一半；**历史小节标题不在替换表里**，因为那些记的是当年的事实，跟着新版本号走会变成假历史。`versionCode` 必须严格大于旧值，否则新包装不上去。
 
 ### 资质
 
@@ -343,7 +352,7 @@ taptap-cli upload-h5-package dist/liuyige.zip --screen-orientation 1 --yes
 - [ ] TapTap 开发者账号**已完成认证**（官方 FAQ 里上传失败的头号原因）
 - [ ] 图标／封面／宣传图／录屏／三份文案齐了
 - [ ] 小游戏前置备案已启动
-- [ ] 版本号填 `V0.5.0`（下次传从 V0.5.1 起，编号不能重复）
+- [ ] 版本号填 `V1.0.1`（下次传从 V1.0.2 起，编号不能重复）
 - [ ] 激励视频广告位：要么在后台建好并把 ID 填进 `ads.js`，要么确认 `AD_UNIT_ID` 仍为空、按「未接入」放行
 
 走 APK 渠道时另加：

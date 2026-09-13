@@ -70,7 +70,7 @@ node android/tools/verify-apk.cjs
 | 6 | `zipalign -p -f 4` |
 | 7 | `apksigner sign`（v1 + v2 + v3） |
 
-产物信息（0.5.0）：包名 `com.liuyige.game`，versionCode `500`，minSdk `24`，targetSdk `34`，约 81 KB。
+产物信息（1.0.1）：包名 `com.liuyige.game`，versionCode `1001`，minSdk `24`，targetSdk `34`，约 89 KB。
 
 ### 签名密钥
 

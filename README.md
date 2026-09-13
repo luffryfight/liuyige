@@ -1,6 +1,6 @@
 # 留一格 · 旧物开箱：回忆收纳师
 
-HTML + 原生 JavaScript + Canvas 2D 的可玩版本，0.5.0，2026-09-13。
+HTML + 原生 JavaScript + Canvas 2D 的可玩版本，1.0.1，2026-09-13。
 
 ## 试玩
 
@@ -88,6 +88,7 @@ HTML + 原生 JavaScript + Canvas 2D 的可玩版本，0.5.0，2026-09-13。
 | tools/ceiling.cjs、gradient.cjs、dims.cjs、spread.cjs、multisol.cjs、relations-check.cjs、baseline.cjs | 分数上限、整齐度梯度、维度分布、分数跨度、多解、关系可达性、关卡结构基线的离线校验 |
 | tools/shots.cjs | 无头 Chrome 验收截图 |
 | tools/pack-taptap.cjs | 打 TapTap 上传包：只挑运行时文件铺进 `dist/liuyige/`，再写成结构合规的 zip，并逐项自检（第一级唯一文件夹、入口在第二层、无反斜杠、解压回来与源文件逐字节一致）。自己写 zip 而不用 `Compress-Archive`，因为后者历史上会用反斜杠当条目分隔符 |
+| tools/bump-version.cjs | 版本升档：当前版本号散在 8 个文件里（README / TAPTAP_UPLOAD / TEST_REPORT / DEVELOPMENT_PLAN / NEXT_VERSION_PROPOSAL / android/README / pack-taptap / build-apk），这个脚本一次改齐。每条替换要求精确命中恰好 1 次，对不上就整批中止；**历史小节标题不在表里**。`versionCode` 必须严格大于旧值，否则新包装不上去 |
 | android/ | 安卓壳工程：一个 WebView 承载**同一份**游戏文件，产出 `dist/liuyige.apk`。不用 Gradle，直接调 build-tools 的 `aapt2 → javac → d8 → zipalign → apksigner`。壳里唯一一个 Java 文件只做三件事：把 WebView 配成能跑 Canvas + localStorage + Web Audio、载入 `assets/liuyige/`、跟随生命周期。构建方式与踩坑记录见 `android/README.md` |
 | android/tools/verify-apk.cjs | APK 产物校验：拆开包核对框架文件、条目名分隔符、7 个游戏文件与源文件逐字节一致、签名有效、没有把测试或文档打进去 |
 | tools/overflow.cjs | 窄视口体检：在 12 个宽度下用 **iframe 造真实视口**渲染，报出 `scrollWidth` 与每个越界元素，并可另存窄视口截图。之所以用 iframe，是因为无头 Chrome 的 `--window-size` 有 500px 下限，直接开窄窗口只会得到「按 500 排版再裁图」的假象 |

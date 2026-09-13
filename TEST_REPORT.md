@@ -1,6 +1,6 @@
 # 留一格 验证记录
 
-版本：0.5.0；日期：2026-09-13。验证对象为本地 HTML + JavaScript + Canvas 版本，未提交 TapTap。
+版本：1.0.1；日期：2026-09-13。验证对象为本地 HTML + JavaScript + Canvas 版本，未提交 TapTap。
 
 ## 测试执行
 
@@ -17,7 +17,7 @@ node --test tests/core.test.cjs tests/polish.test.cjs tests/difficulty.test.cjs 
 | `node tests/validate-geometry.cjs` | 几何问题 0；物品栏最多三行且不越过画布底边；单关最多 18 件；四种密度（3/4/5/6 列）都用上了 |
 | `node tests/validate-levels.cjs` | 100 / 100 可解 |
 
-## 本轮（0.5.0）：近满盘难度与激励视频
+## 本轮（1.0.1）：近满盘难度与激励视频
 
 需求是「从留物取舍开始后面所有关卡难度提升、增加要摆放的物品位置、通关时空位最多一个」和「10–20 件，点击提示看广告，或者看广告消除」。
 
