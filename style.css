@@ -25,3 +25,15 @@
 .codex-text{font-size:12px;line-height:1.65;margin:0;color:#6c7364}
 .codex-tip{font-size:11px;color:var(--muted);margin:14px 0 18px;line-height:1.7}
 @media(max-width:650px){.codex-grid{grid-template-columns:1fr;max-height:44vh}.score-pill{padding:6px 10px;font-size:11px;margin-right:6px}.game-heading{flex-wrap:wrap;gap:6px}.toast{font-size:12px;padding:10px 12px}}
+
+/* ---- 内嵌 WebView 适配 ----
+   上线包会在容器自己的内嵌浏览器里跑（不是独立标签页）。那里的默认手势会跟拖拽打架：
+   下拉刷新会重载页面，双击会缩放，长按会选中文字或弹出「存储图片」。
+   这几条在桌面浏览器上是空操作，不影响原有行为。
+   另外用 body 的 padding 让内容避开刘海和底部横条（env 在桌面解析为 0）。 */
+html{overscroll-behavior:none}
+body{overscroll-behavior:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;-webkit-text-size-adjust:100%;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+/* 棋盘上必须允许任意方向的拖动，否则 pointermove 会被浏览器截走去滚页面 */
+canvas{touch-action:none}
+/* 按钮只关掉双击缩放和 300ms 延迟，双指缩放仍可用：小字号的正文还要能放大 */
+button,a{touch-action:manipulation}

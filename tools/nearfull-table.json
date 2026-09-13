@@ -1,0 +1,1507 @@
+{
+  "drawer-16": {
+    "cols": 5,
+    "rows": 5,
+    "add": [
+      "keys",
+      "notebook",
+      "tin",
+      "postcard",
+      "lamp",
+      "cane",
+      "glasses",
+      "pencil",
+      "camera",
+      "shoes",
+      "mug",
+      "ruler"
+    ],
+    "keepCount": 6,
+    "maxEmpty": 0,
+    "dense": true
+  },
+  "drawer-17": {
+    "cols": 7,
+    "rows": 3,
+    "add": [
+      "lamp",
+      "tape",
+      "ruler",
+      "player",
+      "postcard",
+      "headphones",
+      "shoes",
+      "cane",
+      "pencil",
+      "photo",
+      "book",
+      "camera"
+    ],
+    "keepCount": 5,
+    "maxEmpty": 0,
+    "dense": true
+  },
+  "drawer-18": {
+    "cols": 6,
+    "rows": 5,
+    "add": [
+      "shoes",
+      "cane",
+      "mug",
+      "player",
+      "headphones",
+      "tin",
+      "postcard",
+      "glasses",
+      "tape",
+      "notebook",
+      "ruler",
+      "lamp"
+    ],
+    "keepCount": 7,
+    "maxEmpty": 0,
+    "dense": true
+  },
+  "drawer-19": {
+    "cols": 6,
+    "rows": 8,
+    "add": [
+      "headphones",
+      "camera",
+      "mug",
+      "lamp"
+    ],
+    "maxEmpty": 0,
+    "dense": true
+  },
+  "drawer-20": {
+    "cols": 6,
+    "rows": 7,
+    "add": [
+      "headphones",
+      "lamp",
+      "keys",
+      "tape"
+    ],
+    "maxEmpty": 0,
+    "dense": true
+  },
+  "drawer-21": {
+    "cols": 7,
+    "rows": 7,
+    "add": [
+      "notebook",
+      "mug",
+      "cane",
+      "postcard"
+    ],
+    "maxEmpty": 0,
+    "dense": true,
+    "fixedRot": [
+      "cane"
+    ]
+  },
+  "drawer-22": {
+    "cols": 8,
+    "rows": 5,
+    "add": [
+      "headphones",
+      "lamp",
+      "cane",
+      "pencil",
+      "postcard"
+    ],
+    "maxEmpty": 0,
+    "dense": true
+  },
+  "drawer-23": {
+    "cols": 9,
+    "rows": 5,
+    "add": [
+      "headphones",
+      "camera",
+      "mug",
+      "cane",
+      "pencil"
+    ],
+    "maxEmpty": 0,
+    "dense": true
+  },
+  "drawer-24": {
+    "cols": 8,
+    "rows": 6,
+    "add": [
+      "headphones",
+      "mug",
+      "lamp",
+      "cane",
+      "pencil"
+    ],
+    "maxEmpty": 0,
+    "dense": true
+  },
+  "drawer-25": {
+    "add": [
+      "ruler",
+      "glasses",
+      "notebook",
+      "cane",
+      "shoes",
+      "camera",
+      "player",
+      "headphones",
+      "tape",
+      "postcard",
+      "tin",
+      "lamp"
+    ],
+    "keepCount": 5,
+    "maxEmpty": 0,
+    "dense": true
+  },
+  "drawer-26": {
+    "add": [
+      "cane",
+      "tin",
+      "book",
+      "headphones",
+      "mug",
+      "lamp",
+      "photo",
+      "notebook",
+      "camera",
+      "ruler",
+      "player"
+    ],
+    "keepCount": 5,
+    "maxEmpty": 0,
+    "dense": true
+  },
+  "drawer-27": {
+    "add": [
+      "ruler",
+      "lamp",
+      "shoes",
+      "mug",
+      "notebook",
+      "cane",
+      "tape",
+      "book",
+      "glasses",
+      "pencil",
+      "keys",
+      "postcard"
+    ],
+    "keepCount": 6,
+    "maxEmpty": 0,
+    "dense": true
+  },
+  "drawer-29": {
+    "cols": 6,
+    "rows": 9,
+    "add": [
+      "headphones",
+      "notebook",
+      "mug",
+      "lamp",
+      "cane",
+      "keys"
+    ],
+    "maxEmpty": 0,
+    "dense": true
+  },
+  "drawer-30": {
+    "cols": 10,
+    "rows": 5,
+    "add": [
+      "headphones",
+      "camera",
+      "lamp",
+      "shoes",
+      "cane"
+    ],
+    "maxEmpty": 0,
+    "dense": true
+  },
+  "drawer-31": {
+    "cols": 6,
+    "rows": 9,
+    "add": [
+      "camera",
+      "mug",
+      "lamp",
+      "shoes",
+      "photo"
+    ],
+    "maxEmpty": 0,
+    "dense": true
+  },
+  "drawer-32": {
+    "cols": 7,
+    "rows": 8,
+    "add": [
+      "notebook",
+      "mug",
+      "lamp",
+      "shoes",
+      "cane",
+      "photo"
+    ],
+    "maxEmpty": 0,
+    "dense": true
+  },
+  "drawer-33": {
+    "cols": 7,
+    "rows": 8,
+    "add": [
+      "headphones",
+      "notebook",
+      "camera",
+      "lamp",
+      "cane",
+      "player"
+    ],
+    "maxEmpty": 0,
+    "dense": true
+  },
+  "drawer-34": {
+    "cols": 9,
+    "rows": 6,
+    "add": [
+      "headphones",
+      "lamp",
+      "shoes",
+      "cane",
+      "tin",
+      "pencil"
+    ],
+    "maxEmpty": 0,
+    "dense": true
+  },
+  "drawer-35": {
+    "cols": 8,
+    "rows": 7,
+    "add": [
+      "camera",
+      "mug",
+      "lamp",
+      "shoes",
+      "cane",
+      "photo",
+      "pencil"
+    ],
+    "maxEmpty": 0,
+    "dense": true
+  },
+  "drawer-37": {
+    "cols": 7,
+    "rows": 4,
+    "add": [
+      "tape",
+      "photo",
+      "cane",
+      "camera",
+      "shoes",
+      "ruler",
+      "headphones",
+      "player",
+      "keys",
+      "notebook",
+      "lamp",
+      "postcard"
+    ],
+    "keepCount": 7,
+    "maxEmpty": 0,
+    "dense": true
+  },
+  "drawer-38": {
+    "add": [
+      "player",
+      "cane",
+      "mug",
+      "notebook",
+      "lamp",
+      "letter",
+      "postcard",
+      "shoes",
+      "tape",
+      "headphones",
+      "ruler",
+      "glasses"
+    ],
+    "keepCount": 7,
+    "maxEmpty": 0,
+    "dense": true
+  },
+  "drawer-39": {
+    "add": [
+      "ruler",
+      "keys",
+      "shoes",
+      "lamp",
+      "postcard",
+      "photo",
+      "notebook",
+      "cane",
+      "mug",
+      "pencil",
+      "camera",
+      "tin"
+    ],
+    "keepCount": 8,
+    "maxEmpty": 0,
+    "dense": true
+  },
+  "drawer-40": {
+    "add": [
+      "glasses",
+      "player",
+      "keys",
+      "tin",
+      "cane",
+      "mug",
+      "headphones",
+      "lamp",
+      "shoes",
+      "photo",
+      "camera"
+    ],
+    "keepCount": 7,
+    "maxEmpty": 0,
+    "dense": true
+  },
+  "drawer-41": {
+    "add": [
+      "notebook",
+      "cane",
+      "ruler",
+      "book",
+      "shoes",
+      "letter",
+      "tape",
+      "pencil"
+    ],
+    "keepCount": 8,
+    "maxEmpty": 0,
+    "dense": true
+  },
+  "drawer-42": {
+    "add": [
+      "cane",
+      "mug",
+      "headphones",
+      "camera",
+      "player",
+      "ruler",
+      "tin",
+      "shoes",
+      "postcard",
+      "lamp",
+      "notebook",
+      "photo"
+    ],
+    "keepCount": 7,
+    "maxEmpty": 0,
+    "dense": true
+  },
+  "drawer-44": {
+    "add": [
+      "postcard",
+      "shoes",
+      "camera",
+      "player",
+      "notebook",
+      "headphones",
+      "pencil",
+      "lamp",
+      "tape",
+      "cane",
+      "photo",
+      "ruler"
+    ],
+    "keepCount": 7,
+    "maxEmpty": 0,
+    "dense": true
+  },
+  "drawer-45": {
+    "add": [
+      "mug",
+      "cane",
+      "glasses",
+      "camera",
+      "notebook",
+      "ruler",
+      "postcard",
+      "lamp",
+      "shoes",
+      "photo",
+      "pencil",
+      "book"
+    ],
+    "keepCount": 7,
+    "maxEmpty": 0,
+    "dense": true
+  },
+  "drawer-46": {
+    "add": [
+      "cane",
+      "shoes",
+      "lamp",
+      "postcard",
+      "mug",
+      "pencil",
+      "player",
+      "keys",
+      "glasses",
+      "headphones",
+      "tin",
+      "ruler"
+    ],
+    "keepCount": 7,
+    "maxEmpty": 0,
+    "dense": true,
+    "anchors": [
+      {
+        "id": "notebook",
+        "x": 0,
+        "y": 0,
+        "rot": 0
+      }
+    ]
+  },
+  "drawer-47": {
+    "add": [
+      "camera",
+      "ruler",
+      "tin",
+      "photo",
+      "postcard",
+      "book",
+      "keys",
+      "cane",
+      "pencil",
+      "shoes",
+      "lamp"
+    ],
+    "keepCount": 9,
+    "maxEmpty": 0,
+    "dense": true,
+    "anchors": [
+      {
+        "id": "mug",
+        "x": 0,
+        "y": 4,
+        "rot": 0
+      }
+    ]
+  },
+  "drawer-48": {
+    "add": [
+      "notebook",
+      "mug",
+      "lamp",
+      "ruler",
+      "shoes",
+      "headphones",
+      "cane",
+      "tape",
+      "player",
+      "postcard",
+      "tin",
+      "glasses"
+    ],
+    "keepCount": 8,
+    "maxEmpty": 0,
+    "dense": true
+  },
+  "drawer-49": {
+    "add": [
+      "pencil",
+      "player",
+      "ruler",
+      "letter",
+      "photo",
+      "book",
+      "keys",
+      "notebook",
+      "cane",
+      "camera",
+      "lamp"
+    ],
+    "keepCount": 9,
+    "maxEmpty": 0,
+    "dense": true,
+    "anchors": [
+      {
+        "id": "headphones",
+        "x": 0,
+        "y": 0,
+        "rot": 0
+      }
+    ]
+  },
+  "drawer-50": {
+    "add": [
+      "lamp",
+      "glasses",
+      "pencil",
+      "shoes",
+      "cane",
+      "postcard",
+      "player",
+      "photo"
+    ],
+    "keepCount": 7,
+    "maxEmpty": 0,
+    "dense": true,
+    "anchors": [
+      {
+        "id": "notebook",
+        "x": 0,
+        "y": 3,
+        "rot": 0
+      }
+    ]
+  },
+  "drawer-51": {
+    "cols": 7,
+    "rows": 7,
+    "add": [
+      "headphones",
+      "notebook",
+      "lamp",
+      "cane",
+      "tin",
+      "keys",
+      "postcard"
+    ],
+    "maxEmpty": 0,
+    "dense": true
+  },
+  "drawer-52": {
+    "cols": 8,
+    "rows": 7,
+    "add": [
+      "headphones",
+      "camera",
+      "mug",
+      "lamp",
+      "shoes",
+      "cane",
+      "glasses"
+    ],
+    "maxEmpty": 0,
+    "dense": true
+  },
+  "drawer-53": {
+    "cols": 8,
+    "rows": 7,
+    "add": [
+      "headphones",
+      "notebook",
+      "mug",
+      "lamp",
+      "shoes",
+      "cane",
+      "tin",
+      "tape"
+    ],
+    "maxEmpty": 0,
+    "dense": true
+  },
+  "drawer-54": {
+    "add": [
+      "glasses",
+      "shoes",
+      "lamp",
+      "ruler",
+      "camera",
+      "tape",
+      "postcard",
+      "cane",
+      "headphones",
+      "tin",
+      "notebook",
+      "player"
+    ],
+    "keepCount": 5,
+    "maxEmpty": 0,
+    "dense": true
+  },
+  "drawer-55": {
+    "cols": 8,
+    "rows": 8,
+    "add": [
+      "headphones",
+      "notebook",
+      "camera",
+      "mug",
+      "lamp",
+      "shoes",
+      "cane",
+      "player",
+      "book"
+    ],
+    "maxEmpty": 0,
+    "dense": true
+  },
+  "drawer-56": {
+    "add": [
+      "glasses",
+      "ruler",
+      "mug",
+      "lamp",
+      "camera",
+      "tin",
+      "book",
+      "shoes",
+      "player",
+      "notebook",
+      "headphones",
+      "cane"
+    ],
+    "keepCount": 7,
+    "maxEmpty": 0,
+    "dense": true
+  },
+  "drawer-57": {
+    "add": [
+      "photo",
+      "camera",
+      "cane",
+      "notebook",
+      "player",
+      "lamp",
+      "pencil",
+      "glasses",
+      "headphones",
+      "shoes",
+      "postcard",
+      "ruler"
+    ],
+    "keepCount": 7,
+    "maxEmpty": 0,
+    "dense": true,
+    "anchors": [
+      {
+        "id": "tin",
+        "x": 0,
+        "y": 0,
+        "rot": 0
+      }
+    ]
+  },
+  "drawer-58": {
+    "cols": 8,
+    "rows": 7,
+    "add": [
+      "notebook",
+      "camera",
+      "mug",
+      "lamp",
+      "shoes",
+      "cane",
+      "tin",
+      "postcard"
+    ],
+    "maxEmpty": 0,
+    "dense": true
+  },
+  "drawer-59": {
+    "cols": 9,
+    "rows": 7,
+    "add": [
+      "headphones",
+      "notebook",
+      "mug",
+      "lamp",
+      "shoes",
+      "cane",
+      "player",
+      "pencil"
+    ],
+    "maxEmpty": 0,
+    "dense": true
+  },
+  "drawer-60": {
+    "cols": 7,
+    "rows": 8,
+    "add": [
+      "headphones",
+      "camera",
+      "lamp",
+      "shoes",
+      "cane",
+      "photo",
+      "keys",
+      "postcard"
+    ],
+    "maxEmpty": 0,
+    "dense": true
+  },
+  "drawer-61": {
+    "add": [
+      "glasses",
+      "lamp",
+      "ruler",
+      "cane",
+      "mug",
+      "tin",
+      "player",
+      "headphones",
+      "shoes",
+      "postcard",
+      "tape",
+      "notebook"
+    ],
+    "keepCount": 7,
+    "maxEmpty": 0,
+    "dense": true
+  },
+  "drawer-62": {
+    "cols": 8,
+    "rows": 8,
+    "add": [
+      "headphones",
+      "camera",
+      "mug",
+      "lamp",
+      "shoes",
+      "cane",
+      "photo",
+      "player"
+    ],
+    "maxEmpty": 0,
+    "dense": true
+  },
+  "drawer-63": {
+    "add": [
+      "lamp",
+      "keys",
+      "notebook",
+      "player",
+      "ruler",
+      "headphones",
+      "postcard",
+      "photo",
+      "tape",
+      "cane",
+      "shoes",
+      "camera"
+    ],
+    "keepCount": 7,
+    "maxEmpty": 0,
+    "dense": true
+  },
+  "drawer-64": {
+    "add": [
+      "keys",
+      "notebook",
+      "postcard",
+      "ruler",
+      "cane",
+      "glasses",
+      "lamp",
+      "tape",
+      "mug",
+      "shoes"
+    ],
+    "keepCount": 8,
+    "maxEmpty": 0,
+    "dense": true,
+    "anchors": [
+      {
+        "id": "photo",
+        "x": 0,
+        "y": 0,
+        "rot": 0
+      }
+    ]
+  },
+  "drawer-65": {
+    "cols": 9,
+    "rows": 7,
+    "add": [
+      "notebook",
+      "camera",
+      "mug",
+      "lamp",
+      "shoes",
+      "cane",
+      "tin",
+      "ruler",
+      "keys"
+    ],
+    "maxEmpty": 0,
+    "dense": true
+  },
+  "drawer-66": {
+    "cols": 11,
+    "rows": 6,
+    "add": [
+      "headphones",
+      "camera",
+      "mug",
+      "lamp",
+      "shoes",
+      "cane",
+      "player",
+      "pencil",
+      "glasses"
+    ],
+    "maxEmpty": 0,
+    "dense": true
+  },
+  "drawer-67": {
+    "cols": 10,
+    "rows": 6,
+    "add": [
+      "headphones",
+      "notebook",
+      "camera",
+      "mug",
+      "lamp",
+      "shoes",
+      "cane",
+      "photo",
+      "postcard"
+    ],
+    "maxEmpty": 0,
+    "dense": true
+  },
+  "drawer-68": {
+    "add": [
+      "headphones",
+      "lamp",
+      "ruler",
+      "camera",
+      "notebook",
+      "shoes",
+      "cane",
+      "tin",
+      "player",
+      "book",
+      "photo",
+      "mug"
+    ],
+    "keepCount": 5,
+    "maxEmpty": 0,
+    "dense": true
+  },
+  "drawer-69": {
+    "cols": 8,
+    "rows": 8,
+    "add": [
+      "headphones",
+      "notebook",
+      "mug",
+      "lamp",
+      "shoes",
+      "cane",
+      "player",
+      "pencil",
+      "postcard"
+    ],
+    "maxEmpty": 0,
+    "dense": true
+  },
+  "drawer-70": {
+    "add": [
+      "postcard",
+      "camera",
+      "photo",
+      "glasses",
+      "shoes",
+      "ruler",
+      "headphones",
+      "cane",
+      "mug",
+      "lamp",
+      "player",
+      "tin"
+    ],
+    "keepCount": 8,
+    "maxEmpty": 0,
+    "dense": true
+  },
+  "drawer-71": {
+    "add": [
+      "mug",
+      "ruler",
+      "postcard",
+      "glasses",
+      "lamp",
+      "player",
+      "tape",
+      "shoes",
+      "headphones",
+      "tin",
+      "cane"
+    ],
+    "keepCount": 8,
+    "maxEmpty": 0,
+    "dense": true,
+    "anchors": [
+      {
+        "id": "camera",
+        "x": 2,
+        "y": 4,
+        "rot": 0
+      }
+    ]
+  },
+  "drawer-72": {
+    "cols": 8,
+    "rows": 8,
+    "add": [
+      "headphones",
+      "notebook",
+      "camera",
+      "lamp",
+      "shoes",
+      "cane",
+      "tin",
+      "player",
+      "ruler"
+    ],
+    "maxEmpty": 0,
+    "dense": true
+  },
+  "drawer-73": {
+    "cols": 8,
+    "rows": 8,
+    "add": [
+      "headphones",
+      "notebook",
+      "lamp",
+      "shoes",
+      "cane",
+      "tin",
+      "photo",
+      "keys",
+      "tape"
+    ],
+    "maxEmpty": 0,
+    "dense": true
+  },
+  "drawer-74": {
+    "cols": 7,
+    "rows": 9,
+    "add": [
+      "headphones",
+      "notebook",
+      "camera",
+      "lamp",
+      "shoes",
+      "cane",
+      "ruler",
+      "pencil",
+      "glasses",
+      "postcard"
+    ],
+    "maxEmpty": 0,
+    "dense": true
+  },
+  "drawer-75": {
+    "add": [
+      "notebook",
+      "ruler",
+      "camera",
+      "photo",
+      "lamp",
+      "cane",
+      "player",
+      "mug",
+      "headphones",
+      "shoes",
+      "tin",
+      "book"
+    ],
+    "keepCount": 5,
+    "maxEmpty": 0,
+    "dense": true
+  },
+  "drawer-76": {
+    "cols": 9,
+    "rows": 7,
+    "add": [
+      "mug",
+      "lamp",
+      "shoes",
+      "cane",
+      "photo",
+      "player",
+      "book",
+      "pencil",
+      "glasses",
+      "postcard"
+    ],
+    "maxEmpty": 0,
+    "dense": true
+  },
+  "drawer-77": {
+    "add": [
+      "photo",
+      "keys",
+      "notebook",
+      "lamp",
+      "tin",
+      "mug",
+      "shoes",
+      "camera",
+      "pencil",
+      "cane",
+      "ruler",
+      "postcard"
+    ],
+    "keepCount": 8,
+    "maxEmpty": 0,
+    "dense": true
+  },
+  "drawer-78": {
+    "add": [
+      "postcard",
+      "pencil",
+      "glasses",
+      "ruler",
+      "notebook",
+      "photo",
+      "shoes",
+      "lamp",
+      "book",
+      "mug",
+      "cane",
+      "camera"
+    ],
+    "keepCount": 7,
+    "maxEmpty": 0,
+    "dense": true
+  },
+  "drawer-79": {
+    "cols": 8,
+    "rows": 8,
+    "add": [
+      "headphones",
+      "mug",
+      "lamp",
+      "shoes",
+      "cane",
+      "photo",
+      "ruler",
+      "pencil",
+      "tape",
+      "postcard"
+    ],
+    "maxEmpty": 0,
+    "dense": true
+  },
+  "drawer-80": {
+    "cols": 12,
+    "rows": 5,
+    "add": [
+      "headphones",
+      "lamp",
+      "shoes",
+      "cane",
+      "tin",
+      "photo",
+      "pencil",
+      "postcard"
+    ],
+    "maxEmpty": 0,
+    "dense": true
+  },
+  "drawer-81": {
+    "cols": 7,
+    "rows": 9,
+    "add": [
+      "headphones",
+      "camera",
+      "lamp",
+      "shoes",
+      "cane",
+      "tin",
+      "photo",
+      "pencil",
+      "glasses",
+      "postcard"
+    ],
+    "maxEmpty": 0,
+    "dense": true
+  },
+  "drawer-82": {
+    "add": [
+      "lamp",
+      "glasses",
+      "cane",
+      "notebook",
+      "tape",
+      "book",
+      "pencil",
+      "shoes",
+      "mug",
+      "postcard",
+      "ruler",
+      "keys"
+    ],
+    "keepCount": 6,
+    "maxEmpty": 0,
+    "dense": true
+  },
+  "drawer-83": {
+    "cols": 8,
+    "rows": 9,
+    "add": [
+      "headphones",
+      "lamp",
+      "shoes",
+      "cane",
+      "tin",
+      "photo",
+      "player",
+      "book",
+      "ruler",
+      "pencil",
+      "letter"
+    ],
+    "maxEmpty": 0,
+    "dense": true,
+    "fixedRot": [
+      "lamp"
+    ]
+  },
+  "drawer-84": {
+    "add": [
+      "shoes",
+      "headphones",
+      "lamp",
+      "cane",
+      "book",
+      "glasses",
+      "player",
+      "tin",
+      "mug",
+      "notebook",
+      "camera"
+    ],
+    "keepCount": 8,
+    "maxEmpty": 0,
+    "dense": true
+  },
+  "drawer-85": {
+    "add": [
+      "glasses",
+      "player",
+      "shoes",
+      "pencil",
+      "tape",
+      "headphones",
+      "book",
+      "photo",
+      "ruler",
+      "cane",
+      "postcard"
+    ],
+    "keepCount": 8,
+    "maxEmpty": 0,
+    "dense": true,
+    "anchors": [
+      {
+        "id": "camera",
+        "x": 0,
+        "y": 0,
+        "rot": 0
+      }
+    ]
+  },
+  "drawer-86": {
+    "cols": 8,
+    "rows": 8,
+    "add": [
+      "camera",
+      "mug",
+      "lamp",
+      "shoes",
+      "cane",
+      "tin",
+      "photo",
+      "player",
+      "book",
+      "ruler",
+      "glasses"
+    ],
+    "maxEmpty": 0,
+    "dense": true
+  },
+  "drawer-87": {
+    "cols": 9,
+    "rows": 8,
+    "add": [
+      "notebook",
+      "mug",
+      "lamp",
+      "shoes",
+      "cane",
+      "photo",
+      "player",
+      "ruler",
+      "pencil",
+      "glasses",
+      "postcard"
+    ],
+    "maxEmpty": 0,
+    "dense": true
+  },
+  "drawer-88": {
+    "cols": 8,
+    "rows": 8,
+    "add": [
+      "camera",
+      "mug",
+      "lamp",
+      "shoes",
+      "cane",
+      "photo",
+      "player",
+      "book",
+      "ruler",
+      "pencil",
+      "postcard"
+    ],
+    "maxEmpty": 0,
+    "dense": true
+  },
+  "drawer-89": {
+    "add": [
+      "headphones",
+      "ruler",
+      "player",
+      "tape",
+      "tin",
+      "keys",
+      "lamp",
+      "shoes",
+      "mug",
+      "cane",
+      "camera",
+      "glasses"
+    ],
+    "keepCount": 5,
+    "maxEmpty": 0,
+    "dense": true
+  },
+  "drawer-90": {
+    "cols": 9,
+    "rows": 8,
+    "add": [
+      "headphones",
+      "notebook",
+      "camera",
+      "lamp",
+      "shoes",
+      "cane",
+      "player",
+      "book",
+      "ruler",
+      "tape",
+      "postcard"
+    ],
+    "maxEmpty": 0,
+    "dense": true
+  },
+  "drawer-91": {
+    "add": [
+      "lamp",
+      "shoes",
+      "tape",
+      "headphones",
+      "cane",
+      "mug",
+      "glasses",
+      "letter",
+      "ruler",
+      "notebook",
+      "postcard",
+      "player"
+    ],
+    "keepCount": 8,
+    "maxEmpty": 0,
+    "dense": true
+  },
+  "drawer-92": {
+    "add": [
+      "camera",
+      "headphones",
+      "shoes",
+      "keys",
+      "mug",
+      "photo",
+      "lamp",
+      "glasses",
+      "cane",
+      "pencil",
+      "ruler",
+      "postcard"
+    ],
+    "keepCount": 8,
+    "maxEmpty": 0,
+    "dense": true
+  },
+  "drawer-93": {
+    "cols": 8,
+    "rows": 8,
+    "add": [
+      "lamp",
+      "shoes",
+      "cane",
+      "tin",
+      "photo",
+      "player",
+      "ruler",
+      "glasses",
+      "tape",
+      "postcard"
+    ],
+    "maxEmpty": 0,
+    "dense": true
+  },
+  "drawer-94": {
+    "cols": 8,
+    "rows": 9,
+    "add": [
+      "headphones",
+      "camera",
+      "mug",
+      "lamp",
+      "shoes",
+      "cane",
+      "player",
+      "ruler",
+      "keys",
+      "pencil",
+      "glasses"
+    ],
+    "maxEmpty": 1
+  },
+  "drawer-95": {
+    "cols": 8,
+    "rows": 9,
+    "add": [
+      "headphones",
+      "camera",
+      "lamp",
+      "shoes",
+      "cane",
+      "photo",
+      "player",
+      "ruler",
+      "pencil",
+      "tape",
+      "letter",
+      "postcard"
+    ],
+    "maxEmpty": 1
+  },
+  "drawer-96": {
+    "add": [
+      "cane",
+      "notebook",
+      "player",
+      "postcard",
+      "glasses",
+      "tin",
+      "tape",
+      "shoes",
+      "headphones",
+      "lamp",
+      "camera",
+      "ruler"
+    ],
+    "keepCount": 7,
+    "maxEmpty": 0,
+    "dense": true
+  },
+  "drawer-97": {
+    "cols": 12,
+    "rows": 6,
+    "add": [
+      "headphones",
+      "lamp",
+      "shoes",
+      "cane",
+      "tin",
+      "photo",
+      "player",
+      "ruler",
+      "pencil",
+      "glasses",
+      "postcard"
+    ],
+    "maxEmpty": 1
+  },
+  "drawer-98": {
+    "add": [
+      "photo",
+      "lamp",
+      "keys",
+      "camera",
+      "player",
+      "shoes",
+      "ruler",
+      "tin",
+      "glasses",
+      "headphones",
+      "mug",
+      "cane"
+    ],
+    "keepCount": 8,
+    "maxEmpty": 0,
+    "dense": true
+  },
+  "drawer-99": {
+    "add": [
+      "camera",
+      "notebook",
+      "lamp",
+      "keys",
+      "ruler",
+      "cane",
+      "book",
+      "pencil",
+      "player",
+      "shoes",
+      "photo",
+      "letter"
+    ],
+    "keepCount": 8,
+    "maxEmpty": 0,
+    "dense": true,
+    "anchors": [
+      {
+        "id": "headphones",
+        "x": 0,
+        "y": 0,
+        "rot": 0
+      }
+    ]
+  },
+  "drawer-100": {
+    "cols": 9,
+    "rows": 8,
+    "add": [
+      "lamp",
+      "shoes",
+      "cane",
+      "tin",
+      "photo",
+      "player",
+      "book",
+      "keys",
+      "pencil",
+      "glasses",
+      "tape",
+      "letter"
+    ],
+    "maxEmpty": 1
+  }
+}

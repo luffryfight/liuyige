@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 与 style.css 里 body 的纸色底一致，保证启动瞬间不闪白。
+         注意：XML 注释里不能出现连续两个连字符，所以这里不写 CSS 变量名。 -->
+    <color name="page_bg">#f4efe3</color>
+    <color name="ink">#374b42</color>
+</resources>

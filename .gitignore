@@ -12,10 +12,29 @@ tools/shots/*
 !tools/shots/lv99-auto.png
 !tools/shots/lv100-auto.png
 !tools/shots/music-probe.png
+!tools/shots/vp-390.png
 
 # ---- 脚手架临时输出 ----
 # 下划线开头的都是 tools/ 里比对、试跑时留下的中间文件，不是交付物。
-tools/_*.txt
+# （含 overflow.cjs 生成的 _probe-*.html / _dump-*.html 等探针页）
+tools/_*
+
+# ---- 上传包 ----
+# dist/ 是 `node tools/pack-taptap.cjs`（zip）与 `node android/tools/build-apk.cjs`（APK）的产物：
+# 运行时文件的副本 + zip + 签名 APK。内容和仓库里的源文件完全一致，属于可再生成物，不进版本库。
+# 之所以加规则而不是整目录忽略：将来若放静态资源，也不该被顺手带进来。
+dist/
+
+# ---- Android 壳工程 ----
+# 源码（AndroidManifest / src / res / tools / assets-src 的 icon.html）进仓库，其余都不进。
+android/build/
+# assets/ 是 build-apk.cjs 从项目根复制过来的游戏文件副本，逐字节一致，可再生成
+android/assets/
+# icon-512.png 由 android/tools/make-icon.cjs 用 Chrome 渲染 icon.html 得到，可再生成
+android/assets-src/icon-512.png
+# 签名密钥与口令：绝不能进仓库。换机器发版要手工把这两个文件带过去
+android/*.jks
+android/keystore.properties
 
 # ---- 依赖 ----
 # 本项目零依赖，留个口子以防以后引入工具链。

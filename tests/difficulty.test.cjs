@@ -69,14 +69,19 @@ test('后期委托确实加了旧物：教学关保持轻量，正文章节件�
   assert.equal(tutorial.length, 7, '新手章节七关');
   for (const l of K.levels) {
     const n = l.items.length;
-    assert.ok(n <= 10, `${l.id} 有 ${n} 件，超出物品栏 10 件上限`);
+    // 旧物一共 18 种，物品栏的硬顶就是 18 件（六列排三行）。
+    assert.ok(n <= 18, `${l.id} 有 ${n} 件，超出物品栏 18 件上限`);
     // 教学关刻意保持轻量，这是设计意图，不是漏配。
     if (l.tutorial) assert.ok(n <= 6, `${l.id} 是教学关，应当保持轻量，实得 ${n} 件`);
   }
-  const heavy = rest.filter(l => l.items.length >= 8);
-  assert.ok(heavy.length >= 25, `应有大量关卡加量到 8 件以上，实得 ${heavy.length} 关`);
+  // 从「留物取舍」正文起是重配过的 82 关：件数下限也抬到了 10 件。
+  const scoped = rest.filter(l => l.seq >= 14);
+  assert.ok(scoped.length >= 80, `重配范围应有 80 关以上，实得 ${scoped.length}`);
+  for (const l of scoped) assert.ok(l.items.length >= 10, `${l.id} 只有 ${l.items.length} 件，低于本轮下限 10 件`);
+  const heavy = rest.filter(l => l.items.length >= 12);
+  assert.ok(heavy.length >= 40, `应有大量关卡加量到 12 件以上，实得 ${heavy.length} 关`);
   const avg = rest.reduce((s, l) => s + l.items.length, 0) / rest.length;
-  assert.ok(avg >= 7.5, `正文章节平均件数应明显提高，实得 ${avg.toFixed(2)}`);
+  assert.ok(avg >= 11, `正文章节平均件数应明显提高，实得 ${avg.toFixed(2)}`);
 });
 
 test('增强表逐条落到关卡上，没有写进表却漏生效的配置', () => {
@@ -96,6 +101,12 @@ test('增强表逐条落到关卡上，没有写进表却漏生效的配置', ()
     if (h.rows) assert.equal(level.rows, h.rows, `${id} 行数没生效`);
     for (const a of h.add || []) assert.ok(level.items.includes(a), `${id} 缺少追加物品 ${a}`);
     if (h.dense) assert.ok(level.dense, `${id} 没有标记恰好放满`);
+    if (h.maxEmpty !== undefined) assert.equal(K.maxEmptyOf(level), h.maxEmpty, `${id} 的空位上限没生效`);
+    if (h.keepCount !== undefined) {
+      assert.equal(level.keepCount, h.keepCount, `${id} 的取舍件数没生效`);
+      // 件数可以上调，但必留物必须还在，否则玩家一开局就缺了强制项。
+      for (const id2 of level.required || []) assert.ok(level.items.includes(id2), `${id} 缺了必留物 ${id2}`);
+    }
     if (h.anchors) assert.equal(level.anchors.length, h.anchors.length, `${id} 固定件数量不符`);
     if (h.fixedRot) assert.deepEqual(level.fixedRot, h.fixedRot, `${id} 锁转件不符`);
     assert.equal(level.rule, K.levelRule(level), `${id} 的规则文案没有跟着刷新`);
@@ -103,20 +114,55 @@ test('增强表逐条落到关卡上，没有写进表却漏生效的配置', ()
   assert.ok(Object.keys(K.HARDEN).length >= 40, '增强表覆盖关卡太少');
 });
 
-test('恰好放满的委托：物品格数正好等于抽屉空格数', () => {
+test('要填满的委托：解真的通过完成判定，且空位不超上限', () => {
   const list = dense();
-  assert.ok(list.length >= 3, '至少要有三关用到恰好放满');
+  assert.ok(list.length >= 3, '至少要有三关用到填满要求');
+  let choiceCount = 0;
   for (const l of list) {
-    assert.equal(l.keepCount, undefined, `${l.id} 是取舍关，不能同时要求恰好放满`);
-    assert.equal(l.items.reduce((s, id) => s + cellsOf(id), 0), K.freeCells(l), `${l.id} 的件数凑不满抽屉`);
-    const solution = K.solve(l).solution;
+    const cap = K.maxEmptyOf(l);
+    assert.ok(cap === 0 || cap === 1, `${l.id} 的空位上限只该是 0 或 1，实得 ${cap}`);
+    const solution = K.solve(l, {}, 400000).solution;
+    assert.ok(solution, `${l.id} 应当可解`);
     assert.ok(K.isComplete(l, solution), `${l.id} 的解应当通过完成判定`);
-    assert.equal(K.cellCount(l, solution), K.freeCells(l), `${l.id} 的解必须填满`);
+    const empty = K.freeCells(l) - K.cellCount(l, solution);
+    assert.ok(empty <= cap, `${l.id} 的解空了 ${empty} 格，超过上限 ${cap}`);
+    if (l.keepCount) {
+      // 取舍关放几件是玩家挑的，不能拿「全部物品的格数」去比，只能要求「存在凑得满的挑法」。
+      choiceCount++;
+      assert.equal(Object.keys(solution).length, l.keepCount, `${l.id} 的解件数应当等于配额`);
+      for (const id of l.required || []) assert.ok(solution[id], `${l.id} 的必留物 ${id} 必须在解里`);
+    } else {
+      assert.equal(l.items.reduce((s, id) => s + cellsOf(id), 0), K.freeCells(l) - empty, `${l.id} 的件数凑不满抽屉`);
+    }
   }
+  assert.ok(choiceCount >= 5, `取舍关也该有填满要求，实得 ${choiceCount} 关`);
   // 件数对不上时空格不会被默认放行。
   const tutorial = K.levels[0], solved = K.solve(tutorial).solution;
   assert.equal(K.isComplete(tutorial, solved), true);
   assert.equal(K.isComplete({ ...tutorial, dense: true }, solved), false, '有空隙的布局不能算完成');
+});
+
+test('留物取舍之后的委托：通关时空位最多一个，物品栏 10~18 件', () => {
+  // 这一条就是本轮需求本身：从「留物取舍」章节起，每一关都要摆到只剩至多一格。
+  // 教学关不参与（七关要保持轻量），所以按 seq 取范围、再排掉 TUTORIAL。
+  const scoped = K.RAW.filter(l => l.seq >= 14 && !K.TUTORIAL.includes(l.id));
+  assert.ok(scoped.length >= 80, `本轮改造应覆盖 80 关以上，实得 ${scoped.length}`);
+  for (const raw of scoped) {
+    const l = K.levels.find(x => x.id === raw.id);
+    assert.ok(l, `${raw.id} 应当还在关卡表里`);
+    const cap = K.maxEmptyOf(l);
+    assert.ok(cap <= 1, `${l.id} 的空位上限应当 ≤ 1，实得 ${cap}`);
+    const n = l.items.length;
+    assert.ok(n >= 10 && n <= 18, `${l.id} 物品栏 ${n} 件，应当落在 10~18`);
+    const solution = K.solve(l, {}, 400000).solution;
+    assert.ok(solution, `${l.id} 应当可解`);
+    assert.ok(K.isComplete(l, solution), `${l.id} 的解应当通过完成判定`);
+    const empty = K.freeCells(l) - K.cellCount(l, solution);
+    assert.ok(empty <= 1, `${l.id} 的解空了 ${empty} 格，超过一格`);
+    if (!l.keepCount) {
+      assert.equal(l.items.reduce((s, id) => s + cellsOf(id), 0), K.freeCells(l) - empty, `${l.id} 的件数对不上格子数`);
+    }
+  }
 });
 
 test('固定件：位置合法、不可移动、求解器必须照着放', () => {
@@ -195,17 +241,26 @@ test('固定件在真实交互里动不了：不能拖、不能转、不能收�
   assert.ok(h.state().placed[anchor.id], '撤销之后固定件仍在原位');
 });
 
-test('物品栏随件数分列，最多两行且不越过画布底边', () => {
-  const TRAY = { x: 25, y: 405, w: 590, h: 104, pitch: 112, gap: 10 };
-  const colsFor = n => n <= 6 ? 3 : n <= 8 ? 4 : 5;
+test('物品栏随件数分列，最多三行且不越过画布底边', () => {
+  // 与 game.js 的 traySpec() 同一套口径：六列封顶，超过两行才压矮格子。
+  const TRAY = { x: 25, y: 400, w: 590, gap: 10 };
+  const colsFor = n => n <= 6 ? 3 : n <= 8 ? 4 : n <= 10 ? 5 : 6;
   const seen = new Set();
   for (const l of K.levels) {
-    const n = l.items.length, c = colsFor(n), tw = (TRAY.w - (c - 1) * TRAY.gap) / c, rows = Math.ceil(n / c);
+    const n = l.items.length, c = colsFor(n), rows = Math.ceil(n / c);
+    const tw = (TRAY.w - (c - 1) * TRAY.gap) / c;
+    const tileH = rows <= 2 ? 104 : 68, pitch = rows <= 2 ? 112 : 76;
+    const artH = rows <= 2 ? 67 : 38;
     seen.add(`${c}列`);
-    assert.ok(tw > 100, `${l.id} 单格只有 ${tw}px，太窄`);
-    assert.ok(rows <= 2, `${l.id} 的物品栏需要 ${rows} 行`);
-    const bottom = TRAY.y + (rows - 1) * TRAY.pitch + TRAY.h;
+    assert.ok(tw > 80, `${l.id} 单格只有 ${tw}px，太窄`);
+    assert.ok(rows <= 3, `${l.id} 的物品栏需要 ${rows} 行`);
+    const bottom = TRAY.y + (rows - 1) * pitch + tileH;
     assert.ok(bottom <= 640, `${l.id} 物品栏底部 ${bottom} 超出画布`);
+    // 再矮的格子也要放得下最高的一件旧物（竖着拿的铅笔是 3 格高）。
+    for (const id of l.items) {
+      const b = K.bounds(K.items[id].cells);
+      assert.ok(b.h * Math.min(30, artH / b.h, (tw - 26) / b.w) <= artH + .5, `${l.id} 的 ${K.items[id].name} 塞不进 ${artH}px`);
+    }
   }
-  assert.ok(seen.has('3列') && seen.has('4列') && seen.has('5列'), '三种密度都该用上');
+  assert.ok(seen.has('3列') && seen.has('4列') && seen.has('5列') && seen.has('6列'), '四种密度都该用上');
 });

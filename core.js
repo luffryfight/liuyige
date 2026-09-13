@@ -42,10 +42,10 @@
     {title:'相片的软垫',mode:'zone',cols:5,rows:5,items:['photo','camera','book','pencil','keys'],zones:[{label:'相片区',items:['photo'],cells:region(0,0,2,3)}],letter:'左上角垫了软布，给老相片留好了。相机和其他旧物，就请你来安排。'},
     {title:'各自的小抽屉',mode:'zone',cols:6,rows:4,items:['player','tape','photo','book','keys','letter'],zones:[{label:'音乐区',items:['player','tape'],cells:region(0,0,3,4)},{label:'纸品区',items:['photo','book'],cells:region(3,0,3,4)}],letter:'左边放随身听和磁带，右边放相片和旧书。来信与钥匙可以放在任意一边。'},
     {title:'留出顺手的位置',mode:'zone',cols:6,rows:5,blocked:[[2,2],[3,2]],items:['mug','glasses','book','tin','keys','pencil'],zones:[{label:'眼镜区',items:['glasses'],cells:region(0,4,6,1)},{label:'钥匙区',items:['keys'],cells:region(4,0,2,3)}],letter:'眼镜要放最下边，钥匙留在右上。绕开中间的木扣，把每天用的东西放得顺手。'},
-    {title:'周末的小行李',mode:'choice',cols:4,rows:4,items:['photo','camera','book','pencil','letter','keys'],required:['photo'],keepCount:4,letter:'行李里只留四件。合照一定要带，另外三件由你挑；没选的旧物留在家里，不会丢掉。'},
-    {title:'只带一段歌',mode:'choice',cols:4,rows:4,items:['player','headphones','tape','book','photo','letter'],required:['player','tape'],keepCount:4,letter:'随身听和磁带一定带上，再选两件放进箱子。耳机、旧书、相片与来信，你会带哪两件？'},
-    {title:'留在手边的日常',mode:'choice',cols:5,rows:3,blocked:[[2,0]],items:['mug','glasses','notebook','tin','keys','letter'],required:['mug'],keepCount:4,letter:'杯子一定留下，再挑三件常用物。左上和右上被木扣隔开，选什么也会影响能怎么摆。'},
-    {title:'给明天留的位置',mode:'choice',cols:5,rows:4,blocked:[[2,0],[2,1]],items:['photo','keys','camera','book','pencil','letter'],required:['photo','keys'],keepCount:5,zones:[{label:'相片区',items:['photo'],cells:region(0,0,2,3)}],letter:'相片与店钥匙必须留下，再选三件。相片放左上的软垫，未选的那件先留在桌面，明天再整理。'}
+    {title:'周末的小行李',mode:'choice',cols:4,rows:4,items:['photo','camera','book','pencil','letter','keys'],required:['photo'],keepCount:4,letter:'行李里只留几件。合照一定要带，其余的你挑；没选的旧物留在家里，不会丢掉。'},
+    {title:'只带一段歌',mode:'choice',cols:4,rows:4,items:['player','headphones','tape','book','photo','letter'],required:['player','tape'],keepCount:4,letter:'随身听和磁带一定带上，再挑几件放进箱子。耳机、旧书、相片与来信，你会带哪些？'},
+    {title:'留在手边的日常',mode:'choice',cols:5,rows:3,blocked:[[2,0]],items:['mug','glasses','notebook','tin','keys','letter'],required:['mug'],keepCount:4,letter:'杯子一定留下，再挑几件常用物。左上和右上被木扣隔开，选什么也会影响能怎么摆。'},
+    {title:'给明天留的位置',mode:'choice',cols:5,rows:4,blocked:[[2,0],[2,1]],items:['photo','keys','camera','book','pencil','letter'],required:['photo','keys'],keepCount:5,zones:[{label:'相片区',items:['photo'],cells:region(0,0,2,3)}],letter:'相片与店钥匙必须留下，再挑几件。相片放左上的软垫，没选上的先留在桌面，明天再整理。'}
   ];
   const modeNames={classic:'基础收纳',blocked:'隔板抽屉',zone:'分区委托',choice:'留物取舍',cross:'隔板分区',pick:'取舍分区',master:'大师委托'};
   // 新手章节：每种玩法各留一关做教学，排在最前面，让玩家在七关之内认全所有规矩。
@@ -65,9 +65,9 @@
     {title:'两本一起留',mode:'zone',cols:7,rows:5,zones:[{label:'读本区',items:['notebook','book'],cells:region(0,0,4,3)},{label:'音乐区',items:['player','tape'],cells:region(4,2,3,3)}],items:['notebook','book','player','tape','camera','keys'],letter:'笔记本和旧书要放在一起，随身听和磁带也归一处。相机的方向，就看你留了多少空。',reply:'要读的和要听的各占一边，中间刚好留出相机的宽度。'}
   ];
   const moreChoice=[
-    {title:'只留一个下午',mode:'choice',cols:5,rows:4,items:['mug','book','photo','pencil','letter','keys'],required:['mug'],keepCount:4,letter:'下午只想安安静静坐一会儿。杯子一定要留，另外三件你来定；没选的先留在桌面，不会丢。',reply:'杯子放在手边，其余三件正好陪着这个下午。'},
-    {title:'出门前的一分钟',mode:'choice',cols:5,rows:4,items:['keys','glasses','letter','postcard','tape','pencil'],required:['keys','glasses'],keepCount:4,letter:'车快到了。钥匙和眼镜必须带，剩下两件随手挑；挑剩下的，回家再整理。',reply:'钥匙和眼镜搁在最外层，伸手就够得到。'},
-    {title:'搬家留三样',mode:'choice',cols:6,rows:5,items:['headphones','player','camera','tin','letter','photo'],required:['headphones'],keepCount:5,letter:'箱子只剩下这一层。耳机一定要带上，另外四件从剩下的里面挑——这次要带的比往常多。',reply:'耳机垫在最下面，上面的四件都稳稳当当。'}
+    {title:'只留一个下午',mode:'choice',cols:5,rows:4,items:['mug','book','photo','pencil','letter','keys'],required:['mug'],keepCount:4,letter:'下午只想安安静静坐一会儿。杯子一定要留，其余的你定；没选的先留在桌面，不会丢。',reply:'杯子放在手边，其余几件正好陪着这个下午。'},
+    {title:'出门前的一分钟',mode:'choice',cols:5,rows:4,items:['keys','glasses','letter','postcard','tape','pencil'],required:['keys','glasses'],keepCount:4,letter:'车快到了。钥匙和眼镜必须带，剩下的随手挑；挑剩下的，回家再整理。',reply:'钥匙和眼镜搁在最外层，伸手就够得到。'},
+    {title:'搬家要留的',mode:'choice',cols:6,rows:5,items:['headphones','player','camera','tin','letter','photo'],required:['headphones'],keepCount:5,letter:'箱子只剩下这一层。耳机一定要带上，其余的从剩下的里面挑——这次要带的比往常多。',reply:'耳机垫在最下面，上面的几件都稳稳当当。'}
   ];
   const crossLevels=[
     {title:'隔板那边的一格',mode:'cross',cols:6,rows:4,blocked:region(2,0,1,4),zones:[{label:'纸品区',items:['book','photo'],cells:region(3,0,3,4)}],items:['book','photo','tin','tape','keys'],letter:'中间的老隔板不能拆。纸品要放右侧的标记区，其余小东西你自己安排。',reply:'隔板两边都满了，抽屉却一点也不挤。'},
@@ -80,21 +80,21 @@
     {title:'上行与下行两排',mode:'cross',cols:6,rows:6,blocked:[[2,2],[3,2]],zones:[{label:'上行区',items:['letter'],cells:region(0,0,6,1)},{label:'下行区',items:['tape'],cells:region(0,5,6,1)}],items:['letter','tape','headphones','notebook','tin','keys'],letter:'来信要放最上面一排，磁带放最下面一排。中间的木扣请绕开，耳机还在等你安排。',reply:'一封信在最上面，一盘磁带在最下面，中间放着戴了多年的耳机。'}
   ];
   const pickLevels=[
-    {title:'信纸要一起',mode:'pick',cols:5,rows:4,zones:[{label:'信纸区',items:['letter','postcard'],cells:region(0,0,5,1)}],items:['letter','postcard','tape','pencil','keys','photo'],required:['letter'],keepCount:4,letter:'来信一定要留，明信片你决定。留下的都要放进最上排的信纸区，其余三件你自己挑。',reply:'信纸整整齐齐排在最上面一排，看一眼就觉得安心。'},
-    {title:'顺手的两件',mode:'pick',cols:6,rows:4,zones:[{label:'手边区',items:['mug','glasses'],cells:region(0,2,6,2)}],items:['mug','glasses','book','tin','pencil','letter'],required:['mug','glasses'],keepCount:5,letter:'杯子和眼镜必须留，也都要放在下两排的手边区。剩下三件，从桌面上挑。',reply:'手边区被杯子占去大半，眼镜搁在上方，都够得到。'},
+    {title:'信纸要一起',mode:'pick',cols:5,rows:4,zones:[{label:'信纸区',items:['letter','postcard'],cells:region(0,0,5,1)}],items:['letter','postcard','tape','pencil','keys','photo'],required:['letter'],keepCount:4,letter:'来信一定要留，明信片你决定。留下的都要放进最上排的信纸区，其余的你自己挑。',reply:'信纸整整齐齐排在最上面一排，看一眼就觉得安心。'},
+    {title:'顺手带上的',mode:'pick',cols:6,rows:4,zones:[{label:'手边区',items:['mug','glasses'],cells:region(0,2,6,2)}],items:['mug','glasses','book','tin','pencil','letter'],required:['mug','glasses'],keepCount:5,letter:'杯子和眼镜必须留，也都要放在下两排的手边区。剩下的，从桌面上挑。',reply:'手边区被杯子占去大半，眼镜搁在上方，都够得到。'},
     {title:'软垫上的相片',mode:'pick',cols:6,rows:5,zones:[{label:'相片区',items:['photo','camera'],cells:region(0,0,4,3)}],items:['photo','camera','book','pencil','keys','tin'],required:['photo'],keepCount:4,letter:'相片必留，相机由你决定。只要是相片区里的东西，都得完整放进去。',reply:'相片落在软布上，位置刚好，光也刚好。'},
     {title:'音乐区的高度',mode:'pick',cols:6,rows:6,zones:[{label:'音乐区',items:['headphones','player','tape'],cells:region(0,0,3,6)}],items:['headphones','player','tape','book','letter','glasses'],required:['headphones'],keepCount:4,letter:'耳机一定要留下，随身听和磁带看你要不要。音乐区在左边一整列，装得下它们。',reply:'左边一整列都是声音的，右边的旧书和来信安静地待着。'},
-    {title:'纸品的分量',mode:'pick',cols:7,rows:5,zones:[{label:'纸品区',items:['notebook','book','letter','postcard'],cells:region(0,0,4,4)}],items:['notebook','book','pencil','letter','postcard','tape'],required:['notebook'],keepCount:4,letter:'笔记本一定留。所有纸品都归左上那块区域，剩下三件从桌面里挑。',reply:'纸品区压着一角，其余的东西反倒摆得更开阔。'},
-    {title:'日常与影像',mode:'pick',cols:6,rows:6,zones:[{label:'日常区',items:['mug','tin'],cells:region(0,0,3,4)},{label:'影像区',items:['photo','camera'],cells:region(3,2,3,4)}],items:['mug','tin','photo','camera','keys','player'],required:['mug','photo'],keepCount:5,letter:'杯子和相片必须留。杯子归日常区，相片归影像区，再挑三件一起带走。',reply:'左边是日子，右边是照片，中间空出一小块地方。'},
-    {title:'桌面上的一排',mode:'pick',cols:6,rows:5,zones:[{label:'桌上区',items:['glasses'],cells:region(0,0,6,1)}],items:['glasses','book','letter','pencil','tape','keys'],required:['glasses'],keepCount:5,letter:'眼镜放最上面一排，随时能拿到。另外四件你挑；留下的越多，越要会挤。',reply:'眼镜在最上面，下面几件的边角都对齐了。'}
+    {title:'纸品的分量',mode:'pick',cols:7,rows:5,zones:[{label:'纸品区',items:['notebook','book','letter','postcard'],cells:region(0,0,4,4)}],items:['notebook','book','pencil','letter','postcard','tape'],required:['notebook'],keepCount:4,letter:'笔记本一定留。所有纸品都归左上那块区域，剩下的从桌面里挑。',reply:'纸品区压着一角，其余的东西反倒摆得更开阔。'},
+    {title:'日常与影像',mode:'pick',cols:6,rows:6,zones:[{label:'日常区',items:['mug','tin'],cells:region(0,0,3,4)},{label:'影像区',items:['photo','camera'],cells:region(3,2,3,4)}],items:['mug','tin','photo','camera','keys','player'],required:['mug','photo'],keepCount:5,letter:'杯子和相片必须留。杯子归日常区，相片归影像区，再挑几件一起带走。',reply:'左边是日子，右边是照片，中间空出一小块地方。'},
+    {title:'桌面上的一排',mode:'pick',cols:6,rows:5,zones:[{label:'桌上区',items:['glasses'],cells:region(0,0,6,1)}],items:['glasses','book','letter','pencil','tape','keys'],required:['glasses'],keepCount:5,letter:'眼镜放最上面一排，随时能拿到。其余的挑几件；留下的越多，越要会挤。',reply:'眼镜在最上面，下面几件的边角都对齐了。'}
   ];
   const masterLevels=[
-    {title:'隔板与相片',mode:'master',cols:6,rows:5,blocked:[[2,2]],zones:[{label:'相片区',items:['photo'],cells:region(0,0,2,3)}],items:['photo','camera','book','pencil','letter','tin'],required:['photo'],keepCount:5,letter:'中间的木扣要留下。相片必须完整放进左上的标记区，再选四件一起带走。',reply:'一块木扣，一张相片，其余四件都找到了自己的位置。'},
-    {title:'两边都要用',mode:'master',cols:6,rows:6,blocked:region(3,0,1,6),zones:[{label:'左手区',items:['mug','glasses'],cells:region(0,3,3,3)},{label:'右手区',items:['keys'],cells:region(4,0,2,3)}],items:['mug','glasses','book','tin','keys','letter'],required:['mug','glasses'],keepCount:5,letter:'一道竖隔板贯穿整层。杯子眼镜去左手区，钥匙留右手区——它们都必须留，再挑三件。',reply:'隔板两侧都不空，每天都用得上的东西一眼就能看到。'},
+    {title:'隔板与相片',mode:'master',cols:6,rows:5,blocked:[[2,2]],zones:[{label:'相片区',items:['photo'],cells:region(0,0,2,3)}],items:['photo','camera','book','pencil','letter','tin'],required:['photo'],keepCount:5,letter:'中间的木扣要留下。相片必须完整放进左上的标记区，再挑几件一起带走。',reply:'一块木扣，一张相片，其余几件都找到了自己的位置。'},
+    {title:'两边都要用',mode:'master',cols:6,rows:6,blocked:region(3,0,1,6),zones:[{label:'左手区',items:['mug','glasses'],cells:region(0,3,3,3)},{label:'右手区',items:['keys'],cells:region(4,0,2,3)}],items:['mug','glasses','book','tin','keys','letter'],required:['mug','glasses'],keepCount:5,letter:'一道竖隔板贯穿整层。杯子眼镜去左手区，钥匙留右手区——它们都必须留，再挑几件。',reply:'隔板两侧都不空，每天都用得上的东西一眼就能看到。'},
     {title:'音乐区只够两件',mode:'master',cols:7,rows:5,blocked:[[1,2],[2,2]],zones:[{label:'音乐区',items:['player','tape'],cells:region(4,3,3,2)}],items:['headphones','player','tape','tin','keys','letter'],required:['headphones'],keepCount:4,letter:'耳机必留。随身听和磁带如果留下，就必须并排放进右下的音乐区——那里只够两件。',reply:'耳机占了最大的位置，音乐区正好收下随身听和磁带。'},
-    {title:'磕坏的一角',mode:'master',cols:6,rows:6,blocked:[[5,1],[5,4],[0,4],[1,4]],zones:[{label:'读本区',items:['notebook','book'],cells:region(0,0,4,3)}],items:['notebook','book','photo','camera','tape','letter'],required:['notebook'],keepCount:5,letter:'侧边磕了四处。笔记本一定要留，纸品都归左上的读本区，再挑四件。',reply:'缺口留在了两边，读本区里两本书挨得很紧。'},
+    {title:'磕坏的一角',mode:'master',cols:6,rows:6,blocked:[[5,1],[5,4],[0,4],[1,4]],zones:[{label:'读本区',items:['notebook','book'],cells:region(0,0,4,3)}],items:['notebook','book','photo','camera','tape','letter'],required:['notebook'],keepCount:5,letter:'侧边磕了四处。笔记本一定要留，纸品都归左上的读本区，再挑几件。',reply:'缺口留在了两边，读本区里两本书挨得很紧。'},
     {title:'一整排的隔板',mode:'master',cols:7,rows:6,blocked:region(0,3,7,1),zones:[{label:'听音区',items:['player','tape'],cells:region(4,0,3,3)},{label:'饮用区',items:['mug','glasses'],cells:region(0,4,7,2)}],items:['mug','glasses','player','headphones','tape','letter'],required:['mug'],keepCount:4,letter:'中间整整一排都被封住了。杯子必留，也必须在饮用区；随身听和磁带若留下，就去听音区。',reply:'一排隔板把抽屉分成上下两层，上层放声音，下层放日常。'},
-    {title:'底部与影像',mode:'master',cols:6,rows:6,blocked:[[1,1],[4,1]],zones:[{label:'影像区',items:['photo','camera'],cells:region(3,2,3,4)}],items:['photo','keys','camera','book','pencil','letter'],required:['photo','keys'],keepCount:5,letter:'相片和店钥匙都必须留。相片与相机归右侧影像区，再挑三件一起带走。',reply:'影像区装下了两台机器，钥匙在最外侧，出门就能拿。'},
+    {title:'底部与影像',mode:'master',cols:6,rows:6,blocked:[[1,1],[4,1]],zones:[{label:'影像区',items:['photo','camera'],cells:region(3,2,3,4)}],items:['photo','keys','camera','book','pencil','letter'],required:['photo','keys'],keepCount:5,letter:'相片和店钥匙都必须留。相片与相机归右侧影像区，再挑几件一起带走。',reply:'影像区装下了两台机器，钥匙在最外侧，出门就能拿。'},
     {title:'大件区只放耳机',mode:'master',cols:7,rows:6,blocked:[[3,0],[3,1],[3,4],[3,5]],zones:[{label:'大件区',items:['headphones'],cells:region(0,0,3,3)}],items:['headphones','tin','mug','glasses','tape','postcard'],required:['headphones'],keepCount:5,letter:'竖隔板上下各断了一截。耳机最占地方，一定要完整放进左上那三格。',reply:'耳机把三格填得满满当当，别的东西从缝隙里绕了过去。'},
     {title:'给书留的九格',mode:'master',cols:6,rows:6,blocked:region(2,2,2,2),zones:[{label:'读本区',items:['notebook'],cells:region(0,3,3,3)}],items:['notebook','camera','mug','tin','keys','letter'],required:['notebook','camera'],keepCount:5,letter:'中间四格封住了。笔记本和相机都必须留，笔记本要完整放进左下的读本区。',reply:'笔记本立在九格里，相机靠着它的边上，中间那块空缺反而让人喘了口气。'}
   ];
@@ -108,12 +108,17 @@
     if(l.zones&&l.zones.length)parts.push('指定物品须完整位于同名标记区。');
     if(l.fixedRot&&l.fixedRot.length)parts.push(`${l.fixedRot.map(id=>items[id].name).join('、')} 只能按原方向摆放，不能转着放。`);
     if(l.blocked&&l.blocked.length)parts.push('木色斜纹格不可占用。');
-    if(l.dense)parts.push('这一层要恰好放满，一格都不能空。');
+    if(l.dense)parts.push(maxEmptyOf(l)===0?'这一层要恰好放满，一格都不能空。':'这一层最多只空一格。');
     else if(!l.keepCount)parts.push('可以留空，不必填满。');
     return parts.join('');
   }
   function freeCells(level){return level.cols*level.rows-(level.blocked||[]).length;}
   function cellCount(level,placed){let n=0;for(const[id]of Object.entries(placed||{}))if(items[id])n+=items[id].cells.length;return n;}
+  // 空位上限：0 = 恰好放满（早期写法 dense:true 就是它），1 = 最多空一格，没写就是不限。
+  // 没有独立成一个开关，是因为「凑得出几格」本来就是关卡数据算出来的：件数总和等于可用格数时，
+  // 放完全部物品自然只剩 0 格；只有取舍关才需要靠这个上限去卡「挑选出来的那几件」。
+  function maxEmptyOf(level){return level.maxEmpty!==undefined?level.maxEmpty:(level.dense?0:Infinity);}
+  function cellsOfIds(ids){let n=0;for(const id of ids)if(items[id])n+=items[id].cells.length;return n;}
   const fused=[...moreBlocked,...moreZone,...moreChoice,...crossLevels,...pickLevels,...masterLevels];
   fused.forEach((l,i)=>levels.push({...l,id:`drawer-${i+19}`,chapter:`${modeNames[l.mode]} · 栖湾的新委托`,from:l.keepCount?'准备出门的旅人':l.zones?.length?'整理所的老朋友':'陈师傅',surface:i%2?'green':'wood',reward:`收藏：${l.title}`,rule:levelRule(l)}));
   // ---- 第二辑：第 51–100 关 ----
@@ -125,51 +130,51 @@
     {season:'春 · 回南天',title:'窗台上的那一层灰',mode:'classic',cols:6,rows:5,items:['book','glasses','mug','letter','pencil','tape'],from:'阿禾',letter:'回南天一来，什么都是潮的。书本、眼镜、杯子，还有几支笔——先帮我把窗台这一层收拾出来吧。',reply:'“擦干净了。原来玻璃后面还留着去年的一张便签。”'},
     {season:'春 · 回南天',title:'四角的霉斑',mode:'blocked',cols:6,rows:5,blocked:[[0,0],[5,0],[0,4],[5,4]],items:['notebook','tin','keys','tape','letter','postcard'],from:'老周',letter:'箱底四角都起了霉，得空着晾一晾。剩下的地方，把这几件放进去就好。',reply:'“四角空着通风，东西反倒摆得比上次整齐。”'},
     {season:'春 · 回南天',title:'晾在窗边的相纸',mode:'zone',cols:6,rows:5,zones:[{label:'相纸区',items:['photo','postcard'],cells:region(0,0,3,3)}],items:['photo','postcard','camera','letter','pencil','keys'],from:'小杜',letter:'洗出来的相纸受了潮，得摊在透气的左上方。相机和零碎小件，你自己找地方。',reply:'“相纸摊开了，边角也慢慢平回去。”'},
-    {season:'春 · 回南天',title:'只留一箱',mode:'choice',cols:5,rows:4,items:['mug','book','photo','pencil','letter','keys'],required:['mug'],keepCount:4,from:'苏老师',letter:'潮天里箱子只能留一箱。杯子我一定要留着，另外三件你替我挑。',reply:'“杯子放在最外层，剩下三件也都有了去处。”'},
+    {season:'春 · 回南天',title:'只留一箱',mode:'choice',cols:5,rows:4,items:['mug','book','photo','pencil','letter','keys'],required:['mug'],keepCount:4,from:'苏老师',letter:'潮天里箱子只能留一箱。杯子我一定要留着，其余的由你替我挑。',reply:'“杯子放在最外层，其余几件也都有了去处。”'},
     {season:'春 · 回南天',title:'潮气最重的角落',mode:'cross',cols:6,rows:5,blocked:[[2,2],[3,2]],zones:[{label:'干燥区',items:['photo'],cells:region(0,3,6,2)}],items:['photo','tin','glasses','tape','letter','keys'],from:'陈师傅',letter:'抽屉中间两块木扣是拆不掉的。最下面两排我垫了干燥纸，老相片就放那儿。',reply:'“相片躺在一整排干燥纸上，这回不会再卷边了。”'},
     {season:'春 · 回南天',title:'春天要回的那封信',mode:'pick',cols:6,rows:5,zones:[{label:'信纸区',items:['letter','postcard'],cells:region(0,0,6,1)}],items:['letter','postcard','tape','pencil','keys','photo'],required:['letter'],keepCount:5,from:'小林',letter:'要回的信必须留，明信片你看着办。留下来的纸品都放最上面那一排。',reply:'“信纸一字排开，回信这件事终于有了开头。”'},
-    {season:'春 · 回南天',title:'檐下的木箱',mode:'master',cols:6,rows:6,blocked:[[2,2],[3,2]],zones:[{label:'木箱区',items:['tin'],cells:region(0,0,2,3)}],items:['tin','mug','book','letter','keys','tape'],required:['tin'],keepCount:5,from:'阿菊',letter:'屋檐下接雨的那只木箱，就放在左上角这个位置。铁盒必留，再挑四件一起收。',reply:'“木箱归位，另外四件也都找到了边角。”'},
+    {season:'春 · 回南天',title:'檐下的木箱',mode:'master',cols:6,rows:6,blocked:[[2,2],[3,2]],zones:[{label:'木箱区',items:['tin'],cells:region(0,0,2,3)}],items:['tin','mug','book','letter','keys','tape'],required:['tin'],keepCount:5,from:'阿菊',letter:'屋檐下接雨的那只木箱，就放在左上角这个位置。铁盒必留，再挑几件一起收。',reply:'“木箱归位，其余几件也都找到了边角。”'},
     {season:'春 · 落雨不停',title:'晒不到被子的下午',mode:'classic',cols:6,rows:5,items:['headphones','player','tape','letter','pencil','glasses'],from:'阿柚',letter:'连着下了半个月的雨，被子晒不成，那就听歌吧。这几件帮我放好。',reply:'“歌听完了，雨还没停。但抽屉整整齐齐的。”'},
     {season:'春 · 落雨不停',title:'墙根的三颗钉',mode:'blocked',cols:6,rows:5,blocked:[[1,2],[2,2],[3,2]],items:['camera','photo','book','tin','keys','letter'],from:'郑师傅',letter:'墙面返潮，我打了三颗钉子挂着吹。中间那格没法用，东西绕着放。',reply:'“三颗钉子占着中间，边上反倒腾出了完整的两块。”'},
     {season:'春 · 落雨不停',title:'一抽屉的春天',mode:'zone',cols:6,rows:5,zones:[{label:'饮品区',items:['mug'],cells:region(3,0,3,3)}],items:['mug','glasses','notebook','tin','tape','letter'],from:'阿满',letter:'杯子要放在右上那几格，一伸手就够到。剩下的，随便你先放哪件。',reply:'“杯子立在右上的格子里，旁边空出的地方正好放眼镜。”'},
-    {season:'春 · 落雨不停',title:'换季的箱子',mode:'choice',cols:6,rows:5,items:['photo','camera','book','pencil','letter','keys'],required:['photo'],keepCount:5,from:'黎姐',letter:'换季了，这次能带五件。相片一定要带，其余四件你挑。',reply:'“相片压在最下面，上面四件都稳稳的。”'},
+    {season:'春 · 落雨不停',title:'换季的箱子',mode:'choice',cols:6,rows:5,items:['photo','camera','book','pencil','letter','keys'],required:['photo'],keepCount:5,from:'黎姐',letter:'换季了，这次能带的有限。相片一定要带，其余的你挑。',reply:'“相片压在最下面，上面的几件都稳稳的。”'},
     {season:'春 · 落雨不停',title:'南风穿过的那道缝',mode:'cross',cols:6,rows:5,blocked:region(2,0,1,5),zones:[{label:'读本区',items:['notebook','book'],cells:region(3,0,3,5)}],items:['notebook','book','tin','tape','keys','letter'],from:'阿禾',letter:'右边那道竖缝是通风用的，拆不了。纸品要完整放进右边的读本区。',reply:'“风从缝里过，书在右边站得笔直。”'},
-    {season:'春 · 落雨不停',title:'春天剩下的三件',mode:'pick',cols:6,rows:5,zones:[{label:'手边区',items:['mug','glasses'],cells:region(0,3,6,2)}],items:['mug','glasses','book','tin','pencil','letter'],required:['mug','glasses'],keepCount:5,from:'陈师傅',letter:'杯子和眼镜都得留，也都要放进下两排。剩下三件从桌面上挑。',reply:'“手边区收下了两件常用的，其余三件在上层排开。”'},
+    {season:'春 · 落雨不停',title:'春天剩下的',mode:'pick',cols:6,rows:5,zones:[{label:'手边区',items:['mug','glasses'],cells:region(0,3,6,2)}],items:['mug','glasses','book','tin','pencil','letter'],required:['mug','glasses'],keepCount:5,from:'陈师傅',letter:'杯子和眼镜都得留，也都要放进下两排。剩下的从桌面上挑。',reply:'“手边区收下了常用的几件，其余的在上层排开。”'},
     {season:'春 · 落雨不停',title:'中间那根木条',mode:'master',cols:7,rows:5,blocked:[[2,2],[3,2],[4,2]],zones:[{label:'相片区',items:['photo'],cells:region(0,0,2,3)}],items:['photo','camera','book','pencil','letter','tin'],required:['photo'],keepCount:5,from:'小杜',letter:'中间横着一根木条。相片必留，也必须完整放进左上那两格。',reply:'“木条留在了原处，相片在左上安静地待着。”'},
     {season:'夏 · 蝉声',title:'阁楼里的蝉声',mode:'classic',cols:7,rows:5,items:['headphones','player','tape','book','photo','letter'],from:'阿满',letter:'暑假躲进阁楼，蝉叫得震天响。耳机、随身听、磁带，还有几本闲书，一起收吧。',reply:'“蝉声隔着屋顶，耳机里放着别的夏天。”'},
     {season:'夏 · 蝉声',title:'天窗下的横梁',mode:'blocked',cols:6,rows:5,blocked:region(0,2,5,1),items:['notebook','tin','photo','tape','letter','keys'],from:'老周',letter:'天窗下面横着一道梁，拆不掉。上下两格都得用上，看看大件能不能横过来。',reply:'“一横一竖，全绕开了那道梁。”'},
     {season:'夏 · 蝉声',title:'纳凉的角落',mode:'zone',cols:6,rows:5,zones:[{label:'纳凉区',items:['glasses'],cells:region(0,0,6,1)}],items:['glasses','keys','tin','book','tape','letter'],from:'阿菊',letter:'眼镜放最上面一排，进门摘下来顺手一搁。其余的自己安排。',reply:'“眼镜在最上排，一进门就能摸到。”'},
-    {season:'夏 · 蝉声',title:'暑假只带四件',mode:'choice',cols:5,rows:4,items:['keys','glasses','letter','postcard','tape','pencil'],required:['keys','glasses'],keepCount:4,from:'阿满',letter:'出门只背一个小包。钥匙和眼镜必须带，剩下两件随手挑。',reply:'“钥匙和眼镜搁在最外层，伸手就够得到。”'},
+    {season:'夏 · 蝉声',title:'暑假随身的',mode:'choice',cols:5,rows:4,items:['keys','glasses','letter','postcard','tape','pencil'],required:['keys','glasses'],keepCount:4,from:'阿满',letter:'出门只背一个小包。钥匙和眼镜必须带，剩下的随手挑。',reply:'“钥匙和眼镜搁在最外层，伸手就够得到。”'},
     {season:'夏 · 蝉声',title:'斜过来的一道光',mode:'cross',cols:7,rows:5,blocked:region(3,0,1,4),zones:[{label:'影像区',items:['camera'],cells:region(4,1,3,3)}],items:['camera','photo','tin','keys','tape','letter'],from:'小杜',letter:'右边那道竖隔板偏着放，两边宽窄不一样。相机放右中的标记区。',reply:'“光从隔板边漏进来，正好落在相机上。”'},
-    {season:'夏 · 蝉声',title:'夏天要读的',mode:'pick',cols:6,rows:6,zones:[{label:'读本区',items:['notebook','book'],cells:region(0,0,4,3)}],items:['notebook','book','pencil','letter','tape','keys'],required:['notebook'],keepCount:4,from:'黎姐',letter:'笔记本一定要留。所有纸品都归左上那块区域，另外三件你挑。',reply:'“读本区装了两个本子，剩下三件在上层等着。”'},
+    {season:'夏 · 蝉声',title:'夏天要读的',mode:'pick',cols:6,rows:6,zones:[{label:'读本区',items:['notebook','book'],cells:region(0,0,4,3)}],items:['notebook','book','pencil','letter','tape','keys'],required:['notebook'],keepCount:4,from:'黎姐',letter:'笔记本一定要留。所有纸品都归左上那块区域，其余的挑几件。',reply:'“读本区装下了本子，其余的在上层等着。”'},
     {season:'夏 · 蝉声',title:'两格的影棚',mode:'master',cols:6,rows:6,blocked:[[2,2],[3,2]],zones:[{label:'影像区',items:['photo','camera'],cells:region(2,2,4,4)}],items:['photo','camera','book','pencil','keys','letter'],required:['photo','camera'],keepCount:5,from:'郑师傅',letter:'中间两块木扣留着。相片和相机都必须留，也都要落进右下那一块。',reply:'“那块地方装下了两台机器，位置刚刚好。”'},
     {season:'夏 · 长昼',title:'午睡的那段时间',mode:'classic',cols:6,rows:5,items:['mug','book','photo','pencil','letter','keys'],from:'苏老师',letter:'下午太长了。杯子、旧书、一张相片，随便放，看着舒服就行。',reply:'“睡醒的时候，东西都还在原来的位置。”'},
     {season:'夏 · 长昼',title:'晾衣绳与木扣',mode:'blocked',cols:6,rows:5,blocked:[[0,0],[5,0],[0,4],[5,4],[2,2]],items:['camera','mug','glasses','pencil','postcard','letter'],from:'阿柚',letter:'四角都挂着晾衣绳的钩子，中间还有一颗木扣。绕开这五处。',reply:'“五个位置都空着，剩下的地方反而更松快。”'},
     {season:'夏 · 长昼',title:'两处都要用',mode:'zone',cols:6,rows:5,zones:[{label:'纸品区',items:['photo','letter'],cells:region(0,0,3,4)},{label:'饮品区',items:['mug'],cells:region(3,0,3,4)}],items:['mug','photo','letter','tape','keys','tin'],from:'陈师傅',letter:'左边放纸品，右边放杯子。两处都不能空着。',reply:'“一左一右，抽屉看上去像被分成两个小间。”'},
-    {season:'夏 · 长昼',title:'出门前的两分钟',mode:'choice',cols:5,rows:4,items:['keys','glasses','letter','postcard','tape','pencil'],required:['keys'],keepCount:4,from:'小林',letter:'车快到了。钥匙必须带，另外三件来不及细想，你替我定。',reply:'“钥匙搁在最外层，其余三件也塞得整整齐齐。”'},
+    {season:'夏 · 长昼',title:'出门前的两分钟',mode:'choice',cols:5,rows:4,items:['keys','glasses','letter','postcard','tape','pencil'],required:['keys'],keepCount:4,from:'小林',letter:'车快到了。钥匙必须带，其余的来不及细想，你替我定。',reply:'“钥匙搁在最外层，其余的也塞得整整齐齐。”'},
     {season:'夏 · 长昼',title:'上下都要留空',mode:'cross',cols:6,rows:6,blocked:[[2,2],[3,2]],zones:[{label:'上行区',items:['letter'],cells:region(0,0,6,1)},{label:'下行区',items:['tape'],cells:region(0,5,6,1)}],items:['letter','tape','headphones','notebook','tin','keys'],from:'阿禾',letter:'来信要放最上面一排，磁带放最下面一排。中间的木扣请绕开。',reply:'“一封信在最上面，一盘磁带在最下面。”'},
-    {season:'夏 · 长昼',title:'夏天的三件',mode:'pick',cols:6,rows:6,zones:[{label:'音乐区',items:['headphones','player','tape'],cells:region(0,0,3,6)}],items:['headphones','player','tape','book','letter','glasses'],required:['headphones'],keepCount:4,from:'阿满',letter:'耳机必留，随身听和磁带看你要不要。音乐区在左边一整列。',reply:'“左边一整列都是声音的。”'},
+    {season:'夏 · 长昼',title:'夏天要留的',mode:'pick',cols:6,rows:6,zones:[{label:'音乐区',items:['headphones','player','tape'],cells:region(0,0,3,6)}],items:['headphones','player','tape','book','letter','glasses'],required:['headphones'],keepCount:4,from:'阿满',letter:'耳机必留，随身听和磁带看你要不要。音乐区在左边一整列。',reply:'“左边一整列都是声音的。”'},
     {season:'夏 · 长昼',title:'一整列的声音',mode:'master',cols:6,rows:6,blocked:[[3,3],[3,4]],zones:[{label:'听音区',items:['player','tape'],cells:region(4,0,2,3)}],items:['headphones','player','tape','tin','keys','letter'],required:['headphones'],keepCount:4,from:'小杜',letter:'耳机必留。随身听和磁带如果留下，就得放进右上的听音区。',reply:'“听音区收下了两件，耳机占了最大的位置。”'},
     {season:'秋 · 搬家季',title:'搬家季的第一箱',mode:'classic',cols:6,rows:5,items:['notebook','book','camera','tin','keys','letter'],from:'黎姐',letter:'巷子里好几户都在搬家。这是第一箱，先放这些，别急着装满。',reply:'“第一箱合上了。外面的纸箱还堆着，慢慢来。”'},
     {season:'秋 · 搬家季',title:'四角还没补',mode:'blocked',cols:7,rows:5,blocked:[[0,0],[6,0],[0,4],[6,4]],items:['camera','notebook','mug','keys','tape','letter'],from:'老周',letter:'箱子四角磕坏了，等木胶干。先把相机和杯子放稳。',reply:'“四角空着，中间的区域反倒更完整。”'},
     {season:'秋 · 搬家季',title:'纸箱里的两摞',mode:'zone',cols:6,rows:5,zones:[{label:'纸品区',items:['book','letter'],cells:region(0,0,3,3)},{label:'饮品区',items:['mug'],cells:region(3,2,3,3)}],items:['notebook','book','mug','tape','keys','letter'],from:'阿菊',letter:'左边三格留给纸品，右下留给每天要用的杯子。',reply:'“两摞纸和一只杯子，各占一处。”'},
-    {season:'秋 · 搬家季',title:'秋天带走五件',mode:'choice',cols:6,rows:5,items:['headphones','player','camera','tin','letter','photo'],required:['headphones'],keepCount:5,from:'苏老师',letter:'这次箱子大一点，能带五件。耳机一定要带，其余四件你决定。',reply:'“耳机垫在最下面，上面四件稳稳当当。”'},
+    {season:'秋 · 搬家季',title:'秋天带走的',mode:'choice',cols:6,rows:5,items:['headphones','player','camera','tin','letter','photo'],required:['headphones'],keepCount:5,from:'苏老师',letter:'这次箱子大一点，能带走的有限。耳机一定要带，其余的你决定。',reply:'“耳机垫在最下面，上面的几件稳稳当当。”'},
     {season:'秋 · 搬家季',title:'落叶堆满的一角',mode:'cross',cols:7,rows:5,blocked:[[1,1],[2,1],[4,1],[5,1]],zones:[{label:'中央区',items:['camera'],cells:region(2,2,3,2)}],items:['camera','notebook','mug','keys','tape','postcard'],from:'郑师傅',letter:'上层四个位置堆着落叶，暂时不能用。相机要完整落在中央标记区。',reply:'“落叶留在原处，相机稳稳落在正中。”'},
     {season:'秋 · 搬家季',title:'秋天要寄的',mode:'pick',cols:6,rows:5,zones:[{label:'信纸区',items:['letter','postcard'],cells:region(0,0,6,1)}],items:['letter','postcard','tape','pencil','keys','photo'],required:['letter','postcard'],keepCount:5,from:'阿柚',letter:'信和明信片都得留，也都要放进最上排的信纸区。',reply:'“信纸整整齐齐排在最上面，看一眼就安心。”'},
     {season:'秋 · 搬家季',title:'两层之间的缝',mode:'master',cols:7,rows:6,blocked:region(0,2,7,1),zones:[{label:'上层区',items:['camera'],cells:region(0,0,3,3)},{label:'下层区',items:['notebook'],cells:region(4,3,3,3)}],items:['camera','notebook','mug','tin','keys','letter'],required:['camera','notebook'],keepCount:5,from:'阿禾',letter:'中间整整一排都封着。相机放上层左边，笔记本放下层右边，两件都必须留。',reply:'“隔板上下各归一处，中间那道缝反倒成了分界。”'},
     {season:'秋 · 起风',title:'翻出来的旧信',mode:'classic',cols:6,rows:5,items:['letter','postcard','notebook','pencil','keys','tape'],from:'阿菊',letter:'风大，窗子关不严，吹出来一叠旧信。先把它们收好。',reply:'“信都压住了，风再大也不怕。”'},
     {season:'秋 · 起风',title:'竖着的一道缝',mode:'blocked',cols:6,rows:6,blocked:region(2,0,1,5),items:['headphones','camera','tin','keys','tape','letter'],from:'郑师傅',letter:'竖隔板从上到下都在，两边都要用。耳机最占地方，先想好放哪侧。',reply:'“隔板把抽屉分成两半，两边都刚刚好。”'},
     {season:'秋 · 起风',title:'桌上的两处',mode:'zone',cols:6,rows:5,zones:[{label:'靠窗区',items:['glasses'],cells:region(0,0,6,1)},{label:'靠门区',items:['keys','tin'],cells:region(0,3,6,2)}],items:['glasses','keys','tin','notebook','tape','letter'],from:'老周',letter:'眼镜放最上面那排，钥匙和铁盒放下排。余下的自己安排。',reply:'“进门就能摸到钥匙，坐下就能戴上眼镜。”'},
-    {season:'秋 · 起风',title:'只留一摞纸',mode:'choice',cols:5,rows:4,items:['notebook','book','pencil','letter','postcard','photo'],required:['notebook'],keepCount:4,from:'黎姐',letter:'这次只想留纸品。笔记本一定要留，另外三件你挑。',reply:'“本子压在最下面，上面几件都是薄的。”'},
+    {season:'秋 · 起风',title:'只留一摞纸',mode:'choice',cols:5,rows:4,items:['notebook','book','pencil','letter','postcard','photo'],required:['notebook'],keepCount:4,from:'黎姐',letter:'这次只想留纸品。笔记本一定要留，其余的挑几件。',reply:'“本子压在最下面，上面几件都是薄的。”'},
     {season:'秋 · 起风',title:'中间留一行',mode:'cross',cols:6,rows:6,blocked:[[1,2],[2,2],[3,2],[4,2]],zones:[{label:'底边区',items:['glasses'],cells:region(0,5,6,1)}],items:['glasses','mug','tin','photo','pencil','letter'],from:'苏老师',letter:'中间四个格子封住了。眼镜要贴着最下排，其他东西绕着走。',reply:'“眼镜安静地躺在一整排的最后。”'},
-    {season:'秋 · 起风',title:'秋天最后三件',mode:'pick',cols:6,rows:6,zones:[{label:'影像区',items:['photo','camera'],cells:region(2,2,4,4)}],items:['photo','camera','book','pencil','keys','tin'],required:['photo'],keepCount:4,from:'小杜',letter:'相片必留，相机你决定。只要是影像区里的东西，都得完整放进去。',reply:'“影像区收下了要收的，剩下的三件也各就各位。”'},
+    {season:'秋 · 起风',title:'秋天最后收的',mode:'pick',cols:6,rows:6,zones:[{label:'影像区',items:['photo','camera'],cells:region(2,2,4,4)}],items:['photo','camera','book','pencil','keys','tin'],required:['photo'],keepCount:4,from:'小杜',letter:'相片必留，相机你决定。只要是影像区里的东西，都得完整放进去。',reply:'“影像区收下了要收的，剩下的也各就各位。”'},
     {season:'秋 · 起风',title:'顶上一层停用',mode:'master',cols:7,rows:6,blocked:region(0,0,7,1),zones:[{label:'读本区',items:['notebook','book'],cells:region(0,2,4,3)},{label:'听音区',items:['player'],cells:region(4,2,3,3)}],items:['notebook','book','player','tape','tin','letter'],required:['notebook'],keepCount:5,from:'阿满',letter:'最上面一排漏雨，先空着。笔记本必留，纸品归左边的读本区。',reply:'“顶上一层空着，下面两处各自安顿好了。”'},
     {season:'冬 · 收店前',title:'收店前的最后一箱',mode:'classic',cols:7,rows:6,items:['headphones','camera','notebook','mug','letter','keys'],from:'姨婆的老朋友',letter:'整理所也要歇一阵。这是收店前最后一箱，把大件先放进去。',reply:'“箱子合上了。门口那块牌子，明天再摘。”'},
     {season:'冬 · 收店前',title:'拆下来的旧板',mode:'blocked',cols:6,rows:6,blocked:[[0,0],[5,0],[0,5],[5,5]],items:['notebook','tin','photo','tape','letter','postcard'],from:'陈师傅',letter:'旧隔板拆下来了，四角留着榫眼。绕开它们，中间那片够用。',reply:'“榫眼还空着，中间却整整齐齐。”'},
     {season:'冬 · 收店前',title:'炉边的两处',mode:'zone',cols:6,rows:6,zones:[{label:'暖手区',items:['mug','glasses'],cells:region(0,4,6,2)},{label:'读本区',items:['notebook','book'],cells:region(2,0,4,3)}],items:['mug','glasses','notebook','book','tin','keys'],from:'阿菊',letter:'杯子眼镜放下两排，取暖的时候顺手。纸品放在中间偏上的读本区。',reply:'“炉边一伸手就是杯子，另一头是本子。”'},
-    {season:'冬 · 收店前',title:'冬天只留五件',mode:'choice',cols:6,rows:5,items:['mug','book','photo','pencil','letter','keys'],required:['mug','keys'],keepCount:5,from:'苏老师',letter:'冬天东西少，只留五件。杯子和钥匙都要，其余三件你定。',reply:'“杯子和钥匙在外侧，三件薄的填在里面。”'},
+    {season:'冬 · 收店前',title:'冬天留下的',mode:'choice',cols:6,rows:5,items:['mug','book','photo','pencil','letter','keys'],required:['mug','keys'],keepCount:5,from:'苏老师',letter:'冬天东西少，东西不多，留下的要精。杯子和钥匙都要，其余的你定。',reply:'“杯子和钥匙在外侧，薄的填在里面。”'},
     {season:'冬 · 收店前',title:'关店前的四角',mode:'cross',cols:7,rows:6,blocked:[[0,0],[6,0],[0,5],[6,5]],zones:[{label:'中央区',items:['camera'],cells:region(2,2,3,2)}],items:['camera','notebook','mug','keys','tape','letter'],from:'郑师傅',letter:'四个角都松了，得空着。相机放中央那块标记区。',reply:'“四个角空着，正中稳稳放着一台相机。”'},
-    {season:'冬 · 收店前',title:'冬天要写的',mode:'pick',cols:6,rows:6,zones:[{label:'纸品区',items:['notebook','book','letter','postcard'],cells:region(0,0,4,4)}],items:['notebook','book','pencil','letter','postcard','tape'],required:['notebook'],keepCount:4,from:'黎姐',letter:'笔记本必留。所有纸品都归左上那块，剩下三件从桌面里挑。',reply:'“纸品区压着一角，其余东西反倒摆得更开阔。”'},
+    {season:'冬 · 收店前',title:'冬天要写的',mode:'pick',cols:6,rows:6,zones:[{label:'纸品区',items:['notebook','book','letter','postcard'],cells:region(0,0,4,4)}],items:['notebook','book','pencil','letter','postcard','tape'],required:['notebook'],keepCount:4,from:'黎姐',letter:'笔记本必留。所有纸品都归左上那块，剩下的从桌面里挑。',reply:'“纸品区压着一角，其余东西反倒摆得更开阔。”'},
     {season:'冬 · 收店前',title:'最后一只抽屉',mode:'master',cols:7,rows:6,blocked:[[3,0],[3,1],[3,4],[3,5]],zones:[{label:'大件区',items:['headphones'],cells:region(0,0,3,3)}],items:['headphones','tin','mug','glasses','tape','postcard'],required:['headphones'],keepCount:5,from:'阿禾',letter:'竖隔板上下各断了一截。耳机最占地方，一定要完整放进左上那三格。',reply:'“耳机把三格填满，别的东西从缝隙里绕过去。”'},
     {season:'冬 · 最后一箱',title:'给下一年留一格',mode:'classic',cols:7,rows:6,items:['headphones','camera','notebook','mug','postcard','ruler'],from:'给明年的自己',letter:'最后一份委托，留给你自己。放什么都可以——记得留一格空的。',reply:'“抽屉合上之前，你留了一格。明年打开时，它还在。”'}
   ];
@@ -178,8 +183,8 @@
   function isComplete(level,placed){
     if(Object.keys(placed).length!==goalCount(level))return false;
     if(!(level.required||level.items).every(id=>!!placed[id]))return false;
-    // 「恰好放满」类委托：件数对了还不算，空格必须为零。
-    if(level.dense&&cellCount(level,placed)!==freeCells(level))return false;
+    // 「最多空一格」类委托：件数对了还不算，剩下的空格数必须在上限之内。
+    if(freeCells(level)-cellCount(level,placed)>maxEmptyOf(level))return false;
     return true;
   }
   function shape(id,rot=0){let c=items[id].cells.map(p=>p.slice());for(let i=0;i<((rot%4)+4)%4;i++){const h=Math.max(...c.map(p=>p[1]))+1;c=c.map(([x,y])=>[h-1-y,x]);}return c;}
@@ -217,7 +222,11 @@
     const optional=level.items.filter(id=>!mandatory.includes(id)),sets=[];
     function choose(start,ids){if(ids.length===slots){sets.push([...mandatory,...ids]);return;}for(let i=start;i<optional.length;i++)choose(i+1,[...ids,optional[i]]);}
     choose(0,[]);let nodes=0;
-    for(const ids of sets){const r=solveAll({...level,items:ids},fixed,Math.max(0,limit-nodes));nodes+=r.nodes;if(r.solution)return {...r,nodes};if(r.status==='limit')return {...r,nodes};}
+    // 有「空位上限」的取舍关：先按格数把凑不满的挑法剔掉，再交给求解器。
+    // 不剔的话，求解器可能返回一种「摆得下但空格太多」的挑法，玩家照着提示摆完却通不了关。
+    const cap=maxEmptyOf(level),room=freeCells(level);
+    const usable=cap===Infinity?sets:sets.filter(ids=>room-cellsOfIds(ids)<=cap);
+    for(const ids of usable){const r=solveAll({...level,items:ids},fixed,Math.max(0,limit-nodes));nodes+=r.nodes;if(r.solution)return {...r,nodes};if(r.status==='limit')return {...r,nodes};}
     return {status:'unsolvable',solution:null,nodes};
   }
   // 难度增强表：为后期委托追加旧物、放大抽屉、加固定件与「恰好放满」要求。
@@ -234,91 +243,91 @@
     'drawer-13':{add:['mug'],dense:true},
     'drawer-14':{add:['tape']},
     'drawer-15':{add:['headphones','shoes']},
-    'drawer-16':{add:['notebook','cane']},
-    'drawer-17':{add:['camera','lamp']},
-    'drawer-18':{add:['tin','mug']},
-    'drawer-19':{cols:7,rows:5,add:['pencil','postcard']},
-    'drawer-20':{cols:7,rows:5,add:['tape','keys']},
-    'drawer-21':{cols:8,rows:5,add:['pencil','lamp'],fixedRot:['lamp']},
-    'drawer-22':{cols:7,rows:4,add:['pencil','glasses','postcard']},
-    'drawer-23':{add:['postcard','lamp']},
-    'drawer-24':{add:['pencil','letter']},
-    'drawer-25':{add:['headphones','shoes']},
-    'drawer-26':{add:['mug','cane']},
-    'drawer-27':{add:['notebook','lamp']},
+    'drawer-16':{cols:5,rows:5,add:['keys','notebook','tin','postcard','lamp','cane','glasses','pencil','camera','shoes','mug','ruler'],keepCount:6,dense:true,maxEmpty:0},
+    'drawer-17':{cols:7,rows:3,add:['lamp','tape','ruler','player','postcard','headphones','shoes','cane','pencil','photo','book','camera'],keepCount:5,dense:true,maxEmpty:0},
+    'drawer-18':{cols:6,rows:5,add:['shoes','cane','mug','player','headphones','tin','postcard','glasses','tape','notebook','ruler','lamp'],keepCount:7,dense:true,maxEmpty:0},
+    'drawer-19':{cols:6,rows:8,add:['headphones','camera','mug','lamp'],dense:true,maxEmpty:0},
+    'drawer-20':{cols:6,rows:7,add:['headphones','lamp','keys','tape'],dense:true,maxEmpty:0},
+    'drawer-21':{cols:7,rows:7,add:['notebook','mug','cane','postcard'],fixedRot:['cane'],dense:true,maxEmpty:0},
+    'drawer-22':{cols:8,rows:5,add:['headphones','lamp','cane','pencil','postcard'],dense:true,maxEmpty:0},
+    'drawer-23':{cols:9,rows:5,add:['headphones','camera','mug','cane','pencil'],dense:true,maxEmpty:0},
+    'drawer-24':{cols:8,rows:6,add:['headphones','mug','lamp','cane','pencil'],dense:true,maxEmpty:0},
+    'drawer-25':{add:['ruler','glasses','notebook','cane','shoes','camera','player','headphones','tape','postcard','tin','lamp'],keepCount:5,dense:true,maxEmpty:0},
+    'drawer-26':{add:['cane','tin','book','headphones','mug','lamp','photo','notebook','camera','ruler','player'],keepCount:5,dense:true,maxEmpty:0},
+    'drawer-27':{add:['ruler','lamp','shoes','mug','notebook','cane','tape','book','glasses','pencil','keys','postcard'],keepCount:6,dense:true,maxEmpty:0},
     'drawer-28':{cols:7,rows:5,add:['pencil','letter','glasses','postcard']},
-    'drawer-29':{cols:7,rows:6,add:['tape','pencil','keys','lamp']},
-    'drawer-30':{cols:6,rows:6,add:['letter','postcard','lamp']},
-    'drawer-31':{cols:7,rows:6,add:['pencil','keys','lamp']},
-    'drawer-32':{cols:7,rows:6,add:['pencil','glasses','postcard']},
-    'drawer-33':{cols:7,rows:5,add:['notebook','tape','postcard'],dense:true},
-    'drawer-34':{cols:8,rows:5,add:['pencil','glasses','postcard']},
-    'drawer-35':{cols:7,rows:6,add:['pencil','lamp','shoes']},
+    'drawer-29':{cols:6,rows:9,add:['headphones','notebook','mug','lamp','cane','keys'],dense:true,maxEmpty:0},
+    'drawer-30':{cols:10,rows:5,add:['headphones','camera','lamp','shoes','cane'],dense:true,maxEmpty:0},
+    'drawer-31':{cols:6,rows:9,add:['camera','mug','lamp','shoes','photo'],dense:true,maxEmpty:0},
+    'drawer-32':{cols:7,rows:8,add:['notebook','mug','lamp','shoes','cane','photo'],dense:true,maxEmpty:0},
+    'drawer-33':{cols:7,rows:8,add:['headphones','notebook','camera','lamp','cane','player'],dense:true,maxEmpty:0},
+    'drawer-34':{cols:9,rows:6,add:['headphones','lamp','shoes','cane','tin','pencil'],dense:true,maxEmpty:0},
+    'drawer-35':{cols:8,rows:7,add:['camera','mug','lamp','shoes','cane','photo','pencil'],dense:true,maxEmpty:0},
     'drawer-36':{add:['mug','headphones','cane']},
-    'drawer-37':{add:['notebook','keys','camera']},
-    'drawer-38':{add:['player','lamp','shoes']},
-    'drawer-39':{add:['tin','mug','cane']},
-    'drawer-40':{add:['keys','camera','headphones']},
-    'drawer-41':{add:['notebook','lamp','shoes']},
-    'drawer-42':{add:['tin','mug','cane']},
+    'drawer-37':{cols:7,rows:4,add:['tape','photo','cane','camera','shoes','ruler','headphones','player','keys','notebook','lamp','postcard'],keepCount:7,dense:true,maxEmpty:0},
+    'drawer-38':{add:['player','cane','mug','notebook','lamp','letter','postcard','shoes','tape','headphones','ruler','glasses'],keepCount:7,dense:true,maxEmpty:0},
+    'drawer-39':{add:['ruler','keys','shoes','lamp','postcard','photo','notebook','cane','mug','pencil','camera','tin'],keepCount:8,dense:true,maxEmpty:0},
+    'drawer-40':{add:['glasses','player','keys','tin','cane','mug','headphones','lamp','shoes','photo','camera'],keepCount:7,dense:true,maxEmpty:0},
+    'drawer-41':{add:['notebook','cane','ruler','book','shoes','letter','tape','pencil'],keepCount:8,dense:true,maxEmpty:0},
+    'drawer-42':{add:['cane','mug','headphones','camera','player','ruler','tin','shoes','postcard','lamp','notebook','photo'],keepCount:7,dense:true,maxEmpty:0},
     'drawer-43':{add:['keys','player','headphones'],anchors:[{id:'camera',x:3,y:2,rot:0}]},
-    'drawer-44':{add:['notebook','lamp','shoes'],anchors:[{id:'mug',x:0,y:4,rot:0}]},
-    'drawer-45':{add:['camera','mug','cane'],anchors:[{id:'headphones',x:3,y:0,rot:0}]},
-    'drawer-46':{add:['tin','keys','headphones'],anchors:[{id:'notebook',x:2,y:0,rot:0}]},
-    'drawer-47':{add:['notebook','lamp','shoes'],anchors:[{id:'headphones',x:0,y:0,rot:0}]},
-    'drawer-48':{add:['mug','player','cane'],anchors:[{id:'camera',x:3,y:4,rot:0}]},
-    'drawer-49':{add:['photo','keys','camera'],anchors:[{id:'headphones',x:0,y:0,rot:0}]},
-    'drawer-50':{add:['headphones','lamp','shoes'],anchors:[{id:'notebook',x:0,y:3,rot:0}]},
-    'drawer-51':{add:['tin','headphones'],dense:true},
-    'drawer-52':{cols:7,rows:5,add:['lamp','shoes']},
-    'drawer-53':{add:['tape','lamp']},
-    'drawer-54':{add:['notebook','cane']},
-    'drawer-55':{add:['postcard','lamp'],fixedRot:['lamp']},
-    'drawer-56':{add:['mug','headphones']},
-    'drawer-57':{add:['camera','shoes'],anchors:[{id:'mug',x:0,y:2,rot:0}]},
-    'drawer-58':{add:['keys','postcard']},
-    'drawer-59':{add:['tape','postcard'],dense:true},
-    'drawer-60':{add:['keys','postcard']},
-    'drawer-61':{add:['mug','headphones']},
-    'drawer-62':{cols:7,rows:5,add:['pencil','postcard']},
-    'drawer-63':{add:['lamp','shoes']},
-    'drawer-64':{add:['notebook','cane'],anchors:[{id:'camera',x:2,y:0,rot:0}]},
-    'drawer-65':{add:['keys','lamp']},
-    'drawer-66':{cols:7,rows:5,add:['pencil','postcard']},
-    'drawer-67':{add:['lamp','shoes']},
-    'drawer-68':{add:['mug','headphones']},
-    'drawer-69':{add:['postcard','lamp']},
-    'drawer-70':{add:['camera','cane']},
-    'drawer-71':{add:['notebook','shoes'],anchors:[{id:'camera',x:2,y:4,rot:0}]},
-    'drawer-72':{add:['tape','glasses']},
-    'drawer-73':{cols:7,rows:5,add:['notebook','keys'],dense:true},
-    'drawer-74':{add:['postcard','lamp']},
-    'drawer-75':{add:['mug','headphones']},
-    'drawer-76':{cols:7,rows:6,add:['pencil','lamp','shoes']},
-    'drawer-77':{add:['notebook','keys','cane']},
-    'drawer-78':{add:['photo','camera','mug'],anchors:[{id:'headphones',x:0,y:2,rot:0}]},
-    'drawer-79':{cols:6,rows:6,add:['tape','pencil','postcard']},
-    'drawer-80':{cols:8,rows:5,add:['pencil','glasses','postcard']},
-    'drawer-81':{cols:7,rows:5,add:['pencil','glasses','postcard']},
-    'drawer-82':{add:['mug','lamp','shoes']},
-    'drawer-83':{cols:8,rows:5,add:['pencil','letter','glasses']},
-    'drawer-84':{add:['notebook','headphones','cane']},
-    'drawer-85':{add:['photo','lamp','shoes'],anchors:[{id:'camera',x:0,y:0,rot:0}]},
-    'drawer-86':{cols:7,rows:5,add:['lamp','shoes','cane']},
-    'drawer-87':{cols:7,rows:6,add:['notebook','pencil','photo'],dense:true},
-    'drawer-88':{cols:7,rows:5,add:['postcard','lamp','shoes']},
-    'drawer-89':{add:['mug','headphones','cane']},
-    'drawer-90':{add:['tape','keys','postcard']},
-    'drawer-91':{add:['notebook','lamp','shoes']},
-    'drawer-92':{add:['mug','headphones','cane'],anchors:[{id:'notebook',x:2,y:2,rot:0}]},
-    'drawer-93':{add:['tape','postcard','lamp']},
-    'drawer-94':{add:['pencil','keys','glasses']},
-    'drawer-95':{add:['tape','letter','postcard']},
-    'drawer-96':{add:['headphones','lamp','shoes']},
-    'drawer-97':{add:['pencil','postcard','lamp'],fixedRot:['lamp']},
-    'drawer-98':{add:['keys','mug','cane']},
-    'drawer-99':{add:['notebook','camera','shoes'],anchors:[{id:'headphones',x:0,y:0,rot:0}]},
-    'drawer-100':{add:['tin','photo','player'],dense:true},
+    'drawer-44':{add:['postcard','shoes','camera','player','notebook','headphones','pencil','lamp','tape','cane','photo','ruler'],keepCount:7,dense:true,maxEmpty:0},
+    'drawer-45':{add:['mug','cane','glasses','camera','notebook','ruler','postcard','lamp','shoes','photo','pencil','book'],keepCount:7,dense:true,maxEmpty:0},
+    'drawer-46':{add:['cane','shoes','lamp','postcard','mug','pencil','player','keys','glasses','headphones','tin','ruler'],keepCount:7,anchors:[{id:'notebook',x:0,y:0,rot:0}],dense:true,maxEmpty:0},
+    'drawer-47':{add:['camera','ruler','tin','photo','postcard','book','keys','cane','pencil','shoes','lamp'],keepCount:9,anchors:[{id:'mug',x:0,y:4,rot:0}],dense:true,maxEmpty:0},
+    'drawer-48':{add:['notebook','mug','lamp','ruler','shoes','headphones','cane','tape','player','postcard','tin','glasses'],keepCount:8,dense:true,maxEmpty:0},
+    'drawer-49':{add:['pencil','player','ruler','letter','photo','book','keys','notebook','cane','camera','lamp'],keepCount:9,anchors:[{id:'headphones',x:0,y:0,rot:0}],dense:true,maxEmpty:0},
+    'drawer-50':{add:['lamp','glasses','pencil','shoes','cane','postcard','player','photo'],keepCount:7,anchors:[{id:'notebook',x:0,y:3,rot:0}],dense:true,maxEmpty:0},
+    'drawer-51':{cols:7,rows:7,add:['headphones','notebook','lamp','cane','tin','keys','postcard'],dense:true,maxEmpty:0},
+    'drawer-52':{cols:8,rows:7,add:['headphones','camera','mug','lamp','shoes','cane','glasses'],dense:true,maxEmpty:0},
+    'drawer-53':{cols:8,rows:7,add:['headphones','notebook','mug','lamp','shoes','cane','tin','tape'],dense:true,maxEmpty:0},
+    'drawer-54':{add:['glasses','shoes','lamp','ruler','camera','tape','postcard','cane','headphones','tin','notebook','player'],keepCount:5,dense:true,maxEmpty:0},
+    'drawer-55':{cols:8,rows:8,add:['headphones','notebook','camera','mug','lamp','shoes','cane','player','book'],dense:true,maxEmpty:0},
+    'drawer-56':{add:['glasses','ruler','mug','lamp','camera','tin','book','shoes','player','notebook','headphones','cane'],keepCount:7,dense:true,maxEmpty:0},
+    'drawer-57':{add:['photo','camera','cane','notebook','player','lamp','pencil','glasses','headphones','shoes','postcard','ruler'],keepCount:7,anchors:[{id:'tin',x:0,y:0,rot:0}],dense:true,maxEmpty:0},
+    'drawer-58':{cols:8,rows:7,add:['notebook','camera','mug','lamp','shoes','cane','tin','postcard'],dense:true,maxEmpty:0},
+    'drawer-59':{cols:9,rows:7,add:['headphones','notebook','mug','lamp','shoes','cane','player','pencil'],dense:true,maxEmpty:0},
+    'drawer-60':{cols:7,rows:8,add:['headphones','camera','lamp','shoes','cane','photo','keys','postcard'],dense:true,maxEmpty:0},
+    'drawer-61':{add:['glasses','lamp','ruler','cane','mug','tin','player','headphones','shoes','postcard','tape','notebook'],keepCount:7,dense:true,maxEmpty:0},
+    'drawer-62':{cols:8,rows:8,add:['headphones','camera','mug','lamp','shoes','cane','photo','player'],dense:true,maxEmpty:0},
+    'drawer-63':{add:['lamp','keys','notebook','player','ruler','headphones','postcard','photo','tape','cane','shoes','camera'],keepCount:7,dense:true,maxEmpty:0},
+    'drawer-64':{add:['keys','notebook','postcard','ruler','cane','glasses','lamp','tape','mug','shoes'],keepCount:8,anchors:[{id:'photo',x:0,y:0,rot:0}],dense:true,maxEmpty:0},
+    'drawer-65':{cols:9,rows:7,add:['notebook','camera','mug','lamp','shoes','cane','tin','ruler','keys'],dense:true,maxEmpty:0},
+    'drawer-66':{cols:11,rows:6,add:['headphones','camera','mug','lamp','shoes','cane','player','pencil','glasses'],dense:true,maxEmpty:0},
+    'drawer-67':{cols:10,rows:6,add:['headphones','notebook','camera','mug','lamp','shoes','cane','photo','postcard'],dense:true,maxEmpty:0},
+    'drawer-68':{add:['headphones','lamp','ruler','camera','notebook','shoes','cane','tin','player','book','photo','mug'],keepCount:5,dense:true,maxEmpty:0},
+    'drawer-69':{cols:8,rows:8,add:['headphones','notebook','mug','lamp','shoes','cane','player','pencil','postcard'],dense:true,maxEmpty:0},
+    'drawer-70':{add:['postcard','camera','photo','glasses','shoes','ruler','headphones','cane','mug','lamp','player','tin'],keepCount:8,dense:true,maxEmpty:0},
+    'drawer-71':{add:['mug','ruler','postcard','glasses','lamp','player','tape','shoes','headphones','tin','cane'],keepCount:8,anchors:[{id:'camera',x:2,y:4,rot:0}],dense:true,maxEmpty:0},
+    'drawer-72':{cols:8,rows:8,add:['headphones','notebook','camera','lamp','shoes','cane','tin','player','ruler'],dense:true,maxEmpty:0},
+    'drawer-73':{cols:8,rows:8,add:['headphones','notebook','lamp','shoes','cane','tin','photo','keys','tape'],dense:true,maxEmpty:0},
+    'drawer-74':{cols:7,rows:9,add:['headphones','notebook','camera','lamp','shoes','cane','ruler','pencil','glasses','postcard'],dense:true,maxEmpty:0},
+    'drawer-75':{add:['notebook','ruler','camera','photo','lamp','cane','player','mug','headphones','shoes','tin','book'],keepCount:5,dense:true,maxEmpty:0},
+    'drawer-76':{cols:9,rows:7,add:['mug','lamp','shoes','cane','photo','player','book','pencil','glasses','postcard'],dense:true,maxEmpty:0},
+    'drawer-77':{add:['photo','keys','notebook','lamp','tin','mug','shoes','camera','pencil','cane','ruler','postcard'],keepCount:8,dense:true,maxEmpty:0},
+    'drawer-78':{add:['postcard','pencil','glasses','ruler','notebook','photo','shoes','lamp','book','mug','cane','camera'],keepCount:7,dense:true,maxEmpty:0},
+    'drawer-79':{cols:8,rows:8,add:['headphones','mug','lamp','shoes','cane','photo','ruler','pencil','tape','postcard'],dense:true,maxEmpty:0},
+    'drawer-80':{cols:12,rows:5,add:['headphones','lamp','shoes','cane','tin','photo','pencil','postcard'],dense:true,maxEmpty:0},
+    'drawer-81':{cols:7,rows:9,add:['headphones','camera','lamp','shoes','cane','tin','photo','pencil','glasses','postcard'],dense:true,maxEmpty:0},
+    'drawer-82':{add:['lamp','glasses','cane','notebook','tape','book','pencil','shoes','mug','postcard','ruler','keys'],keepCount:6,dense:true,maxEmpty:0},
+    'drawer-83':{cols:8,rows:9,add:['headphones','lamp','shoes','cane','tin','photo','player','book','ruler','pencil','letter'],fixedRot:['lamp'],dense:true,maxEmpty:0},
+    'drawer-84':{add:['shoes','headphones','lamp','cane','book','glasses','player','tin','mug','notebook','camera'],keepCount:8,dense:true,maxEmpty:0},
+    'drawer-85':{add:['glasses','player','shoes','pencil','tape','headphones','book','photo','ruler','cane','postcard'],keepCount:8,anchors:[{id:'camera',x:0,y:0,rot:0}],dense:true,maxEmpty:0},
+    'drawer-86':{cols:8,rows:8,add:['camera','mug','lamp','shoes','cane','tin','photo','player','book','ruler','glasses'],dense:true,maxEmpty:0},
+    'drawer-87':{cols:9,rows:8,add:['notebook','mug','lamp','shoes','cane','photo','player','ruler','pencil','glasses','postcard'],dense:true,maxEmpty:0},
+    'drawer-88':{cols:8,rows:8,add:['camera','mug','lamp','shoes','cane','photo','player','book','ruler','pencil','postcard'],dense:true,maxEmpty:0},
+    'drawer-89':{add:['headphones','ruler','player','tape','tin','keys','lamp','shoes','mug','cane','camera','glasses'],keepCount:5,dense:true,maxEmpty:0},
+    'drawer-90':{cols:9,rows:8,add:['headphones','notebook','camera','lamp','shoes','cane','player','book','ruler','tape','postcard'],dense:true,maxEmpty:0},
+    'drawer-91':{add:['lamp','shoes','tape','headphones','cane','mug','glasses','letter','ruler','notebook','postcard','player'],keepCount:8,dense:true,maxEmpty:0},
+    'drawer-92':{add:['camera','headphones','shoes','keys','mug','photo','lamp','glasses','cane','pencil','ruler','postcard'],keepCount:8,dense:true,maxEmpty:0},
+    'drawer-93':{cols:8,rows:8,add:['lamp','shoes','cane','tin','photo','player','ruler','glasses','tape','postcard'],dense:true,maxEmpty:0},
+    'drawer-94':{cols:8,rows:9,add:['headphones','camera','mug','lamp','shoes','cane','player','ruler','keys','pencil','glasses'],maxEmpty:1},
+    'drawer-95':{cols:8,rows:9,add:['headphones','camera','lamp','shoes','cane','photo','player','ruler','pencil','tape','letter','postcard'],maxEmpty:1},
+    'drawer-96':{add:['cane','notebook','player','postcard','glasses','tin','tape','shoes','headphones','lamp','camera','ruler'],keepCount:7,dense:true,maxEmpty:0},
+    'drawer-97':{cols:12,rows:6,add:['headphones','lamp','shoes','cane','tin','photo','player','ruler','pencil','glasses','postcard'],maxEmpty:1},
+    'drawer-98':{add:['photo','lamp','keys','camera','player','shoes','ruler','tin','glasses','headphones','mug','cane'],keepCount:8,dense:true,maxEmpty:0},
+    'drawer-99':{add:['camera','notebook','lamp','keys','ruler','cane','book','pencil','player','shoes','photo','letter'],keepCount:8,anchors:[{id:'headphones',x:0,y:0,rot:0}],dense:true,maxEmpty:0},
+    'drawer-100':{cols:9,rows:8,add:['lamp','shoes','cane','tin','photo','player','book','keys','pencil','glasses','tape','letter'],maxEmpty:1},
   };
   function applyHarden(){
     for(const l of levels){
@@ -328,11 +337,26 @@
       if(h.cols){l.cols=h.cols;}
       if(h.rows){l.rows=h.rows;}
       for(const id of h.add||[])if(!l.items.includes(id))l.items.push(id);
+      // 取舍关的 keepCount 会跟着盘面一起调：格子数是「挑出来的那几件」决定的，
+      // 原来的件数配不上新盘面时，必须让生成器把件数也改掉，否则永远凑不满。
+      if(h.keepCount!==undefined)l.keepCount=h.keepCount;
       if(h.anchors)l.anchors=h.anchors.map(a=>({...a}));
       if(h.fixedRot)l.fixedRot=[...h.fixedRot];
-      if(h.dense)l.dense=true;
+      // maxEmpty 写在表里就是「有填满要求」：0 = 恰好放满，1 = 最多空一格。两种都算 dense。
+      if(h.dense||h.maxEmpty!==undefined){l.dense=true;if(h.maxEmpty!==undefined)l.maxEmpty=h.maxEmpty;}
       l.rule=levelRule(l);
     }
+  }
+  // ---- 关系覆盖补丁 ----
+  // 上一轮新增的「旧木尺」只在 items 表里、从没被任何关卡引用过（死内容）；
+  // 另外有几对物品从不在同一次委托里同时出现，对应的关系永远解不开。
+  // 这里定点补进去：木尺进五关，旧布鞋补进有拐杖的那一类关卡。
+  // 必须跑在 RAW 快照之前：生成器是按快照里的物品清单算盘面尺寸的，
+  // 补丁晚一步，算出来的盘面就会多出一件放不下的物品（drawer-21/22/31 当初就是这么爆的）。
+  const RELATION_ITEMS={'drawer-21':['ruler'],'drawer-22':['ruler'],'drawer-31':['ruler'],'drawer-40':['ruler'],'drawer-50':['ruler'],'drawer-26':['shoes']};
+  for(const l of levels){
+    const add=RELATION_ITEMS[l.id];if(!add)continue;
+    for(const id of add)if(!l.items.includes(id))l.items.push(id);
   }
   // ---- 原始快照：专供难度增强生成器 ----
   // tools/harden.cjs 靠 tier(seq).count - items.length 算这一关该加几件，
@@ -343,15 +367,6 @@
     zones:(l.zones||[]).map(z=>({...z,items:[...z.items],cells:z.cells.map(c=>[...c])})),
     required:l.required?[...l.required]:undefined}));
   applyHarden();
-  // ---- 关系覆盖补丁 ----
-  // 上一轮新增的「旧木尺」只在 items 表里、从没被任何关卡引用过（死内容）；
-  // 另外有几对物品从不在同一次委托里同时出现，对应的关系永远解不开。
-  // 这里定点补进去：木尺进五关，旧布鞋补进有拐杖的那一类关卡。
-  const RELATION_ITEMS={'drawer-21':['ruler'],'drawer-22':['ruler'],'drawer-31':['ruler'],'drawer-40':['ruler'],'drawer-50':['ruler'],'drawer-26':['shoes']};
-  for(const l of levels){
-    const add=RELATION_ITEMS[l.id];if(!add)continue;
-    for(const id of add)if(!l.items.includes(id))l.items.push(id);
-  }
   // 规则文案统一重算一遍：教学关跳过了 HARDEN，它的 rule 还是最初硬编码的那份。
   for(const l of levels)l.rule=levelRule(l);
   // ---- 章节重排：新手章节 7 关在前，其余 43 关沿用原顺序（原数组按玩法分组，天然有序）----
@@ -480,7 +495,7 @@
   }
   function relationById(id){return relations.find(r=>r.id===id);}
   const byId=id=>levels.find(l=>l.id===id)||null;
-  const api={items,levels,RAW,shape,bounds,canPlace,placementError,validState,solve,goalCount,isComplete,modeNames,levelRule,cellCount,freeCells,anchorMap,HARDEN,
+  const api={items,levels,RAW,shape,bounds,canPlace,placementError,validState,solve,goalCount,isComplete,modeNames,levelRule,cellCount,freeCells,maxEmptyOf,anchorMap,HARDEN,
     chapters,TUTORIAL,byId,scoreLayout,verdict,advice,GRADE_LINES,relations,kindNames,relationMet,metRelations,relationById};
   root.Keepsake=api;if(typeof module!=='undefined')module.exports=api;
 })(typeof window!=='undefined'?window:globalThis);

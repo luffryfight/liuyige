@@ -56,9 +56,11 @@ test('choice completion requires the exact quota and all mandatory keepsakes',()
 });
 
 test('each choice commission supports at least two distinct sets of keepsakes',()=>{
+  // 数到 2 就停：断言本来就是「不止一种挑法」，没必要把全部挑法枚举完。
+  // 近满盘之后物品栏能到 17 件，一种挑法就是一次完整求解，全量枚举 C(16,7)=11440 次要跑几十秒。
   for(const l of K.levels.filter(l=>l.keepCount)){
     let count=0;
-    for(let mask=0;mask<1<<l.items.length;mask++){
+    for(let mask=0;mask<1<<l.items.length&&count<2;mask++){
       const ids=l.items.filter((_,i)=>mask>>i&1);
       if(ids.length!==l.keepCount||!l.required.every(id=>ids.includes(id)))continue;
       if(K.solve({...l,items:ids}).solution)count++;

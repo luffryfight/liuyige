@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>liuyige icon</title>
+<style>
+  html,body{margin:0;width:512px;height:512px;overflow:hidden}
+  /* 图标底：与游戏纸张同色。官方物料要求不能是纯白/纯黑/透明底 */
+  .icon{
+    width:512px;height:512px;
+    background:#f4efe3;
+    display:flex;align-items:center;justify-content:center;
+  }
+  /* 复刻游戏里的「印章」：朱红描边 + 竖排三字 */
+  .seal{
+    width:352px;height:352px;
+    border:14px solid #b96b52;
+    border-radius:26px;
+    display:flex;align-items:center;justify-content:center;
+    gap:2px;
+    transform:rotate(-3deg);
+  }
+  /* 竖排三个字必须塞进 352px 高的框里，否则会自动折成两列 */
+  .seal span{
+    font-family:"Songti SC","SimSun",serif;
+    font-weight:700;
+    font-size:104px;
+    line-height:1;
+    color:#3b5046;
+    writing-mode:vertical-rl;
+    letter-spacing:2px;
+  }
+</style>
+</head>
+<body>
+  <div class="icon"><div class="seal"><span>留一格</span></div></div>
+</body>
+</html>

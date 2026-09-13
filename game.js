@@ -2,16 +2,32 @@
   'use strict';
   const K=Keepsake,A=KeepsakeArt,$=id=>document.getElementById(id),canvas=$('game'),ctx=canvas.getContext('2d');
   const W=640,H=640,KEY='liuyige-mvp-v1';let levelIndex=0,placed={},rotations={},history=[],selected=null,ghost=null,drag=null,hint=null,moves=0,hints=0,started=Date.now(),finished=false,scheduled=false,audio=null,muted=false,flashUntil=0,locked=new Set();
+  // 看广告换来的两种帮忙，都按本关记账：
+  //   freeHints —— 每关自带一次免费提示，用完之后再点就要看广告；
+  //   removed   —— 「消除」掉的旧物。消掉一件，这一关就不再需要安顿它。
+  //                空格上限要跟着放宽同样的格数，否则剩下的物品再也填不满，关卡会变成死局。
+  const FREE_HINTS=1,MAX_CLEARS=2;
+  let removed=new Set(),freeHints=0,clears=0;
   let saved={version:1,completed:{},sessions:{},events:[],codex:{},sound:true},storageOK=true;
   try{const raw=JSON.parse(localStorage.getItem(KEY)||'null');if(raw&&raw.version===1&&raw.completed&&raw.sessions&&typeof raw.completed==='object'&&typeof raw.sessions==='object')saved={version:1,current:raw.current,completed:raw.completed,sessions:raw.sessions,events:Array.isArray(raw.events)?raw.events.slice(-200):[],codex:raw.codex&&typeof raw.codex==='object'?raw.codex:{},sound:raw.sound!==false};}catch{storageOK=false;}
   // BGM 默认开。存档里明确关过就尊重存档；读不出存档（或存档坏了）按「没关过」处理。
   muted=saved.sound===false;
   let toastUntil=0,toastTimer=null;
-  const level=()=>K.levels[levelIndex];
+  // 消除过的旧物不在这份委托里了：物品清单、必留清单、以及「要填多满」都要跟着改。
+  // drop 是「试算要额外抹掉的那一件」——消除前要拿它去问求解器，所以不能写进 removed。
+  const level=(drop)=>{const base=K.levels[levelIndex];
+    const gone=drop?new Set([...removed,drop]):removed;
+    if(!gone.size)return base;
+    const keep=id=>!gone.has(id);
+    const out={...base,items:base.items.filter(keep)};
+    if(base.required)out.required=base.required.filter(keep);
+    // 上限按真正消失的格数放宽，不读 removedCells——那个变量只在落地时才更新，试算会算错。
+    if(!base.keepCount)out.maxEmpty=K.maxEmptyOf(base)+[...gone].reduce((n,id)=>n+K.items[id].cells.length,0);
+    return out;};
   const board=()=>{const l=level(),cell=Math.max(28,Math.min(52,Math.floor(275/l.rows),Math.floor(530/l.cols))),w=l.cols*cell,h=l.rows*cell;return{x:(W-w)/2,y:64,cell,w,h};};
   const clone=x=>JSON.parse(JSON.stringify(x));
   function event(name,data={}){saved.events.push({name,level:level().id,at:Date.now(),...data});saved.events=saved.events.slice(-200);}
-  function persist(){saved.current=levelIndex;saved.sessions[level().id]={placed:clone(placed),rotations:{...rotations},moves,hints};try{localStorage.setItem(KEY,JSON.stringify(saved));storageOK=true;}catch{storageOK=false;}}
+  function persist(){saved.current=levelIndex;saved.sessions[level().id]={placed:clone(placed),rotations:{...rotations},moves,hints,removed:[...removed],freeHints,clears};try{localStorage.setItem(KEY,JSON.stringify(saved));storageOK=true;}catch{storageOK=false;}}
   function status(text){$('status').textContent=text;}
   // ---- 整齐度评分：随摆随算。不做星级门槛（各关可达上限不同，星级会给出够不到的目标），
   //      只给一个分数 + 一条「下一步动什么」的建议。 ----
@@ -76,26 +92,51 @@
   function audioCtx(){const M=window.KeepsakeMusic;if(M&&M.ctx){const shared=M.ctx();if(shared)return shared;}return audio||(audio=new(window.AudioContext||window.webkitAudioContext)());}
   function beep(success=false){if(muted)return;try{const ac=audioCtx();if(!ac)return;if(ac.state==='suspended')ac.resume().catch(()=>{});const o=ac.createOscillator(),g=ac.createGain();o.type='sine';o.frequency.setValueAtTime(success?659:440,ac.currentTime);o.frequency.exponentialRampToValueAtTime(success?880:523,ac.currentTime+.12);g.gain.setValueAtTime(.035,ac.currentTime);g.gain.exponentialRampToValueAtTime(.001,ac.currentTime+.2);o.connect(g);g.connect(ac.destination);o.start();o.stop(ac.currentTime+.22);}catch{}}
   function snapshot(){history.push({placed:clone(placed),rotations:{...rotations},moves,hints});if(history.length>100)history.shift();}
-  function updateUI(){const l=level(),n=Object.keys(placed).length;$('progress').textContent=`${n} / ${K.goalCount(l)} 件`;$('move-count').textContent=`已整理 ${moves} 次`;const frozen=!!selected&&(locked.has(selected)||(l.fixedRot||[]).includes(selected));$('rotate').disabled=!selected||frozen;$('return').disabled=!selected||!placed[selected]||locked.has(selected);$('undo').disabled=!history.length;$('hint').disabled=finished;$('completed-count').textContent=`${K.levels.filter(l=>saved.completed[l.id]).length} / ${K.levels.length} 已整理`;document.querySelectorAll('.level-button').forEach((b,i)=>{b.hidden=K.levels[i].group!==l.group;b.setAttribute('aria-current',String(i===levelIndex));b.querySelector('.tick').textContent=saved.completed[K.levels[i].id]?'✓':'';});document.querySelectorAll('.mode-button').forEach(b=>b.setAttribute('aria-pressed',String(b.getAttribute('data-group')===l.group)));$('codex-count').textContent=`${Object.keys(saved.codex).length}/${K.relations.length}`;paintScore();}
-  function load(i){cancelDrag();levelIndex=i;const l=level(),s=saved.sessions[l.id];// 委托人预置的固定件先落位，存档里的同类位置一律以固定件为准。
+  function updateUI(){const l=level(),n=Object.keys(placed).length;$('progress').textContent=`${n} / ${K.goalCount(l)} 件`;$('move-count').textContent=`已整理 ${moves} 次`;const frozen=!!selected&&(locked.has(selected)||(l.fixedRot||[]).includes(selected));$('rotate').disabled=!selected||frozen;$('return').disabled=!selected||!placed[selected]||locked.has(selected);$('undo').disabled=!history.length;$('hint').disabled=finished;
+    // 两个「看广告」按钮的文案随剩余额度变，免得玩家点了才发现要看完广告。
+    const hintSpan=$('hint').querySelector&&$('hint').querySelector('span');if(hintSpan)hintSpan.textContent=freeHints<FREE_HINTS?'一点提示':'看广告 · 提示';
+    const clearBtn=$('clear');const clearSpan=clearBtn.querySelector&&clearBtn.querySelector('span');if(clearSpan)clearSpan.textContent=clears>=MAX_CLEARS?'已用完':'看广告 · 消除';
+    clearBtn.disabled=finished||clears>=MAX_CLEARS||!clearCandidate();$('completed-count').textContent=`${K.levels.filter(l=>saved.completed[l.id]).length} / ${K.levels.length} 已整理`;document.querySelectorAll('.level-button').forEach((b,i)=>{b.hidden=K.levels[i].group!==l.group;b.setAttribute('aria-current',String(i===levelIndex));b.querySelector('.tick').textContent=saved.completed[K.levels[i].id]?'✓':'';});document.querySelectorAll('.mode-button').forEach(b=>b.setAttribute('aria-pressed',String(b.getAttribute('data-group')===l.group)));$('codex-count').textContent=`${Object.keys(saved.codex).length}/${K.relations.length}`;paintScore();}
+  function load(i){cancelDrag();levelIndex=i;
+    // 先读存档里的「消除」记录，再算这一关长什么样——顺序反了会把上一关的消除带过来。
+    const s=saved.sessions[K.levels[i].id];
+    removed=new Set(Array.isArray(s?.removed)?s.removed.filter(id=>K.items[id]):[]);
+    freeHints=Number.isFinite(s?.freeHints)?Math.max(0,s.freeHints):0;
+    clears=Number.isFinite(s?.clears)?Math.max(0,s.clears):0;
+    const l=level();// 委托人预置的固定件先落位，存档里的同类位置一律以固定件为准。
     locked=new Set((l.anchors||[]).map(a=>a.id));
     const base={};for(const a of l.anchors||[])base[a.id]={x:a.x,y:a.y,rot:((a.rot||0)%4+4)%4};
     placed=K.validState(l,base)?base:{};
     if(s&&s.placed)for(const[id,p]of Object.entries(s.placed)){if(locked.has(id)||!p||!K.canPlace(l,placed,id,p.x,p.y,p.rot))continue;placed[id]={x:p.x,y:p.y,rot:p.rot};}
-    rotations={};for(const id of l.items)rotations[id]=(l.fixedRot||[]).includes(id)?0:(placed[id]?.rot||((Number.isInteger(s?.rotations?.[id])?s.rotations[id]:0)%4+4)%4);history=[];selected=null;ghost=null;drag=null;hint=null;moves=Number.isFinite(s?.moves)?Math.max(0,s.moves):0;hints=Number.isFinite(s?.hints)?Math.max(0,s.hints):0;finished=K.isComplete(l,placed);started=Date.now();$('letter-title').textContent=l.title;$('letter-body').textContent=l.letter;$('letter-from').textContent='—— '+l.from;$('letter-no').textContent=`${String(i+1).padStart(2,'0')} / ${K.levels.length}`;$('chapter-name').textContent=l.chapter;$('game-title').textContent=l.title;$('rule-title').textContent=K.modeNames[l.mode];$('rule-copy').textContent=l.rule;$('zone-key').textContent=[(l.zones||[]).map((z,i)=>`${i===0?'①':'②'} ${z.label}：${z.items.map(id=>K.items[id].name).join('、')}`).join(' ｜ '),l.blocked?.length?'木色斜纹格不可占用':'',l.dense?'这一层要刚好放满':'',l.anchors?.length?`已固定 ${l.anchors.length} 件`:'',(l.fixedRot||[]).length?`${l.fixedRot.map(id=>K.items[id].name).join('、')} 不能转着放`:''].filter(Boolean).join(' ｜ ');status(finished?'这份委托已经整理好了。也可以移动物品，试试另一种摆法。':l.anchors?.length?'委托人已经放好的几件不能移动，剩下的交给你。':l.keepCount?'先放入必留物，再挑选其他旧物；未选的物品留在桌面。':'拖动物品到抽屉，或先点物品，再点目标格。');checkRelations(false);event('level_start');persist();updateUI();requestDraw();}
+    rotations={};for(const id of l.items)rotations[id]=(l.fixedRot||[]).includes(id)?0:(placed[id]?.rot||((Number.isInteger(s?.rotations?.[id])?s.rotations[id]:0)%4+4)%4);history=[];selected=null;ghost=null;drag=null;hint=null;moves=Number.isFinite(s?.moves)?Math.max(0,s.moves):0;hints=Number.isFinite(s?.hints)?Math.max(0,s.hints):0;finished=K.isComplete(l,placed);started=Date.now();$('letter-title').textContent=l.title;$('letter-body').textContent=l.letter;$('letter-from').textContent='—— '+l.from;$('letter-no').textContent=`${String(i+1).padStart(2,'0')} / ${K.levels.length}`;$('chapter-name').textContent=l.chapter;$('game-title').textContent=l.title;$('rule-title').textContent=K.modeNames[l.mode];$('rule-copy').textContent=l.rule;$('zone-key').textContent=[(l.zones||[]).map((z,i)=>`${i===0?'①':'②'} ${z.label}：${z.items.map(id=>K.items[id].name).join('、')}`).join(' ｜ '),l.blocked?.length?'木色斜纹格不可占用':'',l.dense?(K.maxEmptyOf(l)===0?'这一层要刚好放满':'这一层最多空一格'):'',l.anchors?.length?`已固定 ${l.anchors.length} 件`:'',(l.fixedRot||[]).length?`${l.fixedRot.map(id=>K.items[id].name).join('、')} 不能转着放`:''].filter(Boolean).join(' ｜ ');status(finished?'这份委托已经整理好了。也可以移动物品，试试另一种摆法。':l.anchors?.length?'委托人已经放好的几件不能移动，剩下的交给你。':l.keepCount?'先放入必留物，再挑选其他旧物；未选的物品留在桌面。':'拖动物品到抽屉，或先点物品，再点目标格。');checkRelations(false);event('level_start');persist();updateUI();requestDraw();}
   function requestDraw(){if(!scheduled){scheduled=true;requestAnimationFrame(()=>{scheduled=false;render();});}}
   function resize(){const width=canvas.getBoundingClientRect().width,dpr=Math.min(window.devicePixelRatio||1,2);canvas.width=Math.round(width*dpr);canvas.height=Math.round(width*H/W*dpr);requestDraw();}
   function text(t,x,y,size=14,color='#5c6958',align='left'){ctx.font=`${size}px "Microsoft YaHei",sans-serif`;ctx.fillStyle=color;ctx.textAlign=align;ctx.fillText(t,x,y);}
-  // 物品栏随件数自适应：6 件以内沿用原来的三列大格，7-8 件四列，9 件以上五列。
-  const TRAY={x:25,y:405,w:590,h:104,pitch:112,gap:10};
-  const trayCols=n=>n<=6?3:n<=8?4:5;
-  function tileRect(i){const n=level().items.length,c=trayCols(n),tw=(TRAY.w-(c-1)*TRAY.gap)/c;return{x:TRAY.x+(i%c)*(tw+TRAY.gap),y:TRAY.y+Math.floor(i/c)*TRAY.pitch,w:tw,h:TRAY.h};}
-  function itemRect(id){const i=level().items.indexOf(id),r=tileRect(i),b=K.bounds(K.shape(id,rotations[id]||0)),u=Math.min(30,67/b.h,(r.w-26)/b.w);return{x:r.x+(r.w-b.w*u)/2,y:r.y+6+(67-b.h*u)/2,w:b.w*u,h:b.h*u,u};}
+  // 物品栏随件数自适应：6 件以内三列大格，7-8 件四列，9-10 件五列，11 件以上六列。
+  // 后段委托最多翻出 18 件旧物，六列正好三行；三行时格子压矮，靠缩图标把两行让出来。
+  const TRAY={x:25,y:400,w:590,gap:10};
+  const trayCols=n=>n<=6?3:n<=8?4:n<=10?5:6;
+  function traySpec(n){
+    const cols=trayCols(n),rows=Math.ceil(n/cols),tall=rows<=2;
+    const tileH=tall?104:68,pitch=tall?112:76;
+    return{cols,rows,tileH,pitch,tw:(TRAY.w-(cols-1)*TRAY.gap)/cols,
+      tagY:tall?18:13,artTop:tall?6:4,artH:tall?67:38,markY:tall?42:30,
+      nameY:tall?92:tileH-8,nameSize:tall?(cols>=5?13:15):11};
+  }
+  function tileRect(i){const s=traySpec(level().items.length);return{x:TRAY.x+(i%s.cols)*(s.tw+TRAY.gap),y:TRAY.y+Math.floor(i/s.cols)*s.pitch,w:s.tw,h:s.tileH};}
+  function itemRect(id){const i=level().items.indexOf(id),r=tileRect(i),s=traySpec(level().items.length),b=K.bounds(K.shape(id,rotations[id]||0)),u=Math.min(30,s.artH/b.h,(r.w-26)/b.w);return{x:r.x+(r.w-b.w*u)/2,y:r.y+s.artTop+(s.artH-b.h*u)/2,w:b.w*u,h:b.h*u,u};}
   // 棋盘下方那句提示，按玩法逐层收敛，避免和规则卡片重复。
   function boardHint(){
     const l=level(),remaining=K.goalCount(l)-Object.keys(placed).length,missing=(l.required||[]).filter(id=>!placed[id]);
-    if(finished)return l.dense?'一格不多，一格不少。':'每一件，都有自己的位置。';
-    if(l.dense){const free=K.freeCells(l)-K.cellCount(l,placed);return free>0?`这一层要刚好放满，还差 ${free} 格。`:'刚好填满了。';}
+    const cap=K.maxEmptyOf(l),room=K.freeCells(l)-K.cellCount(l,placed);
+    if(finished)return l.dense?(cap===0?'一格不多，一格不少。':'最后一格也留得刚刚好。'):'每一件，都有自己的位置。';
+    // 取舍 + 要填满：两件事都得说清楚——先够了件数，才轮得到空格。
+    if(l.keepCount&&l.dense){
+      const tail=missing.length?' · 必留物尚未放齐':'';
+      if(remaining>0)return `再选留 ${remaining} 件，而且最多只能空 ${cap} 格${tail}`;
+      return room>cap?`件数够了，但还空着 ${room} 格（最多只能空 ${cap} 格）${tail}`:(room===0?'正好填满了。':'正好只剩一格。');
+    }
+    if(l.dense)return cap===0?(room>0?`这一层要刚好放满，还差 ${room} 格。`:'刚好填满了。'):(room>cap?`这一层最多只空一格，还差 ${room-cap} 格。`:(room===0?'一格不多，一格不少。':'刚好剩下一格。'));
     if(l.keepCount)return remaining===0&&missing.length?'还缺必留物，请先取回一件再换入。':`再选留 ${remaining} 件${missing.length?' · 必留物尚未放齐':' · 必留物已放好'}`;
     if(l.anchors?.length)return remaining===0?'固定件已经就位。':'委托人放好的几件不能动，其余照常。';
     if(l.mode==='classic')return '可以留空，不必填满。';
@@ -106,7 +147,7 @@
     const scale=canvas.width/W;ctx.setTransform(scale,0,0,scale,0,0);ctx.clearRect(0,0,W,H);const l=level(),b=board();ctx.fillStyle='#eee7d7';ctx.fillRect(0,0,W,H);
     // Quiet paper texture; deterministic so redraws do not shimmer.
     ctx.fillStyle='#8e7d5420';for(let i=0;i<650;i++){const x=(i*173+31)%W,y=(i*277+19)%H;ctx.fillRect(x,y,.7,.7);}
-    text('留 一 格   /   收 纳 工 作 台',30,32,11,'#93917c');text(l.keepCount?`本单选留 ${K.goalCount(l)} 件`:l.dense?'本单要恰好放满':'把全部物品安顿好',W-29,32,11,'#93917c','right');
+    text('留 一 格   /   收 纳 工 作 台',30,32,11,'#93917c');text(l.keepCount?`本单选留 ${K.goalCount(l)} 件`:l.dense?(K.maxEmptyOf(l)===0?'本单要恰好放满':'本单最多空一格'):'把全部物品安顿好',W-29,32,11,'#93917c','right');
     ctx.save();ctx.shadowColor='#6d4f3020';ctx.shadowBlur=17;ctx.shadowOffsetY=8;A.rr(ctx,b.x-23,b.y-23,b.w+46,b.h+55,12,'#c7a982');ctx.restore();A.rr(ctx,b.x-18,b.y-18,b.w+36,b.h+44,9,'#d5bb96','#b39875');
     // Wood rings stay outside the puzzle cells.
     for(let i=0;i<4;i++)A.line(ctx,b.x-11,b.y-11+i*3,b.x+b.w+11,b.y-11+i*3,'#bea17b66');
@@ -126,8 +167,8 @@
     if(hint&&Date.now()<hint.until){outline(hint.id,hint.p,'#457b64',.3,true);text('提示位置 · '+K.items[hint.id].name,W/2,367,14,'#52745b','center');}
     else text(boardHint(),W/2,367,14,'#75846d','center');
     A.line(ctx,25,380,615,380,'#d1c8b6',1);text('从旧箱子里拿出来的物品',28,397,13,'#868570');text(selected?K.items[selected].name+' · 可旋转':'挑一件，开始整理',611,397,13,'#68785f','right');
-    const tagSize=trayCols(l.items.length)>=5?13:15;
-    l.items.forEach((id,i)=>{const r=tileRect(i),isPlaced=!!placed[id],isFixed=locked.has(id);A.rr(ctx,r.x,r.y,r.w,r.h,8,selected===id?'#e0e6d1':isFixed?'#e6dcc6':isPlaced?'#e7e1d2':'#f4eedf',selected===id?'#9aab8b':'#e0d7c4');const q=itemRect(id);A.draw(ctx,id,q.x,q.y,q.u,rotations[id]||0,isPlaced?.18:1);if(isPlaced)text(isFixed?'已固定':'已放好',r.x+r.w/2,r.y+42,14,isFixed?'#a08a5f':'#8a957c','center');text(K.items[id].name,r.x+r.w/2,r.y+92,tagSize,isPlaced?'#a09f8a':'#6b7160','center');if(l.required?.includes(id))text('必留',r.x+8,r.y+18,11,'#ad684f');const zi=(l.zones||[]).findIndex(z=>z.items.includes(id));if(zi>=0)text(zi===0?'①区':'②区',r.x+r.w-8,r.y+18,11,zi===0?'#54786c':'#946c50','right');});
+    const spec=traySpec(l.items.length);
+    l.items.forEach((id,i)=>{const r=tileRect(i),isPlaced=!!placed[id],isFixed=locked.has(id);A.rr(ctx,r.x,r.y,r.w,r.h,8,selected===id?'#e0e6d1':isFixed?'#e6dcc6':isPlaced?'#e7e1d2':'#f4eedf',selected===id?'#9aab8b':'#e0d7c4');const q=itemRect(id);A.draw(ctx,id,q.x,q.y,q.u,rotations[id]||0,isPlaced?.18:1);if(isPlaced)text(isFixed?'已固定':'已放好',r.x+r.w/2,r.y+spec.markY,spec.nameSize===11?12:14,isFixed?'#a08a5f':'#8a957c','center');text(K.items[id].name,r.x+r.w/2,r.y+spec.nameY,spec.nameSize,isPlaced?'#a09f8a':'#6b7160','center');if(l.required?.includes(id))text('必留',r.x+8,r.y+spec.tagY,11,'#ad684f');const zi=(l.zones||[]).findIndex(z=>z.items.includes(id));if(zi>=0)text(zi===0?'①区':'②区',r.x+r.w-8,r.y+spec.tagY,11,zi===0?'#54786c':'#946c50','right');});
     if(selected&&ghost){const p={...ghost,rot:rotations[selected]||0},valid=K.canPlace(l,placed,selected,p.x,p.y,p.rot);outline(selected,p,valid?'#4d8361':'#b9745b',.23);A.draw(ctx,selected,b.x+p.x*b.cell,b.y+p.y*b.cell,b.cell,p.rot,.85);}
     if(flashUntil>Date.now()){ctx.strokeStyle='#92a77d';ctx.lineWidth=3;ctx.strokeRect(b.x-3,b.y-3,b.w+6,b.h+6);requestDraw();}
   }
@@ -167,7 +208,56 @@
   canvas.addEventListener('keydown',e=>{if(e.key.toLowerCase()==='r'){e.preventDefault();rotate();}else if(e.key==='Escape'){cancelDrag();selected=null;updateUI();requestDraw();}else if(selected&&['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','Enter',' '].includes(e.key)){e.preventDefault();if(!ghost)ghost=placed[selected]?{x:placed[selected].x,y:placed[selected].y}:{x:0,y:0};if(e.key==='ArrowUp')ghost.y--;if(e.key==='ArrowDown')ghost.y++;if(e.key==='ArrowLeft')ghost.x--;if(e.key==='ArrowRight')ghost.x++;if(e.key==='Enter'||e.key===' ')place(selected,ghost.x,ghost.y,rotations[selected]||0);requestDraw();}});
   $('rotate').onclick=rotate;$('return').onclick=()=>returnItem();
   $('undo').onclick=()=>{if(!history.length)return;cancelDrag();const s=history.pop();placed=s.placed;rotations=s.rotations;moves=s.moves;hints=s.hints;finished=K.isComplete(level(),placed);selected=null;ghost=null;hint=null;event('undo');persist();status('退回上一步了。慢慢试，总能找到位置。');updateUI();requestDraw();};
-  $('hint').onclick=()=>{cancelDrag();selected=null;ghost=null;const r=K.solve(level(),placed,70000);hints++;event('hint',{result:r.status});if(r.solution){const id=Object.keys(r.solution).find(id=>!placed[id]);if(id){hint={id,p:r.solution[id],until:Date.now()+12000};status(`试试把「${K.items[id].name}」放在绿色虚线位置，方向也要一致。这只是其中一种${level().keepCount?'选择与':''}摆法。`);setTimeout(()=>requestDraw(),12100);}}else{hint=null;status(r.status==='unsolvable'?'目前的选择或摆法无法完成委托。撤销一步，或把一件旧物放回桌面，再试提示。':'这次布局有些复杂。先把一件大物品放回桌面，再试提示。');}persist();updateUI();requestDraw();};
+  function giveHint(){cancelDrag();selected=null;ghost=null;const r=K.solve(level(),placed,70000);hints++;event('hint',{result:r.status});if(r.solution){const id=Object.keys(r.solution).find(id=>!placed[id]);if(id){hint={id,p:r.solution[id],until:Date.now()+12000};status(`试试把「${K.items[id].name}」放在绿色虚线位置，方向也要一致。这只是其中一种${level().keepCount?'选择与':''}摆法。`);setTimeout(()=>requestDraw(),12100);}}else{hint=null;status(r.status==='unsolvable'?'目前的选择或摆法无法完成委托。撤销一步，或把一件旧物放回桌面，再试提示。':'这次布局有些复杂。先把一件大物品放回桌面，再试提示。');}persist();updateUI();requestDraw();}
+  // 广告只负责回答「这一次机会给不给」；真正判定看没看完，在 ads.js 的 onClose(isEnded) 里。
+  // 拿不到广告位（网页版／未配置广告位）时直接放行，绝不让玩家卡在「点了没反应」上。
+  // 失败原因逐个说清楚，别一律甩一句「稍后再试」。
+  const AD_REASON={
+    skipped:'要看完广告才能拿到这一次机会，这次先不算。',
+    unavailable:'这台设备上没有广告可看，这次直接给你。',
+    busy:'上一个广告还没播完，稍等一下再点。',
+    timeout:'广告迟迟没打开，这次先不算，稍后再试。',
+    'load-failed':'广告没加载出来，稍后再试。',
+  };
+  function withAd(what,run){
+    const Ads=window.KeepsakeAds;
+    if(!Ads||!Ads.supported()){if(Ads&&Ads.status())status(`${what}：${Ads.status()}`);run();return;}
+    status(`正在加载广告，看完就能拿到这次${what}。`);
+    Ads.show().then(res=>{
+      if(res.ok){run();return;}
+      status(AD_REASON[res.reason]||'广告没播完，这次先不算。');
+      updateUI();
+    });
+  }
+  // 消除：把一件「不必须、也没被固定」的旧物从这份委托里拿掉。挑最占地方的那件——
+  // 玩家真正卡住的时候，卡的通常就是它。
+  // 但取舍关有个坑：玩家只放 keepCount 件，「能凑满格数」的挑法本来就少，
+  // 抹掉一件有可能把仅有的几种一起抹掉。所以出手前先让求解器验一遍：抹掉之后仍可解，才让它走。
+  // 这一步必须在播广告之前做完，不能让玩家看完广告才被告知「这件消不得」。
+  function clearCandidate(){
+    const l=level();
+    const pool=l.items.filter(id=>!(l.required||[]).includes(id)&&!locked.has(id));
+    if(!pool.length)return null;
+    const ordered=pool.slice().sort((a,b)=>K.items[b].cells.length-K.items[a].cells.length);
+    for(const id of ordered)if(K.solve(level(id),{},120000).status==='solved')return id;
+    return null;
+  }
+  function doClear(id=clearCandidate()){
+    if(!id)return;
+    if(placed[id])delete placed[id];
+    removed.add(id);
+    clears++;hint=null;ghost=null;selected=null;finished=K.isComplete(level(),placed);
+    event('item_cleared',{item:id});persist();
+    status(`已经消掉「${K.items[id].name}」，这份委托不用再安顿它了。`);
+    updateUI();requestDraw();
+  }
+  $('hint').onclick=()=>{if(freeHints<FREE_HINTS){freeHints++;giveHint();return;}withAd('提示',giveHint);};
+  $('clear').onclick=()=>{
+    if(clears>=MAX_CLEARS){status(`这份委托最多消掉 ${MAX_CLEARS} 件旧物。`);return;}
+    const id=clearCandidate();
+    if(!id){status('这一关能消的都已经消过了：再拿掉一件，就凑不出能填满的答案了。');return;}
+    withAd('消除',()=>doClear(id));
+  };
   $('reset').onclick=()=>$('reset-dialog').showModal();$('confirm-reset').onclick=()=>{$('reset-dialog').close();delete saved.sessions[level().id];load(levelIndex);event('restart');persist();};
   $('help').onclick=()=>$('help-dialog').showModal();$('codex').onclick=()=>{renderCodex();$('codex-dialog').showModal();};document.querySelectorAll('[data-close]').forEach(b=>b.onclick=()=>$(b.dataset.close).close());
   // ---- 声音：一个开关同时管 BGM 和提示音，选择记进存档 ----

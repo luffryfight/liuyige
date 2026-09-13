@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 无标题栏 + 纸色底：游戏自己画完整界面，系统只提供一块画布。
+         系统栏保持可见（不做沉浸式），这样刘海与底部横条天然不会压到内容。 -->
+    <style name="AppTheme" parent="@android:style/Theme.Material.Light.NoActionBar">
+        <item name="android:windowBackground">@color/page_bg</item>
+        <item name="android:colorBackground">@color/page_bg</item>
+        <item name="android:statusBarColor">@color/page_bg</item>
+        <item name="android:navigationBarColor">@color/page_bg</item>
+        <item name="android:windowLightStatusBar">true</item>
+    </style>
+</resources>

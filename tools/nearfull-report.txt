@@ -1,0 +1,169 @@
+.. seq  15 drawer-16       562ms 候选 120
+.. seq  16 drawer-17       281ms 候选 120
+.. seq  17 drawer-18       862ms 候选 120
+.. seq  18 drawer-19       576ms 候选 120
+.. seq  19 drawer-20      1279ms 候选 125
+.. seq  20 drawer-21       512ms 候选 120
+.. seq  21 drawer-22      1572ms 候选 120
+.. seq  22 drawer-23       643ms 候选 122
+.. seq  23 drawer-24      2699ms 候选 124
+.. seq  24 drawer-25       277ms 候选 120
+.. seq  25 drawer-26       317ms 候选 120
+.. seq  26 drawer-27      1417ms 候选 120
+.. seq  28 drawer-29      1039ms 候选 120
+.. seq  29 drawer-30      4544ms 候选 122
+.. seq  30 drawer-31      4208ms 候选 125
+.. seq  31 drawer-32      1424ms 候选 120
+.. seq  32 drawer-33      8586ms 候选 120
+.. seq  33 drawer-34     11000ms 候选 120
+.. seq  34 drawer-35      4764ms 候选 120
+.. seq  36 drawer-37      1024ms 候选 120
+.. seq  37 drawer-38      1828ms 候选 120
+.. seq  38 drawer-39     11671ms 候选 120
+.. seq  39 drawer-40      5716ms 候选 120
+.. seq  40 drawer-41      4164ms 候选 120
+.. seq  41 drawer-42      3175ms 候选 120
+.. seq  43 drawer-44      6650ms 候选 120
+.. seq  44 drawer-45      4207ms 候选 120
+.. seq  45 drawer-46      2299ms 候选 120
+.. seq  46 drawer-47     25613ms 候选 120
+.. seq  47 drawer-48      2169ms 候选 120
+.. seq  48 drawer-49     11533ms 候选 120
+.. seq  49 drawer-50      2479ms 候选 120
+.. seq  50 drawer-51     10084ms 候选 120
+.. seq  51 drawer-52     23301ms 候选 120
+.. seq  52 drawer-53      2007ms 候选 125
+.. seq  53 drawer-54       478ms 候选 120
+.. seq  54 drawer-55      5045ms 候选 121
+.. seq  55 drawer-56      5383ms 候选 120
+.. seq  56 drawer-57      2444ms 候选 120
+.. seq  57 drawer-58      8191ms 候选 120
+.. seq  58 drawer-59     13404ms 候选 122
+.. seq  59 drawer-60     58636ms 候选 120
+.. seq  60 drawer-61      7910ms 候选 120
+.. seq  61 drawer-62      2088ms 候选 123
+.. seq  62 drawer-63      2591ms 候选 120
+.. seq  63 drawer-64      2401ms 候选 120
+.. seq  64 drawer-65      3625ms 候选 120
+.. seq  65 drawer-66     10819ms 候选 121
+.. seq  66 drawer-67     27801ms 候选 120
+.. seq  67 drawer-68       634ms 候选 120
+.. seq  68 drawer-69      6402ms 候选 120
+.. seq  69 drawer-70      5157ms 候选 120
+.. seq  70 drawer-71      2928ms 候选 120
+.. seq  71 drawer-72      9286ms 候选 121
+.. seq  72 drawer-73     28676ms 候选 120
+.. seq  73 drawer-74     57186ms 候选 123
+.. seq  74 drawer-75       905ms 候选 120
+.. seq  75 drawer-76      7230ms 候选 100
+.. seq  76 drawer-77      9501ms 候选 120
+.. seq  77 drawer-78      4430ms 候选 120
+.. seq  78 drawer-79      6149ms 候选 125
+.. seq  79 drawer-80     58109ms 候选  42
+.. seq  80 drawer-81     12859ms 候选 122
+.. seq  81 drawer-82      2961ms 候选 120
+.. seq  82 drawer-83     21404ms 候选 108
+.. seq  83 drawer-84      3085ms 候选 120
+.. seq  84 drawer-85      2436ms 候选 120
+.. seq  85 drawer-86     13782ms 候选 109
+.. seq  86 drawer-87      5512ms 候选  84
+.. seq  87 drawer-88      2570ms 候选 120
+.. seq  88 drawer-89       322ms 候选 120
+.. seq  89 drawer-90      9757ms 候选 105
+.. seq  90 drawer-91      7035ms 候选 120
+.. seq  91 drawer-92      5348ms 候选 120
+.. seq  92 drawer-93     11940ms 候选  76
+.. seq  93 drawer-94     50424ms 候选  30
+.. seq  94 drawer-95      1747ms 候选  71
+.. seq  95 drawer-96      1180ms 候选 120
+.. seq  96 drawer-97     19683ms 候选  26
+.. seq  97 drawer-98      8962ms 候选 120
+.. seq  98 drawer-99     11059ms 候选 120
+.. seq  99 drawer-100     6120ms 候选  50
+seq 关卡         玩法   栏/挑 网格   可用 占格 空位  节点 挑法 锚/锁 追加
+ 15 drawer-16    choice  18/6 5x5     25  25   0     6  103 0/0  keys,notebook,tin,postcard,lamp,cane,glasses,pencil,camera,shoes,mug,ruler
+ 16 drawer-17    choice  18/5 7x3     20  20   0     9  235 0/0  lamp,tape,ruler,player,postcard,headphones,shoes,cane,pencil,photo,book,camera
+ 17 drawer-18    choice  18/7 6x5     28  28   0   530  576 0/0  shoes,cane,mug,player,headphones,tin,postcard,glasses,tape,notebook,ruler,lamp
+ 18 drawer-19    blocked  10/- 6x8     43  43   0   135    - 0/0  headphones,camera,mug,lamp
+ 19 drawer-20    blocked  10/- 6x7     37  37   0   163    - 0/0  headphones,lamp,keys,tape
+ 20 drawer-21    blocked  11/- 7x7     45  45   0    37    - 0/0  notebook,mug,lamp,cane,postcard
+ 21 drawer-22    zone    11/- 8x5     40  40   0  1184    - 0/0  headphones,lamp,shoes,cane,pencil,postcard
+ 22 drawer-23    zone    11/- 9x5     45  45   0    86    - 0/0  headphones,camera,mug,cane,pencil
+ 23 drawer-24    zone    11/- 8x6     48  48   0  2194    - 0/0  headphones,mug,lamp,cane,pencil
+ 24 drawer-25    choice  18/5 5x4     20  20   0     5  260 0/0  ruler,glasses,notebook,cane,shoes,camera,player,headphones,tape,postcard,tin,lamp
+ 25 drawer-26    choice  18/5 5x4     20  20   0     5   70 0/0  headphones,lamp,camera,book,tin,ruler,photo,player,mug,notebook,shoes,cane
+ 26 drawer-27    choice  18/6 6x5     30  30   0  1022   79 0/0  ruler,lamp,shoes,mug,notebook,cane,tape,book,glasses,pencil,keys,postcard
+ 28 drawer-29    cross   11/- 6x9     48  48   0   898    - 0/0  headphones,notebook,mug,lamp,cane,keys
+ 29 drawer-30    cross   11/- 10x5    47  47   0   913    - 0/0  headphones,camera,lamp,shoes,cane
+ 30 drawer-31    cross   12/- 6x9     52  52   0   714    - 0/0  camera,mug,lamp,shoes,cane,photo
+ 31 drawer-32    cross   12/- 7x8     51  51   0   891    - 0/0  notebook,mug,lamp,shoes,cane,photo
+ 32 drawer-33    cross   12/- 7x8     52  52   0  2206    - 0/0  headphones,notebook,camera,lamp,cane,player
+ 33 drawer-34    cross   12/- 9x6     50  50   0  3412    - 0/0  headphones,lamp,shoes,cane,tin,pencil
+ 34 drawer-35    cross   13/- 8x7     54  54   0  1116    - 0/0  camera,mug,lamp,shoes,cane,photo,pencil
+ 36 drawer-37    pick    18/7 7x4     28  28   0    10  381 0/0  tape,photo,cane,camera,shoes,ruler,headphones,player,keys,notebook,lamp,postcard
+ 37 drawer-38    pick    18/7 6x5     30  30   0   185  240 0/0  player,cane,mug,notebook,lamp,letter,postcard,shoes,tape,headphones,ruler,glasses
+ 38 drawer-39    pick    18/8 6x6     36  36   0   553 1356 0/0  ruler,keys,shoes,lamp,postcard,photo,notebook,cane,mug,pencil,camera,tin
+ 39 drawer-40    pick    18/7 7x5     35  35   0   451   49 0/0  tin,camera,headphones,mug,glasses,ruler,shoes,keys,player,photo,cane,lamp
+ 40 drawer-41    pick    14/8 6x6     36  36   0   155   40 0/0  notebook,cane,ruler,book,shoes,letter,tape,pencil
+ 41 drawer-42    pick    18/7 6x5     30  30   0     7  838 0/0  cane,mug,headphones,camera,player,ruler,tin,shoes,postcard,lamp,notebook,photo
+ 43 drawer-44    master  18/7 6x6     30  30   0   195   66 0/0  postcard,shoes,camera,player,notebook,headphones,pencil,lamp,tape,cane,photo,ruler
+ 44 drawer-45    master  18/7 7x5     33  33   0  1320  146 0/0  mug,cane,glasses,camera,notebook,ruler,postcard,lamp,shoes,photo,pencil,book
+ 45 drawer-46    master  18/7 6x6     32  32   0    65  251 1/0  cane,shoes,lamp,postcard,mug,pencil,player,keys,glasses,headphones,tin,ruler
+ 46 drawer-47    master  17/9 7x6     35  35   0    50  680 1/0  camera,ruler,tin,photo,postcard,book,keys,cane,pencil,shoes,lamp
+ 47 drawer-48    master  18/8 6x6     34  34   0   356  221 0/0  notebook,mug,lamp,ruler,shoes,headphones,cane,tape,player,postcard,tin,glasses
+ 48 drawer-49    master  17/9 7x6     38  38   0   704 1837 1/0  pencil,player,ruler,letter,photo,book,keys,notebook,cane,camera,lamp
+ 49 drawer-50    master  16/7 6x6     32  32   0    97  105 1/0  shoes,cane,player,lamp,postcard,tape,photo,book,glasses,ruler
+ 50 drawer-51    classic  13/- 7x7     49  49   0  1000    - 0/0  headphones,notebook,lamp,cane,tin,keys,postcard
+ 51 drawer-52    blocked  13/- 8x7     52  52   0   463    - 0/0  headphones,camera,mug,lamp,shoes,cane,glasses
+ 52 drawer-53    zone    14/- 8x7     56  56   0   175    - 0/0  headphones,notebook,mug,lamp,shoes,cane,tin,tape
+ 53 drawer-54    choice  18/5 5x4     20  20   0     5  347 0/0  glasses,shoes,lamp,ruler,camera,tape,postcard,cane,headphones,tin,notebook,player
+ 54 drawer-55    cross   15/- 8x8     62  62   0   132    - 0/0  headphones,notebook,camera,mug,lamp,shoes,cane,player,book
+ 55 drawer-56    pick    18/7 6x5     30  30   0   958  481 0/0  glasses,ruler,mug,lamp,camera,tin,book,shoes,player,notebook,headphones,cane
+ 56 drawer-57    master  18/7 6x6     34  34   0    41   42 1/0  photo,camera,cane,notebook,player,lamp,pencil,glasses,headphones,shoes,postcard,ruler
+ 57 drawer-58    classic  14/- 8x7     56  56   0   361    - 0/0  notebook,camera,mug,lamp,shoes,cane,tin,postcard
+ 58 drawer-59    blocked  14/- 9x7     60  60   0   282    - 0/0  headphones,notebook,mug,lamp,shoes,cane,player,pencil
+ 59 drawer-60    zone    14/- 7x8     56  56   0    22    - 0/0  headphones,camera,lamp,shoes,cane,photo,keys,postcard
+ 60 drawer-61    choice  18/7 6x5     30  30   0     7  590 0/0  glasses,lamp,ruler,cane,mug,tin,player,headphones,shoes,postcard,tape,notebook
+ 61 drawer-62    cross   14/- 8x8     59  59   0   104    - 0/0  headphones,camera,mug,lamp,shoes,cane,photo,player
+ 62 drawer-63    pick    18/7 6x5     30  30   0    10  330 0/0  lamp,keys,notebook,player,ruler,headphones,postcard,photo,tape,cane,shoes,camera
+ 63 drawer-64    master  16/8 7x5     32  32   0    11  402 1/0  keys,notebook,postcard,ruler,cane,glasses,lamp,tape,mug,shoes
+ 64 drawer-65    classic  15/- 9x7     63  63   0   347    - 0/0  notebook,camera,mug,lamp,shoes,cane,tin,ruler,keys
+ 65 drawer-66    blocked  15/- 11x6    61  61   0    56    - 0/0  headphones,camera,mug,lamp,shoes,cane,player,pencil,glasses
+ 66 drawer-67    zone    15/- 10x6    60  60   0  4730    - 0/0  headphones,notebook,camera,mug,lamp,shoes,cane,photo,postcard
+ 67 drawer-68    choice  18/5 5x4     20  20   0     5   54 0/0  headphones,lamp,ruler,camera,notebook,shoes,cane,tin,player,book,photo,mug
+ 68 drawer-69    cross   15/- 8x8     60  60   0  1136    - 0/0  headphones,notebook,mug,lamp,shoes,cane,player,pencil,postcard
+ 69 drawer-70    pick    18/8 6x6     36  36   0    20  990 0/0  postcard,camera,photo,glasses,shoes,ruler,headphones,cane,mug,lamp,player,tin
+ 70 drawer-71    master  17/8 6x6     34  34   0    11  359 1/0  mug,ruler,postcard,glasses,lamp,player,tape,shoes,headphones,tin,cane
+ 71 drawer-72    classic  15/- 8x8     64  64   0    80    - 0/0  headphones,notebook,camera,lamp,shoes,cane,tin,player,ruler
+ 72 drawer-73    blocked  15/- 8x8     59  59   0   530    - 0/0  headphones,notebook,lamp,shoes,cane,tin,photo,keys,tape
+ 73 drawer-74    zone    16/- 7x9     63  63   0   131    - 0/0  headphones,notebook,camera,lamp,shoes,cane,ruler,pencil,glasses,postcard
+ 74 drawer-75    choice  18/5 5x4     20  20   0   153  119 0/0  notebook,ruler,camera,photo,lamp,cane,player,mug,headphones,shoes,tin,book
+ 75 drawer-76    cross   16/- 9x7     61  61   0  1442    - 0/0  mug,lamp,shoes,cane,photo,player,book,pencil,glasses,postcard
+ 76 drawer-77    pick    18/8 6x6     36  36   0   553 1582 0/0  photo,keys,notebook,lamp,tin,mug,shoes,camera,pencil,cane,ruler,postcard
+ 77 drawer-78    master  18/7 6x6     34  34   0    35   89 0/0  postcard,pencil,glasses,ruler,notebook,photo,shoes,lamp,book,mug,cane,camera
+ 78 drawer-79    classic  16/- 8x8     64  64   0    23    - 0/0  headphones,mug,lamp,shoes,cane,photo,ruler,pencil,tape,postcard
+ 79 drawer-80    blocked  14/- 12x5    56  56   0   790    - 0/0  headphones,lamp,shoes,cane,tin,photo,pencil,postcard
+ 80 drawer-81    zone    16/- 7x9     63  63   0  3850    - 0/0  headphones,camera,lamp,shoes,cane,tin,photo,pencil,glasses,postcard
+ 81 drawer-82    choice  18/6 6x5     30  30   0  1022   79 0/0  lamp,glasses,cane,notebook,tape,book,pencil,shoes,mug,postcard,ruler,keys
+ 82 drawer-83    cross   17/- 8x9     68  68   0 15297    - 0/1  headphones,lamp,shoes,cane,tin,photo,player,book,ruler,pencil,letter
+ 83 drawer-84    pick    17/8 6x5     30  30   0   206  270 0/0  shoes,headphones,lamp,cane,book,glasses,player,tin,mug,notebook,camera
+ 84 drawer-85    master  17/8 7x6     35  35   0   421  237 1/0  glasses,player,shoes,pencil,tape,headphones,book,photo,ruler,cane,postcard
+ 85 drawer-86    classic  17/- 8x8     64  64   0   182    - 0/0  camera,mug,lamp,shoes,cane,tin,photo,player,book,ruler,glasses
+ 86 drawer-87    blocked  17/- 9x8     67  67   0   327    - 0/0  notebook,mug,lamp,shoes,cane,photo,player,ruler,pencil,glasses,postcard
+ 87 drawer-88    zone    17/- 8x8     64  64   0  1026    - 0/0  camera,mug,lamp,shoes,cane,photo,player,book,ruler,pencil,postcard
+ 88 drawer-89    choice  18/5 5x4     20  20   0     8  237 0/0  headphones,ruler,player,tape,tin,keys,lamp,shoes,mug,cane,camera,glasses
+ 89 drawer-90    cross   17/- 9x8     68  68   0  2771    - 0/0  headphones,notebook,camera,lamp,shoes,cane,player,book,ruler,tape,postcard
+ 90 drawer-91    pick    18/8 6x6     36  36   0   156  491 0/0  lamp,shoes,tape,headphones,cane,mug,glasses,letter,ruler,notebook,postcard,player
+ 91 drawer-92    master  18/8 7x6     35  35   0   183  368 0/0  camera,headphones,shoes,keys,mug,photo,lamp,glasses,cane,pencil,ruler,postcard
+ 92 drawer-93    classic  16/- 8x8     64  64   0   309    - 0/0  lamp,shoes,cane,tin,photo,player,ruler,glasses,tape,postcard
+ 93 drawer-94    blocked  17/- 8x9     68  67   1   736    - 0/0  headphones,camera,mug,lamp,shoes,cane,player,ruler,keys,pencil,glasses
+ 94 drawer-95    zone    18/- 8x9     72  71   1    40    - 0/0  headphones,camera,lamp,shoes,cane,photo,player,ruler,pencil,tape,letter,postcard
+ 95 drawer-96    choice  18/7 6x5     30  30   0    83  440 0/0  cane,notebook,player,postcard,glasses,tin,tape,shoes,headphones,lamp,camera,ruler
+ 96 drawer-97    cross   17/- 12x6    68  67   1   174    - 0/0  headphones,lamp,shoes,cane,tin,photo,player,ruler,pencil,glasses,postcard
+ 97 drawer-98    pick    18/8 6x6     36  36   0   768  721 0/0  photo,lamp,keys,camera,player,shoes,ruler,tin,glasses,headphones,mug,cane
+ 98 drawer-99    master  18/8 7x6     38  38   0   642  231 1/0  camera,notebook,lamp,keys,ruler,cane,book,pencil,player,shoes,photo,letter
+ 99 drawer-100   classic  18/- 9x8     72  71   1    24    - 0/0  lamp,shoes,cane,tin,photo,player,book,keys,pencil,glasses,tape,letter
+
+已生成 82 关；失败 0 关
+空位：0 格 78 关 / 1 格 4 关 / 超过 1 格 0 关
+物品栏 10 ~ 18 件；求解调用 59495 次
