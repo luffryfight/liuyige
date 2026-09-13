@@ -311,17 +311,26 @@
   //   3. 拒绝之后基础功能照常可用——这里拒绝只等于「不保存进度」，游戏本体一点不减。
   // 另外：弹窗只在没有记录时出现，玩家点过同意或拒绝都记住了，不会反复打扰。
   const PRIVACY_DIALOG=$('privacy-dialog');
+  // showModal() 默认把焦点交给弹窗里第一个可聚焦元素——也就是那行政策链接。
+  // 结果每次打开弹窗，链接上都挂着一圈焦点环，看着像「链接被选中了」。
+  // 但焦点环本身是键盘用户唯一的定位依据，不能简单去掉；正确做法是把初始焦点
+  // 移到「同意并开始」上（阅读顺序里本来就是下一步），链接的焦点环留给 Tab。
+  function openPrivacy(){
+    try{PRIVACY_DIALOG.showModal();}catch{return;}
+    const accept=$('privacy-accept');
+    if(accept&&typeof accept.focus==='function')accept.focus();
+  }
   function rememberConsent(value){
     consent=value;
     try{localStorage.setItem(CONSENT_KEY,value);}catch{storageOK=false;}
     if(value==='no'){status('好的，这次不保存进度。整理照样可以进行，随时可以在「玩法说明」里改主意。');return;}
     persist();
   }
-  function askPrivacy(){if(consent!==null)return;try{PRIVACY_DIALOG.showModal();}catch{/* 老浏览器：直接用普通属性兜底 */}}
+  function askPrivacy(){if(consent!==null)return;openPrivacy();}
   $('privacy-accept').onclick=()=>{rememberConsent('yes');PRIVACY_DIALOG.close();status('谢谢。你的整理进度会保存在这台设备上，不会上传。');};
   $('privacy-decline').onclick=()=>{rememberConsent('no');PRIVACY_DIALOG.close();};
   // 从「玩法说明」里随时能再看一遍，也允许在那里改主意。
-  $('privacy-open').onclick=e=>{e.preventDefault();if($('help-dialog').open)$('help-dialog').close();PRIVACY_DIALOG.showModal();};
+  $('privacy-open').onclick=e=>{e.preventDefault();if($('help-dialog').open)$('help-dialog').close();openPrivacy();};
   if(window.GameDebug)window.GameDebug.consent=()=>consent;
   // 允许用 ?level=7 直接打开某一份委托，方便分享和验收。
   const wanted=Number(new URLSearchParams(location.search).get('level'));

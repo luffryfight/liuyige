@@ -127,6 +127,22 @@ test('玩法说明里有常驻入口，玩家随时能重新查看政策', () =>
   assert.equal(h.element('privacy-dialog').open, true, '随时能重新打开隐私说明');
 });
 
+// 这条是真实浏览器里验出来的：showModal() 会把焦点自动交给弹窗内第一个可聚焦元素，
+// 也就是那行政策链接，于是每次打开弹窗链接上都挂着一圈焦点环，看着像页面坏了。
+// 同一批 tool call 里不要对同一文件发多条 Edit —— 这里只改这一处。
+// 修法是把初始焦点移到「同意并开始」，而不是去掉焦点环（那会牺牲键盘可用性）。
+test('弹窗打开后初始焦点在「同意并开始」上，不落在政策链接上', () => {
+  const src = fs.readFileSync(path.join(ROOT, 'game.js'), 'utf8');
+  // showModal 之后必须显式 focus 到同意按钮，否则浏览器会自己挑第一个可聚焦元素
+  assert.match(src, /showModal\(\)[\s\S]{0,200}focus\(\)/, 'showModal 之后要把焦点交给「同意并开始」');
+  // 不能靠 outline:none 把焦点环抹掉来掩盖问题
+  const css = fs.readFileSync(path.join(ROOT, 'style.css'), 'utf8');
+  const dialogCss = (css.match(/\/\* ---- 首次启动的隐私政策弹窗[\s\S]*?(?=@media|$)/) || [''])[0];
+  assert.ok(!/outline\s*:\s*none/.test(dialogCss), '不要用 outline:none 藏掉焦点环，应当移动初始焦点');
+  // 弹窗里的链接要统一成品牌色，不能留浏览器默认的蓝/紫
+  assert.match(css, /#privacy-dialog a[^{]*\{[^}]*color/, '弹窗里的链接要指定颜色');
+});
+
 test('弹窗里的摘要与 docs/privacy.html 正文口径一致', () => {
   const dialog = dialogHtml();
   const policy = readPolicy();
