@@ -35,7 +35,9 @@ function game() {
   document.createElement = () => new Element();
   document.querySelectorAll = selector => selector === '.level-button' ? element('levels').children : [];
   const storage = new Map();
+  // 版式按视口宽挑；这里固定按宽屏桌面走（画布宽就是上面写死的 640）。
   const window = new Element();
+  window.innerWidth = 1024;
   const context = vm.createContext({
     window, document,
     localStorage: { getItem: key => storage.get(key) ?? null, setItem: (key, value) => storage.set(key, value) },
@@ -241,25 +243,26 @@ test('固定件在真实交互里动不了：不能拖、不能转、不能收�
   assert.ok(h.state().placed[anchor.id], '撤销之后固定件仍在原位');
 });
 
-test('物品栏随件数分列，最多三行且不越过画布底边', () => {
-  // 与 game.js 的 traySpec() 同一套口径：六列封顶，超过两行才压矮格子。
-  const TRAY = { x: 25, y: 400, w: 590, gap: 10 };
-  const colsFor = n => n <= 6 ? 3 : n <= 8 ? 4 : n <= 10 ? 5 : 6;
+test('物品栏随件数分列，宽屏下最多三行且不越过画布底边', () => {
+  // 口径不再在这里手抄一份：直接问 game.js 的当前版式要数字（GameDebug.layout）。
+  // 手抄的那份在「版式分宽屏/手机两套」之后就会跟实现悄悄脱节。
+  const h = game();
   const seen = new Set();
   for (const l of K.levels) {
-    const n = l.items.length, c = colsFor(n), rows = Math.ceil(n / c);
-    const tw = (TRAY.w - (c - 1) * TRAY.gap) / c;
-    const tileH = rows <= 2 ? 104 : 68, pitch = rows <= 2 ? 112 : 76;
-    const artH = rows <= 2 ? 67 : 38;
-    seen.add(`${c}列`);
-    assert.ok(tw > 80, `${l.id} 单格只有 ${tw}px，太窄`);
-    assert.ok(rows <= 3, `${l.id} 的物品栏需要 ${rows} 行`);
-    const bottom = TRAY.y + (rows - 1) * pitch + tileH;
-    assert.ok(bottom <= 640, `${l.id} 物品栏底部 ${bottom} 超出画布`);
+    h.debug.loadId(l.id);
+    const L = h.debug.layout();
+    assert.equal(L.phone, false, `${l.id} 宽屏走原设计稿`);
+    const s = L.tray;
+    seen.add(`${s.cols}列`);
+    assert.ok(s.tw > 80, `${l.id} 单格只有 ${s.tw}px，太窄`);
+    assert.ok(s.rows <= 3, `${l.id} 的物品栏需要 ${s.rows} 行`);
+    const bottom = s.y + (s.rows - 1) * s.pitch + s.tileH;
+    assert.ok(bottom <= L.VH, `${l.id} 物品栏底部 ${bottom} 超出画布 ${L.VH}`);
     // 再矮的格子也要放得下最高的一件旧物（竖着拿的铅笔是 3 格高）。
     for (const id of l.items) {
       const b = K.bounds(K.items[id].cells);
-      assert.ok(b.h * Math.min(30, artH / b.h, (tw - 26) / b.w) <= artH + .5, `${l.id} 的 ${K.items[id].name} 塞不进 ${artH}px`);
+      const u = Math.min(L.uMax, s.artH / b.h, (s.tw - 26) / b.w);
+      assert.ok(b.h * u <= s.artH + .5, `${l.id} 的 ${K.items[id].name} 塞不进 ${s.artH}px`);
     }
   }
   assert.ok(seen.has('3列') && seen.has('4列') && seen.has('5列') && seen.has('6列'), '四种密度都该用上');

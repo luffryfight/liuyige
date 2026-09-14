@@ -39,10 +39,14 @@ android/keystore.properties
 # ---- 依赖 ----
 # 本项目零依赖，留个口子以防以后引入工具链。
 node_modules/
+.taptap-mcp/
 
 # ---- 编辑器与系统 ----
+# 编辑器/客户端的本地配置一律不进仓库：里面的路径是 ${workspaceFolder} 这类本机写法，
+# 换个目录就不成立。TapTap MCP 的接法另外写在 TAPTAP_MCP_SETUP.md 里。
 .vscode/
 .idea/
+.cursor/
 .DS_Store
 Thumbs.db
 desktop.ini

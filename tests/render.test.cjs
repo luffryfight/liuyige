@@ -70,10 +70,14 @@ test('every commission draws through the real render path without throwing', () 
     assert.doesNotThrow(() => debug.load(i), `${K.levels[i].id} renders`);
     assert.ok(h.calls.length > 100, `${K.levels[i].id} actually painted something`);
   }
-  // A tall grid must still leave the tray area free: the board is drawn above y=380.
+  // 棋盘必须整个落在分隔线以上，不能压到物品栏；版式分成宽屏/手机两套之后这条更要守住。
   const tall = K.levels.findIndex(l => l.rows === 6);
   debug.load(tall);
+  const L = debug.layout();
+  assert.ok(L.rect.y + L.rows * L.rect.cell <= L.sep.y, 'board stays above the tray divider');
+  assert.ok(L.tray.y > L.sep.y, 'the tray starts below the divider');
   const fills = h.calls.filter(([name]) => name === 'fillRect').map(([, a]) => a);
-  const lowestBoardPixel = Math.max(...fills.filter(([, y]) => y < 380).map(([, y]) => y));
-  assert.ok(lowestBoardPixel < 380, 'no board cell is painted over the tray divider');
+  const lowest = Math.max(...fills.map(([, y]) => y));
+  assert.ok(lowest <= L.VH, 'nothing is painted below the canvas');
+  assert.ok(lowest > L.sep.y, 'the tray actually paints below the divider');
 });

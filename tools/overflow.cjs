@@ -85,16 +85,29 @@ f.onload = () => {
     }
     over.sort((a, b) => b.dx - a.dx);
     const cv = doc.getElementById('game');
+    // 棋盘格 / 箱子格在屏幕上到底多大：画布是等比缩放的，宽度数字本身说明不了问题，
+    // 得乘上「CSS 宽 ÷ 逻辑宽」。GameDebug 只在 ?test=1 时挂上，所以 iframe 用带参数的地址。
+    let cell = null, tile = null, phone = null;
+    try {
+      const L = doc.defaultView.GameDebug && doc.defaultView.GameDebug.layout();
+      if (L && cv) {
+        const s = cv.getBoundingClientRect().width / L.VW;
+        cell = Math.round(L.rect.cell * s * 10) / 10;
+        tile = Math.round(L.tray.tw * s * 10) / 10;
+        phone = L.phone ? 1 : 0;
+      }
+    } catch { /* 量不到就算了，不影响溢出结论 */ }
     lines.push('width=${width} client=' + vw + ' scroll=' + de.scrollWidth
       + ' board=' + (cv ? Math.round(cv.getBoundingClientRect().width) : 'null')
+      + ' cell=' + cell + ' tile=' + tile + ' phone=' + phone
       + ' n=' + over.length);
     for (const o of over.slice(0, 6)) lines.push('  +' + o.dx + 'px w=' + o.w + ' ' + o.sel);
   } catch (e) {
-    lines.push('width=${width} client=null scroll=null board=null n=0 ERR=' + (e && e.message));
+    lines.push('width=${width} client=null scroll=null board=null cell=null tile=null phone=null n=0 ERR=' + (e && e.message));
   }
   document.getElementById('${OUT_ID}').textContent = lines.join('\\n');
 };
-f.src = '${url(path.join(ROOT, 'index.html'))}';
+f.src = '${url(path.join(ROOT, 'index.html'))}?test=1&consent=yes';
 document.body.appendChild(f);
 </script>
 </body>`;
@@ -132,14 +145,18 @@ function measure(width, keep) {
   if (!pre) return { width, err: 'dump 里找不到 <pre id="' + OUT_ID + '">（加 --keep 保留 dump 排查）' };
   const body = unescapeHtml(pre[1]).trim();
   if (!body) return { width, err: '探针回传是空的（load 没触发或内部抛错，加 --keep 排查）' };
-  const m = body.match(/^width=(\d+) client=(-?\d+|null) scroll=(-?\d+|null) board=(-?\d+|null) n=(\d+)(?: ERR=(.*))?$/m);
+  const m = body.match(/^width=(\d+) client=(-?\d+|null) scroll=(-?\d+|null) board=(-?\d+|null) cell=([\d.]+|null) tile=([\d.]+|null) phone=(\d|null) n=(\d+)(?: ERR=(.*))?$/m);
   if (!m) return { width, err: '回传格式不认识：' + JSON.stringify(body.slice(0, 100)) };
   const offenders = body.split('\n').filter(l => l.trim().startsWith('+')).map(l => l.trim());
   const client = m[2] === 'null' ? null : +m[2];
   const scroll = m[3] === 'null' ? null : +m[3];
   const board = m[4] === 'null' ? null : +m[4];
-  if (client === null || scroll === null) return { width, err: m[6] || '缺少测量值' };
-  return { width, client, scroll, board, over: scroll - client, offenders, err: null };
+  const num = v => (v === 'null' ? null : +v);
+  if (client === null || scroll === null) return { width, err: m[9] || '缺少测量值' };
+  return {
+    width, client, scroll, board, over: scroll - client, offenders,
+    cell: num(m[5]), tile: num(m[6]), phone: m[7] === 'null' ? null : m[7] === '1', err: null,
+  };
 }
 
 function main() {
@@ -165,23 +182,31 @@ function main() {
 
   console.log('窄视口体检（iframe 造真实视口，无头 Chrome 实测）');
   console.log('');
-  console.log('  视口    client  文档宽  棋盘宽  结论');
-  console.log('  ' + '-'.repeat(74));
+  console.log('  视口    client  文档宽  画布宽  棋盘格  箱子格  版式   结论');
+  console.log('  ' + '-'.repeat(88));
 
-  let bad = 0, fail = 0;
+  let bad = 0, fail = 0, small = 0;
   for (const w of list) {
     const r = measure(w, keep);
     if (r.err) { fail++; console.log('  ' + String(w).padEnd(7) + '测量失败  ' + r.err); continue; }
     if (r.over > 0) bad++;
+    // 棋盘格小于 40 CSS px 就只能用指尖尖去点，算「太小」；这是这轮改版最关心的指标。
+    // 但只在**手机版式**下这么判：宽屏走原设计稿，它的取舍是「一屏看全、不滚动」，
+    // 桌面窗口越矮画布越窄、格子越小是这个稿子的固有代价（改版前就是这个口径，本轮没动）。
+    const tiny = r.phone === true && r.cell !== null && r.cell < 40;
+    if (tiny) small++;
     console.log('  ' + String(w).padEnd(7) + String(r.client).padEnd(9) + String(r.scroll).padEnd(8)
-      + String(r.board).padEnd(8) + (r.over > 0 ? '✗ 溢出 ' + r.over + 'px' : '✓'));
+      + String(r.board).padEnd(8) + String(r.cell ?? '-').padEnd(8) + String(r.tile ?? '-').padEnd(8)
+      + (r.phone === null ? '-' : r.phone ? '手机' : '宽屏').padEnd(6)
+      + (r.over > 0 ? '✗ 溢出 ' + r.over + 'px' : tiny ? '△ 棋盘格仅 ' + r.cell + 'px' : '✓'));
     for (const o of r.offenders) console.log('        ' + ''.padEnd(33) + o);
   }
 
   console.log('');
   if (fail) { console.log(`${fail} 个视口测量失败 —— 剔除，不计入通过。`); process.exitCode = 1; }
   if (bad) { console.log(`${bad} 个视口存在横向溢出。`); process.exitCode = 1; }
-  if (!bad && !fail) console.log('所有视口均无横向溢出 ✓');
+  if (small) console.log(`${small} 个窄屏视口的棋盘格小于 40 CSS px（这些宽度下点击偏吃力）。`);
+  if (!bad && !fail && !small) console.log('所有视口均无横向溢出，窄屏的棋盘格都在可点范围 ✓');
 }
 
 main();

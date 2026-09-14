@@ -34,7 +34,14 @@ function game(initialSave, consent = 'yes') {
     appendChild(child) { this.children.push(child); return child; }
     focus() {}
     getContext() { return {}; }
-    getBoundingClientRect() { return { left: 0, top: 0, width: 640, height: 640 }; }
+    // 画布在屏幕上按 CSS 宽度等比缩放，版式随视口宽切换；测试用 setViewport / setCanvasWidth 换环境。
+    // 高度要跟当前版式的高宽比一致（浏览器里 height:auto 就是这么算的），
+    // 否则 position() 换算纵向坐标会失真。__layout 由下面的 game() 注入。
+    getBoundingClientRect() {
+      const w = this.__cssWidth ?? 640;
+      const L = this.__layout ? this.__layout() : null;
+      return { left: 0, top: 0, width: w, height: L ? w * L.VH / L.VW : w };
+    }
     setPointerCapture(pointerId) { this.captures.add(pointerId); }
     hasPointerCapture(pointerId) { return this.captures.has(pointerId); }
     releasePointerCapture(pointerId) {
@@ -61,6 +68,10 @@ function game(initialSave, consent = 'yes') {
   // 预置隐私选择。null = 全新安装，留给测试自己走一次弹窗流程。
   if (consent === 'yes' || consent === 'no') storage.set('liuyige-privacy-v1', consent);
   const window = new Element();
+  // 版式只看视口宽度，所以桩里得有个像样的视口。默认按宽屏桌面（1024）起步——
+  // 老测试全都写在「原设计稿 + CSS 宽 640」这个前提上，默认行为不受影响。
+  window.innerWidth = 1024;
+  window.innerHeight = 900;
   const context = vm.createContext({
     window, document,
     localStorage: { getItem: key => storage.get(key) ?? null, setItem: (key, value) => storage.set(key, value) },
@@ -75,18 +86,24 @@ function game(initialSave, consent = 'yes') {
   const debug = window.GameDebug;
   const state = () => JSON.parse(JSON.stringify(debug.getState()));
   const canvas = element('game');
+  // 让画布元素能按当前版式报出自己的高宽比（浏览器里由 height:auto 决定）。
+  canvas.__layout = () => debug.layout();
   const pointer = (type, point, extra = {}) => canvas.emit(type, {
     pointerId: 1, pointerType: 'mouse', button: 0,
     buttons: type === 'pointerup' ? 0 : 1,
     clientX: point.x, clientY: point.y, ...extra,
   });
+  // 画布在屏幕上按 CSS 宽度等比缩放，pointer 事件里的 clientX/Y 要用这个比例换算。
+  // 宽屏（逻辑宽 640、CSS 宽也是 640）时比例正好是 1，老测试的行为不受影响。
+  const scale = () => (canvas.__cssWidth ?? 640) / debug.layout().VW;
+  const client = point => ({ x: point.x * scale(), y: point.y * scale() });
   const grid = (x, y) => {
     const b = state().board;
-    return { x: b.x + (x + .5) * b.cell, y: b.y + (y + .5) * b.cell };
+    return client({ x: b.x + (x + .5) * b.cell, y: b.y + (y + .5) * b.cell });
   };
   const tray = id => {
     const r = debug.itemRect(id);
-    return { x: r.x + r.w / 2, y: r.y + r.h / 2 };
+    return client({ x: r.x + r.w / 2, y: r.y + r.h / 2 });
   };
   const click = point => { pointer('pointerdown', point); pointer('pointerup', point); };
   const key = key => canvas.emit('keydown', { key });
@@ -96,7 +113,16 @@ function game(initialSave, consent = 'yes') {
     assert.equal(state().ghost, null, 'no object follows the pointer');
     assert.equal(canvas.captures.size, 0, 'pointer capture has ended');
   };
-  return { debug, state, canvas, document, window, storage, element, pointer, grid, tray, click, key, right, idle };
+  // 换一台「设备」。用哪套版式只看视口宽度（和 style.css 的媒体查询同一个断点），
+  // 画布宽度是它的结果——手机上约等于视口宽减去页面左右内边距，默认按 0.94 折算。
+  const setViewport = (w, canvasW = Math.round(w * 0.94)) => {
+    window.innerWidth = w;
+    canvas.__cssWidth = canvasW;
+    debug.resize();
+  };
+  // 只改画布宽度、不动视口：用来核对「宽视口 + 被压窄的画布」仍然走原设计稿。
+  const setCanvasWidth = w => { canvas.__cssWidth = w; debug.resize(); };
+  return { debug, state, canvas, document, window, storage, element, pointer, client, grid, tray, click, key, right, idle, setCanvasWidth, setViewport };
 }
 
 module.exports = { game };
