@@ -192,7 +192,12 @@ function main() {
   const wantZip = !process.argv.includes('--no-zip');
 
   // 1) 铺目录
-  fs.rmSync(DIST, { recursive: true, force: true });
+  // 只清理本脚本自己的产物。dist/ 里还放着宣传片（tools/make-promo.cjs 手录的 mp4）
+  // 与 APK，整个目录递归删会把它一起带走——2026-09-14 打完 H5 包才发现 promo 没了。
+  fs.mkdirSync(DIST, { recursive: true });
+  for (const stale of [PKG_NAME, `${PKG_NAME}.zip`]) {
+    fs.rmSync(path.join(DIST, stale), { recursive: true, force: true });
+  }
   const pkgDir = path.join(DIST, PKG_NAME);
   fs.mkdirSync(pkgDir, { recursive: true });
 
