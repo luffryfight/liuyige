@@ -204,30 +204,41 @@
   }
   function canPlace(level,placed,id,x,y,rot){return placementError(level,placed,id,x,y,rot)===null;}
   function validState(level,placed){if(!placed||typeof placed!=='object'||Array.isArray(placed))return false;const acc={};for(const[id,p]of Object.entries(placed)){if(!p||!canPlace(level,acc,id,p.x,p.y,p.rot))return false;acc[id]=p;}return true;}
-  function solveAll(level,fixed={},limit=100000){
+  // deadline：可选的「到点就收工」时间戳。搜索每 64 个节点看一次表，超了就中止并回 expired。
+  // 为什么要它：求解本身是同步的，而界面里有些按钮（提示／消除／代放）要在玩家摆错之后
+  // 连做好几次求解才能给出结论——大师关一盘错局能烧掉十几秒，主线程僵住、连声音都断。
+  // 不传 = 不限时，行为与以前逐字一致（离线校验和单测走的就是这条）。
+  function solveAll(level,fixed={},limit=100000,deadline=0){
     fixed={...anchorMap(level),...fixed};
     if(!validState(level,fixed))return {status:'invalid',solution:null,nodes:0};
-    let nodes=0,cutoff=false;const bit=(x,y)=>1n<<BigInt(y*level.cols+x);let initial=0n;
+    let nodes=0,cutoff=false,expired=false;const bit=(x,y)=>1n<<BigInt(y*level.cols+x);let initial=0n;
     for(const[id,p]of Object.entries(fixed))for(const[dx,dy]of shape(id,p.rot))initial|=bit(p.x+dx,p.y+dy);
     const options={};for(const id of level.items.filter(id=>!fixed[id])){const seen=new Set();options[id]=[];for(let rot=0;rot<4;rot++){const cells=shape(id,rot),key=cells.map(p=>p.join(',')).sort().join(';');if(seen.has(key))continue;seen.add(key);const {w,h}=bounds(cells);for(let y=0;y<=level.rows-h;y++)for(let x=0;x<=level.cols-w;x++){if(!canPlace(level,{},id,x,y,rot))continue;let mask=0n;for(const[dx,dy]of cells)mask|=bit(x+dx,y+dy);options[id].push({x,y,rot,mask});}}}
-    const memo=new Set();function search(ids,mask,result){if(!ids.length)return result;if(++nodes>limit){cutoff=true;return null;}const key=ids.join(',')+':'+mask;if(memo.has(key))return null;let best=null,candidates=null;for(const id of ids){const legal=options[id].filter(p=>(p.mask&mask)===0n);if(!legal.length){memo.add(key);return null;}if(!candidates||legal.length<candidates.length){best=id;candidates=legal;}}for(const p of candidates){const r=search(ids.filter(id=>id!==best),mask|p.mask,{...result,[best]:{x:p.x,y:p.y,rot:p.rot}});if(r)return r;if(cutoff)return null;}memo.add(key);return null;}
-    const solution=search(Object.keys(options),initial,JSON.parse(JSON.stringify(fixed)));return {status:solution?'solved':cutoff?'limit':'unsolvable',solution,nodes};
+    const memo=new Set();function search(ids,mask,result){if(!ids.length)return result;if(++nodes>limit){cutoff=true;return null;}if(deadline&&!(nodes&63)&&Date.now()>deadline){cutoff=true;expired=true;return null;}const key=ids.join(',')+':'+mask;if(memo.has(key))return null;let best=null,candidates=null;for(const id of ids){const legal=options[id].filter(p=>(p.mask&mask)===0n);if(!legal.length){memo.add(key);return null;}if(!candidates||legal.length<candidates.length){best=id;candidates=legal;}}for(const p of candidates){const r=search(ids.filter(id=>id!==best),mask|p.mask,{...result,[best]:{x:p.x,y:p.y,rot:p.rot}});if(r)return r;if(cutoff)return null;}memo.add(key);return null;}
+    const solution=search(Object.keys(options),initial,JSON.parse(JSON.stringify(fixed)));return {status:solution?'solved':expired?'timeout':cutoff?'limit':'unsolvable',solution,nodes,expired};
   }
-  function solve(level,fixed={},limit=100000){
+  function solve(level,fixed={},limit=100000,deadline=0){
     fixed={...anchorMap(level),...fixed};
     if(!validState(level,fixed))return {status:'invalid',solution:null,nodes:0};
-    if(!level.keepCount)return solveAll(level,fixed,limit);
+    if(!level.keepCount)return solveAll(level,fixed,limit,deadline);
     const mandatory=[...new Set([...(level.required||[]),...Object.keys(fixed)])],slots=goalCount(level)-mandatory.length;
     if(slots<0)return {status:'unsolvable',solution:null,nodes:0};
     const optional=level.items.filter(id=>!mandatory.includes(id)),sets=[];
     function choose(start,ids){if(ids.length===slots){sets.push([...mandatory,...ids]);return;}for(let i=start;i<optional.length;i++)choose(i+1,[...ids,optional[i]]);}
-    choose(0,[]);let nodes=0;
+    choose(0,[]);let nodes=0,expired=false;
     // 有「空位上限」的取舍关：先按格数把凑不满的挑法剔掉，再交给求解器。
     // 不剔的话，求解器可能返回一种「摆得下但空格太多」的挑法，玩家照着提示摆完却通不了关。
     const cap=maxEmptyOf(level),room=freeCells(level);
     const usable=cap===Infinity?sets:sets.filter(ids=>room-cellsOfIds(ids)<=cap);
-    for(const ids of usable){const r=solveAll({...level,items:ids},fixed,Math.max(0,limit-nodes));nodes+=r.nodes;if(r.solution)return {...r,nodes};if(r.status==='limit')return {...r,nodes};}
-    return {status:'unsolvable',solution:null,nodes};
+    for(const ids of usable){
+      // 挑法是一批一批试的，到点就得收：不然「一组失败再试下一组」会一直滚下去。
+      if(deadline&&(expired||Date.now()>deadline)){expired=true;break;}
+      const r=solveAll({...level,items:ids},fixed,Math.max(0,limit-nodes),deadline);
+      nodes+=r.nodes;if(r.solution)return {...r,nodes};
+      if(r.expired){expired=true;break;}
+      if(r.status==='limit')return {...r,nodes};
+    }
+    return {status:expired?'timeout':'unsolvable',solution:null,nodes,expired};
   }
   // 难度增强表：为后期委托追加旧物、放大抽屉、加固定件与「恰好放满」要求。
   // 由 tools/harden.cjs 生成，每一关都跑过求解器校验（可解 + 节点数余量）。改表后必须重跑校验。

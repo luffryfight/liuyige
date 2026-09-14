@@ -155,16 +155,55 @@ test('Escape ends an active drag and releases pointer capture', () => {
 });
 
 test('reloading a saved session restores its selected level and placements', () => {
+  const K = require('../core.js');
   const h = game();
   const idx = h.debug.loadId('drawer-4');
   h.debug.place('player', 0, 0, 0);
-  const restored = game(h.storage.get('liuyige-mvp-v1'));
+  // 关卡是依次解锁的：一份「停在第 N 关」的存档，前面几关必然已经整理完了，
+  // 所以造存档时要把它们标上，否则会被按「没解锁」退回第一关（见下一条测试）。
+  const save = JSON.parse(h.storage.get('liuyige-mvp-v1'));
+  for (let i = 0; i < idx; i++) save.completed[K.levels[i].id] = true;
+  const restored = game(JSON.stringify(save));
   assert.equal(restored.state().levelIndex, idx);
   assert.deepEqual(restored.state().placed, { player: { x: 0, y: 0, rot: 0 } });
   restored.idle();
   const invalid = JSON.parse(h.storage.get('liuyige-mvp-v1'));
   invalid.current = 999;
   assert.equal(game(JSON.stringify(invalid)).state().levelIndex, 0);
+});
+
+test('关卡依次解锁：默认只开第一关，通关一关开一关，?unlock=all 才全开', () => {
+  const K = require('../core.js');
+  const h = game();
+  assert.equal(h.debug.unlockedLimit(), 0, '全新存档只开第一关');
+  assert.equal(h.debug.isUnlocked(0), true);
+  assert.equal(h.debug.isUnlocked(1), false);
+  // 锁着的关卡点不开，但要说明原因——不能只是「按了没反应」。
+  const second = h.element('levels').children[1];
+  assert.equal(second.getAttribute('aria-disabled'), 'true');
+  second.onclick();
+  assert.equal(h.state().levelIndex, 0, '锁着的委托进不去');
+  assert.match(h.element('status').textContent, /01 关|依次打开/);
+  // 锁着的章节页签也一样：停在本章第一个能进的关卡，整章锁着就只解释。
+  const tabs = h.element('mode-tabs').children;
+  tabs[tabs.length - 1].onclick();
+  assert.equal(h.state().levelIndex, 0, '后面章节还没解锁，不跳过去');
+  assert.match(h.element('status').textContent, /还在后面|依次打开/);
+  // 整理完第一关 → 第二关打开，而且「下一份委托」真的能走进去。
+  for (const [id, p] of Object.entries(K.solve(K.levels[0]).solution)) {
+    assert.equal(h.debug.place(id, p.x, p.y, p.rot), true);
+  }
+  assert.equal(h.state().finished, true);
+  assert.equal(h.debug.unlockedLimit(), 1, '通关后边界前进一关');
+  h.element('next').onclick();
+  assert.equal(h.state().levelIndex, 1);
+  assert.equal(h.element('levels').children[1].getAttribute('aria-disabled'), 'false');
+  // 存档里停在第 2 关也合法：它已经解锁了。
+  assert.equal(game(h.storage.get('liuyige-mvp-v1')).state().levelIndex, 1);
+  // 自测入口：一次打开全部 100 关。
+  h.debug.unlock.all(true);
+  assert.equal(h.debug.isUnlocked(99), true);
+  assert.equal(h.element('levels').children[99].getAttribute('aria-disabled'), 'false');
 });
 
 test('choice flow refuses count-only completion, permits swapping, and restores completion on undo', () => {
@@ -202,6 +241,9 @@ test('every chapter tab opens its own commission and the board shrinks instead o
   const h = game();
   assert.equal(K.levels.length, 100, 'the shop ships one hundred commissions');
   assert.equal(h.element('levels').children.length, 100, 'one list entry per commission');
+  // 关卡是依次解锁的，这里要验的是「每个页签都能打开自己那一章」，
+  // 所以先把 100 关都打开（自测入口），别让解锁顺序挡住这件事。
+  h.debug.unlock.all(true);
   const tabs = h.element('mode-tabs').children;
   assert.equal(tabs.length, K.chapters.length, 'one tab per chapter, tutorial included');
   for (const tab of tabs) {

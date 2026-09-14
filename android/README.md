@@ -70,7 +70,7 @@ node android/tools/verify-apk.cjs
 | 6 | `zipalign -p -f 4` |
 | 7 | `apksigner sign`（v1 + v2 + v3） |
 
-产物信息（1.0.2）：包名 `com.liuyige.game`，versionCode `1002`，minSdk `24`，targetSdk `34`，约 97 KB。桌面图标下显示的应用名是 `留一格：回忆收纳师`，写在 `res/values/strings.xml` 的 `app_name` 里，须与 TapTap 商店页的应用名一致（别写成简称「留一格」）。
+产物信息（1.0.3）：包名 `com.liuyige.game`，versionCode `1003`，minSdk `24`，targetSdk `34`，约 97 KB。桌面图标下显示的应用名是 `留一格：回忆收纳师`，写在 `res/values/strings.xml` 的 `app_name` 里，须与 TapTap 商店页的应用名一致（别写成简称「留一格」）。
 
 ### 签名密钥
 

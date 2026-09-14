@@ -26,8 +26,8 @@ const API_LEVEL = 34;
 const MIN_SDK = 24;
 const BUILD_TOOLS_PREFERRED = '34.0.0';
 
-const VERSION_CODE = 1002;
-const VERSION_NAME = '1.0.2';
+const VERSION_CODE = 1003;
+const VERSION_NAME = '1.0.3';
 const APP_ID = 'com.liuyige.game';
 
 /** APK 里真正需要的七个运行时文件，顺序无所谓 */

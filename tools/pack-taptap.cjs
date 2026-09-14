@@ -32,7 +32,7 @@ const DIST = path.join(ROOT, 'dist');
 // zip 里那个唯一的第一级文件夹。只能用英文/数字，所以取仓库名。
 const PKG_NAME = 'liuyige';
 // 上传时在控制台「版本设置」里填的版本号，格式 V x.y.z。这里只做记录与自检。
-const VERSION = '1.0.2';
+const VERSION = '1.0.3';
 const SIZE_LIMIT = 60 * 1024 * 1024;
 
 // 运行时文件。index.html 是入口，其余是它 defer 引入的依赖，一个都不能少。

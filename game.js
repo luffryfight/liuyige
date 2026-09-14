@@ -178,7 +178,28 @@
   function audioCtx(){const M=window.KeepsakeMusic;if(M&&M.ctx){const shared=M.ctx();if(shared)return shared;}return audio||(audio=new(window.AudioContext||window.webkitAudioContext)());}
   function beep(success=false){if(muted)return;try{const ac=audioCtx();if(!ac)return;if(ac.state==='suspended')ac.resume().catch(()=>{});const o=ac.createOscillator(),g=ac.createGain();o.type='sine';o.frequency.setValueAtTime(success?659:440,ac.currentTime);o.frequency.exponentialRampToValueAtTime(success?880:523,ac.currentTime+.12);g.gain.setValueAtTime(.035,ac.currentTime);g.gain.exponentialRampToValueAtTime(.001,ac.currentTime+.2);o.connect(g);g.connect(ac.destination);o.start();o.stop(ac.currentTime+.22);}catch{}}
   function snapshot(){history.push({placed:clone(placed),rotations:{...rotations},moves,hints});if(history.length>100)history.shift();}
-  function updateUI(){const l=level(),n=Object.keys(placed).length;$('progress').textContent=`${n} / ${K.goalCount(l)} 件`;$('move-count').textContent=`已整理 ${moves} 次`;const frozen=!!selected&&(locked.has(selected)||(l.fixedRot||[]).includes(selected));$('rotate').disabled=!selected||frozen;$('return').disabled=!selected||!placed[selected]||locked.has(selected);$('undo').disabled=!history.length;$('hint').disabled=finished;
+  // ── 关卡解锁：一次开一关，从第一关依次开到最后一关 ────────────────────────
+  // 判据是「前面的都整理完了没有」——第一个没完成的关卡就是能走到的边界。
+  // 通关记录本来就在存档里（saved.completed），所以老存档不收新字段也自动对上。
+  // 分享/验收用的直达入口（?level=7、?test=1）不受这条限制，见文件末尾。
+  let unlockAll=false;
+  function unlockedLimit(){const i=K.levels.findIndex(l=>!saved.completed[l.id]);return i<0?K.levels.length-1:i;}
+  const isUnlocked=i=>unlockAll||i<=unlockedLimit()||!!saved.completed[K.levels[i].id];
+  const firstLocked=()=>{const i=unlockedLimit();return `第 ${String(i+1).padStart(2,'0')} 关「${K.levels[i].title}」`;};
+  function paintLock(b,i){
+    const shut=!isUnlocked(i),tick=b.querySelector&&b.querySelector('.tick');
+    if(tick)tick.textContent=shut?'锁':(saved.completed[K.levels[i].id]?'✓':'');
+    if(b.classList)b.classList.toggle('locked',shut);
+    b.setAttribute('aria-disabled',String(shut));
+  }
+  // 「能消掉的候选」只按规则筛一遍（不必须、也没被固定），**不判可解性**。
+  // updateUI 每次放置、选中都要用这个集合，那里绝不能跑求解器：
+  // 候选逐个试可解性在大师关一盘死局上要烧十几秒（搪瓷杯放到死路那件事）。
+  function clearPool(){const l=level();return l.items.filter(id=>!(l.required||[]).includes(id)&&!locked.has(id));}
+  function updateUI(){const l=level(),n=Object.keys(placed).length;$('progress').textContent=`${n} / ${K.goalCount(l)} 件`;$('move-count').textContent=`已整理 ${moves} 次`;const frozen=!!selected&&!canTurn(selected);$('rotate').disabled=!selected||frozen;
+    // 手机上再给一个拇指区的翻转键：工具栏在画布下方、一屏之外，转个方向要来回滚一趟。
+    // 它做的和「旋转」按钮是同一件事（都走 rotate()），只是「够得着」。宽屏由 CSS 藏掉。
+    const fab=$('rotate-fab');if(fab)fab.hidden=!selected||frozen;$('return').disabled=!selected||!placed[selected]||locked.has(selected);$('undo').disabled=!history.length;$('hint').disabled=finished;
     // 三个「救援」按钮的文案随剩余额度变，免得玩家点了才发现额度用完了。
     // 另外还会看「这次到底要不要看广告」：ads.js 的 AD_UNIT_ID 没配好、或不在 TapTap
     // 客户端里时，这几下帮忙是**直接免费给**的（见 ads.js 的 STRICT）。那就别写「看广告」——
@@ -188,7 +209,7 @@
     const hintSpan=$('hint').querySelector&&$('hint').querySelector('span');if(hintSpan)hintSpan.textContent=freeHints<FREE_HINTS?'一点提示':withAd('提示');
     const autoBtn=$('auto');const autoSpan=autoBtn.querySelector&&autoBtn.querySelector('span');if(autoSpan)autoSpan.textContent=autoPlaced>=AUTO_LIMIT?'已代放':withAd('帮我放一件');autoBtn.disabled=finished||autoPlaced>=AUTO_LIMIT;
     const clearBtn=$('clear');const clearSpan=clearBtn.querySelector&&clearBtn.querySelector('span');if(clearSpan)clearSpan.textContent=clears>=MAX_CLEARS?'已用完':withAd('消除一件');
-    clearBtn.disabled=finished||clears>=MAX_CLEARS||!clearCandidate();$('completed-count').textContent=`${K.levels.filter(l=>saved.completed[l.id]).length} / ${K.levels.length} 已整理`;document.querySelectorAll('.level-button').forEach((b,i)=>{b.hidden=K.levels[i].group!==l.group;b.setAttribute('aria-current',String(i===levelIndex));b.querySelector('.tick').textContent=saved.completed[K.levels[i].id]?'✓':'';});document.querySelectorAll('.mode-button').forEach(b=>b.setAttribute('aria-pressed',String(b.getAttribute('data-group')===l.group)));$('codex-count').textContent=`${Object.keys(saved.codex).length}/${K.relations.length}`;paintScore();}
+    clearBtn.disabled=finished||clears>=MAX_CLEARS||!clearPool().length;$('completed-count').textContent=`${K.levels.filter(l=>saved.completed[l.id]).length} / ${K.levels.length} 已整理`;document.querySelectorAll('.level-button').forEach((b,i)=>{b.hidden=K.levels[i].group!==l.group;b.setAttribute('aria-current',String(i===levelIndex));paintLock(b,i);});document.querySelectorAll('.mode-button').forEach(b=>b.setAttribute('aria-pressed',String(b.getAttribute('data-group')===l.group)));$('codex-count').textContent=`${Object.keys(saved.codex).length}/${K.relations.length}`;paintScore();}
   function load(i){cancelDrag();levelIndex=i;
     // 先读存档里的「消除」记录，再算这一关长什么样——顺序反了会把上一关的消除带过来。
     const s=saved.sessions[K.levels[i].id];
@@ -284,24 +305,164 @@
     if(locked.has(id)){const a=placed[id];if(a&&a.x===x&&a.y===y&&((a.rot%4)+4)%4===((rot%4)+4)%4)return true;status('这一件委托人已经放好了，位置不能改。');event('invalid_placement',{reason:'locked'});requestDraw();return false;}
     const error=K.placementError(level(),placed,id,x,y,rot);if(error){ghost=null;drag=null;status({blocked:'这里是固定隔板，不能放物品。试试旁边的空位。',zone:'这件物品需要完整放进同名标记区，旋转后也要全部在区内。',quota:'本单件数已满。请右键取回一件，或用“放回桌面”，再换入想留的物品。',norot:'这件只能按原来的方向摆放，转过来就放不下了。'}[error]||'这里有些挤。换个位置，或者旋转一下试试。');event('invalid_placement',{reason:error});requestDraw();return false;}snapshot();placed[id]={x,y,rot};rotations[id]=rot;moves++;selected=null;ghost=null;hint=null;if(hmove&&hmove.id===id)hmove=null;drag=null;event('item_placed',{item:id});beep();const fresh=checkRelations();if(!fresh.length)status('放好了。还可以继续调整，不用急。');checkComplete(fresh);persist();updateUI();requestDraw();return true;}
   function checkComplete(fresh=[]){finished=K.isComplete(level(),placed);if(!finished){if(level().keepCount&&Object.keys(placed).length===K.goalCount(level()))status('件数够了，但必留物还没放齐。先取回一件，再把必留物换进来。');return;}const l=level();saved.completed[l.id]=true;flashUntil=Date.now()+450;event('level_complete',{moves,hints,kept:Object.keys(placed),elapsedSeconds:Math.round((Date.now()-started)/1000)});const sc=K.scoreLayout(l,placed);$('reply').textContent=l.reply;$('reward').textContent=l.reward;$('result-score').textContent=`整齐度 ${sc.total} · ${K.verdict(sc.total)}`+(fresh.length?`　新解锁 ${fresh.length} 段回忆`:'');$('score-line').textContent=`对齐 ${sc.align} · 留白 ${sc.gap} · 居中 ${sc.center}　${K.advice(sc)}`;$('result-stats').textContent=`${Object.keys(placed).length} 件旧物已安顿 · 整理 ${moves} 次 · 提示 ${hints} 次`+(l.keepCount?` · ${l.items.length-Object.keys(placed).length} 件留在桌面`:'');$('next').textContent=levelIndex===K.levels.length-1?'回到第一份委托':'下一份委托 →';$('artwork-preview').hidden=true;$('complete-dialog').showModal();beep(true);}
-  function rotate(){if(!selected)return;const id=selected;if(locked.has(id)){status('这件是委托人放好的，已经固定住了。');return;}if((level().fixedRot||[]).includes(id)){status('这件只能按原来的方向摆放，转过来就放不下了。');return;}const next=((rotations[id]||0)+1)%4;if(placed[id]&&!ghost&&!drag?.moving){const p=placed[id];if(!K.canPlace(level(),placed,id,p.x,p.y,next)){status('原地转不开。先拖到空位，或放回桌面再旋转。');return;}snapshot();placed[id]={...p,rot:next};moves++;rotations[id]=next;hint=null;persist();}else{rotations[id]=next;if(drag){const b=K.bounds(K.shape(id,next));drag.grab={x:Math.floor(b.w/2),y:Math.floor(b.h/2)};}}checkRelations();event('rotate',{item:id});updateUI();requestDraw();}
+  // 转一下。**原地能转就原地转**（与改版前逐字一致）；原地转不开，就顺着
+  // 「转完之后和原来的格子重叠最多、挪得最近」的位置落下去，而不是直接拒绝。
+  //
+  // 为什么要这一层：盘面挤到后面，一件长条原地旋转十有八九会压到旁边那件，
+  // 老版本只能回一句「原地转不开」。玩家点了一下、画面没变，看起来就是「按了没反应」——
+  // 手机上尤其难受：格子小、手指挡着视线，让玩家自己去找那个能转的位置既慢又容易连错几步。
+  // 现在变成「物品就地转了个方向、顺带挪了半格」，实在无处可去才照实说。
+  function rotateSpots(id,rot){
+    const l=level(),cur=placed[id];if(!cur)return[];
+    const cells=K.shape(id,rot),box=K.bounds(cells);
+    const was=new Set(K.shape(id,cur.rot).map(([dx,dy])=>`${cur.x+dx},${cur.y+dy}`));
+    const out=[];
+    for(let y=0;y+box.h<=l.rows;y++)for(let x=0;x+box.w<=l.cols;x++){
+      if(!K.canPlace(l,placed,id,x,y,rot))continue;
+      let keep=0;for(const[dx,dy]of cells)if(was.has(`${x+dx},${y+dy}`))keep++;
+      out.push({x,y,keep,away:Math.abs(x-cur.x)+Math.abs(y-cur.y)});
+    }
+    // 重叠多的优先；一样就挪得少的优先；再一样靠上、靠左，保证结果稳定可复现（测试也才写得住）。
+    out.sort((a,b)=>b.keep-a.keep||a.away-b.away||a.y-b.y||a.x-b.x);
+    return out;
+  }
+  function rotate(){
+    if(!selected)return;const id=selected;
+    if(locked.has(id)){status('这件是委托人放好的，已经固定住了。');return;}
+    if((level().fixedRot||[]).includes(id)){status('这件只能按原来的方向摆放，转过来就放不下了。');return;}
+    const next=((rotations[id]||0)+1)%4;
+    if(placed[id]&&!ghost&&!drag?.moving){
+      const from=placed[id];
+      // 原地优先。原来那句「原地转不开」的提示，只有真的无处可去时才会出现。
+      const spots=K.canPlace(level(),placed,id,from.x,from.y,next)?[{x:from.x,y:from.y,away:0}]:rotateSpots(id,next);
+      if(!spots.length){status('这件转过来哪一格都放不下。先把旁边的挪开，或者把它放回桌面再转。');event('rotate',{item:id,blocked:true});updateUI();requestDraw();return;}
+      const at=spots[0];
+      snapshot();placed[id]={x:at.x,y:at.y,rot:next};moves++;rotations[id]=next;hint=null;persist();
+      // 原地转成功时不动状态栏——那里正写着这件旧物的回忆，别把它盖掉。挪过位才解释一句。
+      if(at.away)status(`「${K.items[id].name}」原地转不开，就近挪了 ${at.away} 格。`);
+      checkRelations();
+    }else{
+      rotations[id]=next;
+      if(drag){const b=K.bounds(K.shape(id,next));drag.grab={x:Math.floor(b.w/2),y:Math.floor(b.h/2)};}
+    }
+    event('rotate',{item:id});updateUI();requestDraw();
+  }
   function returnItem(id=selected){if(!id||!placed[id])return;if(locked.has(id)){status('这件是委托人放好的，收不回去，也动不了。');return;}snapshot();delete placed[id];finished=false;moves++;hint=null;ghost=null;selected=null;const wasBlamed=!!(hmove&&hmove.id===id);hmove=null;event('item_returned',{item:id});persist();status(wasBlamed?`「${K.items[id].name}」已经收起来了。再点一次提示，看下一步该放哪件。`:'已放回桌面，可以重新摆放；撤销可恢复原位。');updateUI();requestDraw();}
-  canvas.addEventListener('pointerdown',e=>{if(e.button!==0&&e.pointerType==='mouse')return;if(drag)return;e.preventDefault();canvas.focus({preventScroll:true});const p=position(e),b=board();if(selected&&p.x>=b.x&&p.x<b.x+b.w&&p.y>=b.y&&p.y<b.y+b.h&&!hitItem(p)){setGhost(p);place(selected,ghost.x,ghost.y,rotations[selected]||0);return;}const id=hitItem(p);if(!id){selected=null;ghost=null;updateUI();requestDraw();return;}select(id);if(locked.has(id)){drag=null;status('这一件委托人已经放好了，位置不能改。点别的地方继续整理。');updateUI();requestDraw();return;}const size=K.bounds(K.shape(id,rotations[id]||0));drag={id,pointer:e.pointerId,start:p,moving:false,grab:placed[id]?{x:Math.floor((p.x-b.x)/b.cell)-placed[id].x,y:Math.floor((p.y-b.y)/b.cell)-placed[id].y}:{x:Math.floor(size.w/2),y:Math.floor(size.h/2)}};canvas.setPointerCapture(e.pointerId);});
+  // ── 手势：同一块画布上既要能搬东西，也要能滚页面 ─────────────────────────
+  // 拖拽玩法和页面滚动天生抢手势：画布挂 touch-action:none 才保证拖东西不被浏览器截走，
+  // 代价是手指按在画布上怎么划，页面都纹丝不动。手机版式一张画布就比一屏还高，
+  // 玩家在旧物箱上往上滑想翻到下面的按钮，结果就是「滑不动」。
+  //
+  // 判定规则（只在触摸/触控笔下走，鼠标完全走老路，桌面行为一个字不改）：
+  //   · 按住 ≥130ms 再移动  → 搬东西（这就是说明里写的「按住拖动」）
+  //   · 不停顿直接划过去    → 滚动页面，一比一跟手，松手带一点惯性
+  //   · 按下就抬起          → 轻点：选中物品／把已选物品放进这一格
+  //                          （同一个物品连着点两下＝就地翻转，见 pointerup）
+  // 空白处（没压到任何旧物）怎么划都是滚动——那里本来就没东西可搬。
+  const HOLD_MS=130,SLOP=8,FLING_DECAY=.94,FLING_MIN=.35,DOUBLE_MS=320;
+  let gesture=null,fling=null,lastTap=null;
+  // 能转的：不是委托人固定的，也不是本关规定「只能按原方向放」的。托盘里还没放下的那件也算
+  // （它的方向会跟着带下去），所以这里不要求 placed。
+  const canTurn=id=>!!id&&!locked.has(id)&&!(level().fixedRot||[]).includes(id);
+  function stopFling(){
+    if(!fling)return;
+    if(typeof cancelAnimationFrame==='function'&&fling.raf!==undefined)cancelAnimationFrame(fling.raf);
+    fling=null;
+  }
+  function startFling(vy){
+    if(typeof window.scrollBy!=='function'||Math.abs(vy)<FLING_MIN)return;
+    stopFling();
+    let v=vy;
+    const step=()=>{
+      v*=FLING_DECAY;
+      if(Math.abs(v)<FLING_MIN){stopFling();return;}
+      window.scrollBy(0,-v*16);
+      fling.raf=typeof requestAnimationFrame==='function'?requestAnimationFrame(step):undefined;
+    };
+    fling={raf:typeof requestAnimationFrame==='function'?requestAnimationFrame(step):undefined};
+  }
+  function clearHold(g){if(g&&g.hold){clearTimeout(g.hold);g.hold=null;}}
+  function releasePointer(pointer){if(typeof canvas.hasPointerCapture==='function'&&canvas.hasPointerCapture(pointer))canvas.releasePointerCapture(pointer);}
+  function startDragAt(id,p,pointer){const b=board(),size=K.bounds(K.shape(id,rotations[id]||0));drag={id,pointer,start:p,moving:false,grab:placed[id]?{x:Math.floor((p.x-b.x)/b.cell)-placed[id].x,y:Math.floor((p.y-b.y)/b.cell)-placed[id].y}:{x:Math.floor(size.w/2),y:Math.floor(size.h/2)}};canvas.setPointerCapture(pointer);}
+  // 松手／抬起时收尾拖拽。返回是否真的收了一件。
+  function endDrag(p){const d=drag;if(!d)return false;const target=ghost;drag=null;ghost=null;if(d.moving){if(p.y>=LAY.sep.y&&placed[d.id])returnItem(d.id);else if(target)place(d.id,target.x,target.y,rotations[d.id]||0);}return true;}
+  canvas.addEventListener('pointerdown',e=>{
+    if(e.button!==0&&e.pointerType==='mouse')return;
+    if(drag||gesture)return;
+    e.preventDefault();stopFling();canvas.focus({preventScroll:true});
+    const p=position(e),b=board(),onBoard=p.x>=b.x&&p.x<b.x+b.w&&p.y>=b.y&&p.y<b.y+b.h,id=hitItem(p);
+    if(e.pointerType==='mouse'){
+      // 鼠标：滚轮负责滚动，拖拽就是拖拽，判定不需要推迟——与改版前逐字一致。
+      if(selected&&onBoard&&!id){setGhost(p);place(selected,ghost.x,ghost.y,rotations[selected]||0);return;}
+      if(!id){selected=null;ghost=null;updateUI();requestDraw();return;}
+      select(id);
+      if(locked.has(id)){status('这一件委托人已经放好了，位置不能改。点别的地方继续整理。');updateUI();requestDraw();return;}
+      startDragAt(id,p,e.pointerId);
+      return;
+    }
+    // 触摸：先只记意图，等第一次移动（或抬手）再定性。
+    gesture={pointer:e.pointerId,start:p,lastClientY:e.clientY,id,placeHere:!!(selected&&onBoard&&!id),mode:null,armed:false,vY:0,vT:0,hold:null};
+    if(id)gesture.hold=setTimeout(()=>{if(gesture)gesture.armed=true;},HOLD_MS);
+    canvas.setPointerCapture(e.pointerId);
+  });
   canvas.addEventListener('pointermove',e=>{
+    if(gesture&&e.pointerId===gesture.pointer){
+      const p=position(e);
+      if(gesture.mode===null){
+        if(Math.hypot(p.x-gesture.start.x,p.y-gesture.start.y)<SLOP)return;
+        clearHold(gesture);
+        if(gesture.id&&gesture.armed){
+          gesture.mode='drag';select(gesture.id);
+          if(!locked.has(gesture.id))startDragAt(gesture.id,p,e.pointerId);
+        }else gesture.mode='scroll';
+      }
+      if(gesture.mode==='scroll'){
+        const now=Date.now(),dy=e.clientY-gesture.lastClientY,dt=now-(gesture.vT||now);
+        if(dt>0){gesture.vY=gesture.vY*.6+(dy/dt)*.4;gesture.vT=now;}
+        gesture.lastClientY=e.clientY;
+        if(dy&&typeof window.scrollBy==='function')window.scrollBy(0,-dy);
+        return;
+      }
+      if(!drag)return;
+      if(Math.hypot(p.x-drag.start.x,p.y-drag.start.y)>7)drag.moving=true;
+      if(drag.moving)setGhost(p,drag.grab);
+      return;
+    }
     if(!drag||e.pointerId!==drag.pointer)return;
     if(e.pointerType==='mouse'&&(e.buttons&1)===0){cancelDrag();return;}
     const p=position(e);if(Math.hypot(p.x-drag.start.x,p.y-drag.start.y)>7)drag.moving=true;
     if(drag.moving)setGhost(p,drag.grab);
   });
-  function cancelDrag(){const pointer=drag?.pointer;drag=null;ghost=null;if(pointer!==undefined&&canvas.hasPointerCapture(pointer))canvas.releasePointerCapture(pointer);requestDraw();}
+  function cancelDrag(){const pointer=drag?.pointer;drag=null;ghost=null;clearHold(gesture);gesture=null;stopFling();if(pointer!==undefined)releasePointer(pointer);requestDraw();}
   canvas.addEventListener('pointerup',e=>{
+    const g=gesture&&e.pointerId===gesture.pointer?gesture:null;
+    if(g){
+      gesture=null;clearHold(g);
+      if(g.mode==='scroll'){releasePointer(e.pointerId);startFling(g.vY);return;}
+      if(g.mode===null){
+        // 一次完整的「点一下」＝按下 + 抬起，放在这里做，滚动手势就不会被误当成点击。
+        if(g.id){
+          // 手机端补的快捷方式：**同一个旧物连着点两下 = 就地翻转**。
+          // 单点仍然是选中，只有三条同时成立才算双击——同一件、间隔够短、而且它此刻就是选中的那件。
+          // 最后那条是安全绳：中间只要点过别处（放下、取消、选了另一件），选中就会变，绝不会误判。
+          const now=Date.now(),again=!!lastTap&&lastTap.id===g.id&&now-lastTap.at<=DOUBLE_MS&&selected===g.id;
+          lastTap={id:g.id,at:now};
+          if(again&&placed[g.id]&&canTurn(g.id)){lastTap=null;rotate();}
+          else select(g.id);
+        }
+        else if(g.placeHere){const p=position(e);setGhost(p);place(selected,ghost.x,ghost.y,rotations[selected]||0);}
+        else{selected=null;ghost=null;lastTap=null;}
+        releasePointer(e.pointerId);updateUI();requestDraw();
+        return;
+      }
+      endDrag(position(e));releasePointer(e.pointerId);requestDraw();
+      return;
+    }
     if(!drag||drag.pointer!==e.pointerId)return;
-    const d=drag,p=position(e),target=ghost;drag=null;ghost=null;
-    if(d.moving){if(p.y>=LAY.sep.y&&placed[d.id])returnItem(d.id);else if(target)place(d.id,target.x,target.y,rotations[d.id]||0);}
-    if(canvas.hasPointerCapture(e.pointerId))canvas.releasePointerCapture(e.pointerId);requestDraw();
+    endDrag(position(e));releasePointer(e.pointerId);requestDraw();
   });
-  canvas.addEventListener('pointercancel',e=>{if(drag?.pointer===e.pointerId)cancelDrag();});
-  canvas.addEventListener('lostpointercapture',e=>{if(drag?.pointer===e.pointerId)cancelDrag();});
+  canvas.addEventListener('pointercancel',e=>{if(gesture?.pointer===e.pointerId||drag?.pointer===e.pointerId)cancelDrag();});
+  canvas.addEventListener('lostpointercapture',e=>{if(gesture?.pointer===e.pointerId||drag?.pointer===e.pointerId)cancelDrag();});
   canvas.addEventListener('contextmenu',e=>{
     e.preventDefault();if(e.pointerType==='touch')return;
     const id=hitItem(position(e));cancelDrag();
@@ -309,7 +470,7 @@
   });
   window.addEventListener('blur',cancelDrag);document.addEventListener('visibilitychange',()=>{if(document.hidden){cancelDrag();persist();}});
   canvas.addEventListener('keydown',e=>{if(e.key.toLowerCase()==='r'){e.preventDefault();rotate();}else if(e.key==='Escape'){cancelDrag();selected=null;updateUI();requestDraw();}else if(selected&&['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','Enter',' '].includes(e.key)){e.preventDefault();if(!ghost)ghost=placed[selected]?{x:placed[selected].x,y:placed[selected].y}:{x:0,y:0};if(e.key==='ArrowUp')ghost.y--;if(e.key==='ArrowDown')ghost.y++;if(e.key==='ArrowLeft')ghost.x--;if(e.key==='ArrowRight')ghost.x++;if(e.key==='Enter'||e.key===' ')place(selected,ghost.x,ghost.y,rotations[selected]||0);requestDraw();}});
-  $('rotate').onclick=rotate;$('return').onclick=()=>returnItem();
+  $('rotate').onclick=rotate;$('rotate-fab').onclick=rotate;$('return').onclick=()=>returnItem();
   $('undo').onclick=()=>{if(!history.length)return;cancelDrag();const s=history.pop();placed=s.placed;rotations=s.rotations;moves=s.moves;hints=s.hints;finished=K.isComplete(level(),placed);selected=null;ghost=null;hint=null;hmove=null;event('undo');persist();status('退回上一步了。慢慢试，总能找到位置。');updateUI();requestDraw();};
   // ---- 提示 ----
   // 老版本只有一个分支：解得出就标一件，解不出就说「有些复杂」——玩家点了提示等于没点。
@@ -322,9 +483,15 @@
   //   ③ unsolvable —— 全挪开还是无解，说明问题在「选了哪些件」而不是「怎么摆」，
   //                  提示玩家换件，而不是让他继续瞎摆。
   const HINT_MS=12000;
-  // 逐件回退找元凶：O(已放件数) 次求解，放进 UI 线程也够快（大师关单次最慢约 2 万节点）。
-  // 先试「件数多、占格大」的，它们最可能是堵住路的那件。
-  function blameOne(){
+  // 一次点击允许求解器占用多久。以前不限时：「消除」的候选搜索在大师关一盘死局上
+  // 要连做 32 次满额求解，主线程僵 15 秒以上，连 BGM 都断掉（搪瓷杯那件事）。
+  // 现在统一给按钮一个总预算，超了就照实说没算出来——宁可少一次帮忙，不能让界面僵住。
+  const SOLVE_MS=1200;
+  const budget=()=>Date.now()+SOLVE_MS;
+  // 逐件回退找元凶：最多 O(已放件数) 次求解。先试「件数多、占格大」的，它们最可能是堵住路的那件。
+  // blameExpired 记的是「没算完」——这个要跟「真的没有元凶」分开说，不能拿后者当结论。
+  let blameExpired=false;
+  function blameOne(deadline=0){
     const l=level(),ids=Object.keys(placed).filter(id=>!locked.has(id));
     if(!ids.length)return null;
     const ordered=ids.slice().sort((a,b)=>K.items[b].cells.length-K.items[a].cells.length);
@@ -332,63 +499,72 @@
       const rest={...placed};delete rest[id];
       // 直接交给 solve：它自己会先校验状态合法性（重叠/压隔板都算 invalid），
       // 我们只关心「拿掉这一件之后，能不能走通」。
-      if(K.solve(l,rest,90000).status==='solved')return id;
+      const r=K.solve(l,rest,90000,deadline);
+      if(r.status==='solved')return id;
+      if(r.status==='timeout'){blameExpired=true;return null;}
     }
     return null;
   }
-  function giveHint(){
-    cancelDrag();selected=null;ghost=null;
-    const l=level(),r=K.solve(l,placed,90000);
-    hints++;event('hint',{result:r.status});
-    // ① 走得通：标出一件还没放下的，并说清方向。
+  // 提示拆两步：先算出「该告诉玩家什么」，再把它说出来。
+  // 拆开是为了配合广告——**先算方案、再播广告**，算不出来就别浪费玩家一次广告。
+  function planHint(){
+    const l=level(),r=K.solve(l,placed,90000,budget());
+    if(r.status==='timeout')return {kind:'timeout',reason:'timeout'};
     if(r.status==='solved'&&r.solution){
       const id=Object.keys(r.solution).find(id=>!placed[id]);
-      if(id){
-        hint={id,p:r.solution[id],until:Date.now()+HINT_MS};
-        const rot=((r.solution[id].rot%4)+4)%4;
-        const dir=rot?(rot===1?'转成横放':rot===2?'转成倒放':'转成竖放'):'保持原方向';
-        status(`把「${K.items[id].name}」放到绿色虚线的位置，${dir}。这是可行的摆法之一。`);
-        setTimeout(()=>requestDraw(),HINT_MS+100);
-        persist();updateUI();requestDraw();return;
-      }
+      if(id)return {kind:'place',id,p:r.solution[id],reason:r.status};
+    }
+    blameExpired=false;
+    const blame=blameOne(budget());
+    if(blame){const p=placed[blame];return {kind:'blame',id:blame,p:{x:p.x,y:p.y,rot:p.rot},reason:r.status};}
+    return {kind:'none',reason:blameExpired?'timeout':r.status};
+  }
+  function applyHint(plan){
+    cancelDrag();selected=null;ghost=null;
+    hints++;event('hint',{result:plan.reason||plan.kind});
+    // ① 走得通：标出一件还没放下的，并说清方向。
+    if(plan.kind==='place'){
+      const rot=((plan.p.rot%4)+4)%4;
+      hint={id:plan.id,p:plan.p,until:Date.now()+HINT_MS};
+      const dir=rot?(rot===1?'转成横放':rot===2?'转成倒放':'转成竖放'):'保持原方向';
+      status(`把「${K.items[plan.id].name}」放到绿色虚线的位置，${dir}。这是可行的摆法之一。`);
+      setTimeout(()=>requestDraw(),HINT_MS+100);persist();updateUI();requestDraw();return;
     }
     // ② 当前摆法走不通：揪出是哪一件放错了，并指它原来的位置。
-    const blame=blameOne();
-    if(blame){
-      const p=placed[blame];
-      hint={id:blame,p:{x:p.x,y:p.y,rot:p.rot},until:Date.now()+HINT_MS,warn:true};
-      hmove={id:blame};   // 记下「提示让动这一件」，玩家真动了就清掉
-      status(`卡住的是「${K.items[blame].name}」——把它挪开，这份委托就能继续了。先把它放回桌面，再点一次提示。`);
-      setTimeout(()=>requestDraw(),HINT_MS+100);
-      persist();updateUI();requestDraw();return;
+    if(plan.kind==='blame'){
+      hint={id:plan.id,p:plan.p,until:Date.now()+HINT_MS,warn:true};
+      hmove={id:plan.id};   // 记下「提示让动这一件」，玩家真动了就清掉
+      status(`卡住的是「${K.items[plan.id].name}」——把它挪开，这份委托就能继续了。先把它放回桌面，再点一次提示。`);
+      setTimeout(()=>requestDraw(),HINT_MS+100);persist();updateUI();requestDraw();return;
     }
-    // ③ 全挪开也无解：不是摆法问题，是件数/选件问题。
+    // ③ 全挪开也无解（或这次没算完）：不是摆法问题，是件数/选件问题。
     hint=null;
-    const goal=K.goalCount(l),n=Object.keys(placed).length;
-    if(r.status==='unsolvable'||n>=goal){
-      status(l.keepCount?`这份委托要留 ${goal} 件，但现在这几件凑不满。取回一件，换一件更大或更小形状的旧物进来。`:`这几件旧物摆不下，换一件别的形状试试。`);
-    }else{
-      status('这一步不好走。先「放回桌面」一件，再点提示——我会告诉你换哪一件。');
-    }
+    const l=level(),goal=K.goalCount(l),n=Object.keys(placed).length;
+    if(plan.reason==='timeout')status('这一局绕得有点久，这次没算出结论。先试试「消除一件」，或者把一件放回桌面再点提示。');
+    else if(plan.reason==='unsolvable'||n>=goal)status(l.keepCount?`这份委托要留 ${goal} 件，但现在这几件凑不满。取回一件，换一件更大或更小形状的旧物进来。`:`这几件旧物摆不下，换一件别的形状试试。`);
+    else status('这一步不好走。先「放回桌面」一件，再点提示——我会告诉你换哪一件。');
     persist();updateUI();requestDraw();
   }
-  // 广告只负责回答「这一次机会给不给」；真正判定看没看完，在 ads.js 的 onClose(isEnded) 里。
+  function giveHint(){applyHint(planHint());}
+  // 广告只回答「这一次机会给不给」；真正判定看没看完，在 ads.js 的 onClose(isEnded) 里。
   // 拿不到广告位（网页版／未配置广告位）时直接放行，绝不让玩家卡在「点了没反应」上。
-  // 失败原因逐个说清楚，别一律甩一句「稍后再试」。
-  const AD_REASON={
-    skipped:'要看完广告才能拿到这一次机会，这次先不算。',
-    unavailable:'这台设备上没有广告可看，这次直接给你。',
-    busy:'上一个广告还没播完，稍等一下再点。',
-    timeout:'广告迟迟没打开，这次先不算，稍后再试。',
-    'load-failed':'广告没加载出来，稍后再试。',
-  };
+  //
+  // 这里**刻意不往状态栏写原因**：按钮本来就按同一个条件显示成「一点提示」还是
+  // 「看广告 · 提示」，玩家按下去直接拿到东西就好；而且状态栏紧接着就会被动作自己的话
+  // （「把「XX」放到绿色虚线…」）盖掉，写了也是白写。这段说明归玩法说明和隐私政策，
+  // 文案在 ads.js 的 KeepsakeAds.status() 里，只有一份。
+  //
+  // STRICT=true（真开始变现）时反过来：拿不到广告就不给，否则这个开关等于一纸空文。
   function withAd(what,run){
     const Ads=window.KeepsakeAds;
-    if(!Ads||!Ads.supported()){if(Ads&&Ads.status())status(`${what}：${Ads.status()}`);run();return;}
+    if(!Ads||!Ads.supported()){
+      if(Ads&&Ads.STRICT){status(`广告没准备好，这次${what}先不算，稍后再试。`);updateUI();return;}
+      run();return;
+    }
     status(`正在加载广告，看完就能拿到这次${what}。`);
     Ads.show().then(res=>{
       if(res.ok){run();return;}
-      status(AD_REASON[res.reason]||'广告没播完，这次先不算。');
+      status(Ads.explain?Ads.explain(res.reason):'广告没播完，这次先不算。');
       updateUI();
     });
   }
@@ -397,20 +573,33 @@
   // 但取舍关有个坑：玩家只放 keepCount 件，「能凑满格数」的挑法本来就少，
   // 抹掉一件有可能把仅有的几种一起抹掉。所以出手前先让求解器验一遍：抹掉之后仍可解，才让它走。
   // 这一步必须在播广告之前做完，不能让玩家看完广告才被告知「这件消不得」。
+  let clearExpired=false;
   function clearCandidate(){
-    const l=level();
-    const pool=l.items.filter(id=>!(l.required||[]).includes(id)&&!locked.has(id));
+    const l=level(),pool=clearPool();
+    clearExpired=false;
     if(!pool.length)return null;
     const ordered=pool.slice().sort((a,b)=>K.items[b].cells.length-K.items[a].cells.length);
-    // 关键：要用「玩家现在这一盘」去验，不能用空盘面。
-    // 用 {} 验的话，算出来的是「理论上消掉它就能解」，可玩家当前摆法可能是错的，
-    // 消完之后照样解不开——那样玩家看完广告才发现没救，是最糟的体验。
-    // 所以先试「保留玩家已摆的」，消掉后仍可解才认；实在不行再退一步按空盘面试。
+    const deadline=budget();
+    // 两个关键点：
+    // 1. 要用「玩家现在这一盘」去验，不能用空盘面。用 {} 验的话，算出来的是「理论上消掉它就能解」，
+    //    可玩家当前摆法可能是错的，消完之后照样解不开——那样玩家看完广告才发现没救，是最糟的体验。
+    // 2. **按局面去重**。还没放下的候选，删掉它之后盘面一模一样，同一道题会被解十几遍：
+    //    大师关那 16 秒里，有 15 秒是这么白烧的。
+    const seen=new Set();
     for(const id of ordered){
       const kept={...placed};delete kept[id];
-      if(K.solve(l,kept,120000).status==='solved')return id;
+      const key=Object.keys(kept).sort().map(k=>`${k}@${kept[k].x},${kept[k].y},${kept[k].rot}`).join('|');
+      if(seen.has(key))continue;
+      seen.add(key);
+      const r=K.solve(l,kept,120000,deadline);
+      if(r.status==='solved')return id;
+      if(r.status==='timeout'){clearExpired=true;return null;}
     }
-    for(const id of ordered)if(K.solve(level(id),{},120000).status==='solved')return id;
+    for(const id of ordered){
+      const r=K.solve(level(id),{},120000,deadline);
+      if(r.status==='solved')return id;
+      if(r.status==='timeout'){clearExpired=true;return null;}
+    }
     return null;
   }
   function doClear(id=clearCandidate()){
@@ -428,32 +617,47 @@
   // 规则上这是白送一件的有序摆放，所以：
   //   · 每关只给一次，且必须先把放错的清干净——否则会替玩家在错误的基础上越描越黑；
   //   · 放之前先 snapshot()，玩家照样能撤销，不剥夺他的控制权。
-  function doAutoPlace(){
+  // 同样拆成「算方案 / 落方案」：先算出要放哪一件，再播广告。
+  // 算不出来就别播——不能让玩家看完广告才被告知「这一步没法替你放」。
+  function planAuto(){
     const l=level();
-    if(autoPlaced>=AUTO_LIMIT){status('这份委托已经帮你放过一次了，剩下的自己来吧。');return false;}
-    let r=K.solve(l,placed,120000),blamed=null;
+    if(autoPlaced>=AUTO_LIMIT)return {kind:'quota'};
+    if(finished)return {kind:'done'};
+    const deadline=budget();
+    let r=K.solve(l,placed,120000,deadline),blamed=null;
+    if(r.status==='timeout')return {kind:'timeout'};
     // 玩家当前摆法无解时，先把「卡住的那一件」收回来再算，这样代放才不会建立在错误的局面上。
     if(r.status!=='solved'){
-      const blame=blameOne();
+      blameExpired=false;
+      const blame=blameOne(deadline);
       if(blame){
         const rest={...placed};delete rest[blame];
-        const r2=K.solve(l,rest,120000);
+        const r2=K.solve(l,rest,120000,deadline);
+        if(r2.status==='timeout')return {kind:'timeout'};
         if(r2.status==='solved'){blamed=blame;r=r2;}
-      }
+      }else if(blameExpired)return {kind:'timeout'};
     }
-    if(r.status!=='solved'||!r.solution){status('这一步没法直接替你放，先「消除一件」或换一件旧物试试。');return false;}
+    if(r.status!=='solved'||!r.solution)return {kind:'none'};
     // 优先替玩家放「还没放下、且位于分区内」的那件——那是关卡真正的难点所在。
     const pending=Object.keys(r.solution).filter(id=>id!==blamed&&!placed[id]);
-    if(!pending.length){status('委托已经摆好了，不用再帮你放。');return false;}
+    if(!pending.length)return {kind:'done'};
     const zone=(l.zones||[])[0];
     const inZone=zone?pending.filter(id=>zone.items.includes(id)):[];
     const pick=(inZone.length?inZone:pending).sort((a,b)=>K.items[b].cells.length-K.items[a].cells.length)[0];
+    return {kind:'place',pick,at:{...r.solution[pick]},blamed};
+  }
+  function applyAuto(plan){
+    if(plan.kind==='quota'){status('这份委托已经帮你放过一次了，剩下的自己来吧。');updateUI();return false;}
+    if(plan.kind==='done'){status('委托已经摆好了，不用再帮你放。');updateUI();return false;}
+    if(plan.kind==='none'){status('这一步没法直接替你放，先「消除一件」或换一件旧物试试。');updateUI();return false;}
+    if(plan.kind==='timeout'){status('这一局绕得有点久，没算出能替你放的那一件。先试试「消除一件」或「提示」。');updateUI();return false;}
+    const pick=plan.pick,blamed=plan.blamed;
     // 整件事只留一个撤销点：收走放错的 + 放好这一件，一次撤销一起退回。
     // （之前在两处各 snapshot() 一次，撤销只能退回一半，玩家会以为撤销坏了。）
     snapshot();
     if(blamed&&placed[blamed])delete placed[blamed];
-    placed[pick]={...r.solution[pick]};
-    rotations[pick]=r.solution[pick].rot;
+    placed[pick]={...plan.at};
+    rotations[pick]=plan.at.rot;
     moves++;autoPlaced++;selected=null;ghost=null;hint=null;hmove=null;
     event('item_auto_placed',{item:pick,replaced:blamed||null});beep();
     status(blamed?`先把放错位置的「${K.items[blamed].name}」收了回来，再帮你把「${K.items[pick].name}」放好了。按「撤销」可以一起退回。`:`帮你把「${K.items[pick].name}」放好了。想自己调整，按「撤销」就能拿回来。`);
@@ -462,17 +666,26 @@
     persist();updateUI();requestDraw();
     return true;
   }
-  $('hint').onclick=()=>{if(freeHints<FREE_HINTS){freeHints++;giveHint();return;}withAd('提示',giveHint);};
+  function doAutoPlace(){return applyAuto(planAuto());}
+  $('hint').onclick=()=>{
+    if(freeHints<FREE_HINTS){freeHints++;giveHint();return;}
+    // 先算方案：算不出来（一次都没算出结论）就别播广告，直接照实说明。
+    const plan=planHint();
+    if(plan.kind!=='place'&&plan.kind!=='blame'){applyHint(plan);return;}
+    withAd('提示',()=>applyHint(plan));
+  };
   $('clear').onclick=()=>{
     if(clears>=MAX_CLEARS){status(`这份委托最多消掉 ${MAX_CLEARS} 件旧物。`);return;}
     const id=clearCandidate();
-    if(!id){status('这一关能消的都已经消过了：再拿掉一件，就凑不出能填满的答案了。');return;}
+    if(!id){status(clearExpired?'这一局绕得有点久，没算完。先试试「提示」，或者把一件放回桌面再消。':'这一关能消的都已经消过了：再拿掉一件，就凑不出能填满的答案了。');return;}
     withAd('消除',()=>doClear(id));
   };
   $('auto').onclick=()=>{
     if(finished){status('委托已经摆好了，不用再帮你放。');return;}
-    // 额度在 doAutoPlace 里扣——真放好了才记账，不能让人看完广告发现没放上还被记一笔。
-    withAd('代放',()=>doAutoPlace());
+    // 额度在 applyAuto 里扣——真放好了才记账，不能让人看完广告发现没放上还被记一笔。
+    const plan=planAuto();
+    if(plan.kind!=='place'){applyAuto(plan);return;}
+    withAd('代放',()=>applyAuto(plan));
   };
   $('reset').onclick=()=>$('reset-dialog').showModal();$('confirm-reset').onclick=()=>{$('reset-dialog').close();delete saved.sessions[level().id];load(levelIndex);event('restart');persist();};
   $('help').onclick=()=>$('help-dialog').showModal();$('codex').onclick=()=>{renderCodex();$('codex-dialog').showModal();};document.querySelectorAll('[data-close]').forEach(b=>b.onclick=()=>$(b.dataset.close).close());
@@ -502,15 +715,28 @@
     event('artwork_generated');persist();status('作品图已生成，可以长按保存或点击下载。');
   }
   $('save-picture').onclick=savePicture;
-  for(const c of K.chapters){const b=document.createElement('button');b.className='mode-button';b.setAttribute('data-group',c.key);b.textContent=c.name;b.setAttribute('aria-label',`${c.name}，${K.levels.filter(l=>l.group===c.key).length}关`);b.setAttribute('aria-pressed','false');b.onclick=()=>load(K.levels.findIndex(l=>l.group===c.key));$('mode-tabs').appendChild(b);}
+  function gotoChapter(key){
+    const first=K.levels.findIndex(l=>l.group===key);
+    if(first<0)return;
+    // 章节里前面几关还没解锁的话，就跳到本章第一个能进的关卡；整章都锁着就直说。
+    const open=K.levels.findIndex((l,i)=>l.group===key&&isUnlocked(i));
+    if(open<0){status(`「${chapterName[key]}」还在后面：先完成${firstLocked()}，这一章才会依次打开。`);return;}
+    load(open);
+  }
+  for(const c of K.chapters){const b=document.createElement('button');b.className='mode-button';b.setAttribute('data-group',c.key);b.textContent=c.name;b.setAttribute('aria-label',`${c.name}，${K.levels.filter(l=>l.group===c.key).length}关`);b.setAttribute('aria-pressed','false');b.onclick=()=>gotoChapter(c.key);$('mode-tabs').appendChild(b);}
   // 委托簿按章节分组显示，序号也跟着按「章内顺序」排：本章有 13 关就编 01–13。
   // 之前用的是全局序号，切到「隔板抽屉」会看到 13,14,15,22,23,24,52,59,66… —— 中间全是被别的章节占掉的号，
   // 看着像漏了关卡。全局进度由顶栏「X / 100 已整理」和信头的「87 / 100」负责，列表只管本章内部。
   const chapterName={},chapterNo={};
   for(const c of K.chapters)chapterName[c.key]=c.name;
-  K.levels.forEach((l,i)=>{const n=chapterNo[l.group]=(chapterNo[l.group]||0)+1,b=document.createElement('button');b.className='level-button';b.innerHTML=`<span class="number">${String(n).padStart(2,'0')}</span><span class="level-name"></span><span class="tick"></span>`;b.querySelector('.level-name').textContent=l.title;b.setAttribute('data-no',String(n));b.setAttribute('data-group',l.group);b.setAttribute('aria-label',`${chapterName[l.group]} 第 ${n} 关：${l.title}`);b.onclick=()=>load(i);$('levels').appendChild(b);});
+  K.levels.forEach((l,i)=>{const n=chapterNo[l.group]=(chapterNo[l.group]||0)+1,b=document.createElement('button');b.className='level-button';b.innerHTML=`<span class="number">${String(n).padStart(2,'0')}</span><span class="level-name"></span><span class="tick"></span>`;b.querySelector('.level-name').textContent=l.title;b.setAttribute('data-no',String(n));b.setAttribute('data-group',l.group);b.setAttribute('aria-label',`${chapterName[l.group]} 第 ${n} 关：${l.title}`);b.onclick=()=>{
+    // 没解锁的关卡用 aria-disabled + 一句原因，而不是 disabled：
+    // 真正 disabled 的按钮连点击都收不到，玩家点了只会觉得「按了没反应」。
+    if(!isUnlocked(i)){status(firstLocked()+' 整理完，这一份委托才会打开。');return;}
+    load(i);
+  };$('levels').appendChild(b);});
   // Debug access is opt-in and never changes the normal player flow.
-  if(new URLSearchParams(location.search).has('test'))window.GameDebug={getState:()=>({levelIndex,placed:clone(placed),rotations:{...rotations},locked:[...locked],selected,ghost:ghost?{...ghost}:null,drag:drag?clone(drag):null,finished,moves,history:history.length,storageOK,board:board(),hint:hint?{...hint,p:{...hint.p}}:null,hmove:hmove?{...hmove}:null,hints,freeHints,clears,autoPlaced}),giveHint,blameOne,doAutoPlace,clearCandidate,load,resize,layout:()=>({VW,VH,phone:LAY.phone,rect:board(),cols:level().cols,rows:level().rows,head:LAY.head,frame:LAY.frame,hintY:LAY.hintY,sep:LAY.sep,label:LAY.label,tray:LAY.tray,uMax:LAY.uMax,padBottom:LAY.padBottom,lastX:LAY.lastX}),loadId:id=>{const i=K.levels.findIndex(l=>l.id===id);load(i);return i;},place,select,itemRect,tileRect,solve:()=>K.solve(level(),placed),events:()=>saved.events,score:()=>K.scoreLayout(level(),placed),codex:()=>({...saved.codex}),met:()=>K.metRelations(level(),placed),levelId:()=>level().id};
+  if(new URLSearchParams(location.search).has('test'))window.GameDebug={getState:()=>({levelIndex,placed:clone(placed),rotations:{...rotations},locked:[...locked],selected,ghost:ghost?{...ghost}:null,drag:drag?clone(drag):null,finished,moves,history:history.length,storageOK,board:board(),hint:hint?{...hint,p:{...hint.p}}:null,hmove:hmove?{...hmove}:null,hints,freeHints,clears,autoPlaced,blameExpired,clearExpired}),giveHint,planHint,applyHint,blameOne,doAutoPlace,planAuto,applyAuto,clearCandidate,clearPool,rotate,rotateSpots,canTurn,load,resize,unlock:{limit:()=>unlockedLimit(),at:i=>isUnlocked(i),all:on=>{unlockAll=!!on;updateUI();return unlockAll;}},unlockedLimit,isUnlocked,gotoChapter,layout:()=>({VW,VH,phone:LAY.phone,rect:board(),cols:level().cols,rows:level().rows,head:LAY.head,frame:LAY.frame,hintY:LAY.hintY,sep:LAY.sep,label:LAY.label,tray:LAY.tray,uMax:LAY.uMax,padBottom:LAY.padBottom,lastX:LAY.lastX}),loadId:id=>{const i=K.levels.findIndex(l=>l.id===id);load(i);return i;},place,select,itemRect,tileRect,solve:()=>K.solve(level(),placed),events:()=>saved.events,score:()=>K.scoreLayout(level(),placed),codex:()=>({...saved.codex}),met:()=>K.metRelations(level(),placed),levelId:()=>level().id};
   // ---- 首次启动的隐私政策弹窗 ----
   // TapTap 审核口径里有三条是硬要求，这里逐条对上：
   //   1. 首次启动必须先弹窗、后服务：所以弹窗是 showModal()，同意之前玩家点不到棋盘。
@@ -539,9 +765,19 @@
   // 从「玩法说明」里随时能再看一遍，也允许在那里改主意。
   $('privacy-open').onclick=e=>{e.preventDefault();if($('help-dialog').open)$('help-dialog').close();openPrivacy();};
   if(window.GameDebug)window.GameDebug.consent=()=>consent;
-  // 允许用 ?level=7 直接打开某一份委托，方便分享和验收。
-  const wanted=Number(new URLSearchParams(location.search).get('level'));
-  const initial=Number.isInteger(wanted)&&wanted>=1&&wanted<=K.levels.length?wanted-1:Number.isInteger(saved.current)&&saved.current>=0&&saved.current<K.levels.length?saved.current:0;load(initial);new ResizeObserver(resize).observe(canvas);
+  // 允许用 ?level=7 直接打开某一份委托，方便分享和验收；?unlock=all 一次性打开全部关卡
+  // （自测每一关要用，普通玩家走正常解锁顺序）。两个都只在 URL 里显式写才生效。
+  const query=new URLSearchParams(location.search);
+  const wanted=Number(query.get('level'));
+  const deepLink=Number.isInteger(wanted)&&wanted>=1&&wanted<=K.levels.length;
+  unlockAll=query.get('unlock')==='all';
+  // 存档里停在的那一关如果还没解锁（比如换了存档、或之前跳到过后面），就退回到当前能走到的那一关。
+  const savedIndex=Number.isInteger(saved.current)&&saved.current>=0&&saved.current<K.levels.length?saved.current:0;
+  let initial=deepLink?wanted-1:savedIndex;
+  let clamped=false;
+  if(!deepLink&&!unlockAll&&!isUnlocked(initial)){initial=unlockedLimit();clamped=true;}
+  load(initial);new ResizeObserver(resize).observe(canvas);
+  if(clamped)status(`${firstLocked()}还没整理完，先带你回到这一关；整理完它，下一份委托就会打开。`);
   // 版式按视口宽挑，而宽视口下画布宽度取的是 100dvh-350（只看窗口高度），所以「只把窗口
   // 拉窄」时 ResizeObserver 可能一次都不响——自己再听一次窗口尺寸变化，转屏也归它管。
   window.addEventListener('resize',resize);
