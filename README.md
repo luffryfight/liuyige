@@ -1,6 +1,6 @@
 # 留一格 · 旧物开箱：回忆收纳师
 
-HTML + 原生 JavaScript + Canvas 2D 的可玩版本，1.0.1，2026-09-13。
+HTML + 原生 JavaScript + Canvas 2D 的可玩版本，1.0.2，2026-09-13。
 
 ## 试玩
 

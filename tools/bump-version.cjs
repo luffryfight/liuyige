@@ -16,7 +16,7 @@
  *    「**0.4.0 背景音乐。**」），它们记的是当年的事实，跟着新版本号走会变成假历史。
  *
  * versionCode 硬约束：必须**严格大于**上一版，否则新包无法覆盖安装。
- * 已用过的编号：0.1.0=100、0.2.0=200、0.3.0=300、0.3.1=301、0.4.0=400、0.4.1=401、0.5.0=500、1.0.1=1001。
+ * 已用过的编号：0.1.0=100、0.2.0=200、0.3.0=300、0.3.1=301、0.4.0=400、0.4.1=401、0.5.0=500、1.0.1=1001、1.0.2=1002。
  * （TapTap 侧还有一条：提审／发布过的版本号不能重复用，所以升档时至少把末段往前推。）
  */
 
@@ -98,9 +98,13 @@ const RULES = [
     to: `\`V${NEW_VERSION}\`（格式`,
   },
   {
+    // 这处原文曾把「用掉的编号」一个个列进句子里（0.4.1 和 0.5.0 都用掉了…），
+    // 每发一版就得改一次句子，改到第二次就和代码对不上了（--check 直接报 0 次命中）。
+    // 现在句子只在「本次 / 下次」两处跟版本号走，已用编号的清单收进本文件顶部注释，
+    // 由下面那条规则自动追加——一处真相，不再分叉。
     file: 'TAPTAP_UPLOAD.md',
-    from: `所以 0.4.1 用掉了，这次传的是 ${OLD_VERSION}，下次再传就得从 ${nextPatch(OLD_VERSION)} 起。`,
-    to: `所以 0.4.1 和 ${OLD_VERSION} 都用掉了，这次传的是 ${NEW_VERSION}，下次再传就得从 ${nextPatch(NEW_VERSION)} 起。`,
+    from: `**本次传的是 V${OLD_VERSION}，下次再传就得从 V${nextPatch(OLD_VERSION)} 起**。`,
+    to: `**本次传的是 V${NEW_VERSION}，下次再传就得从 V${nextPatch(NEW_VERSION)} 起**。`,
   },
   {
     file: 'TAPTAP_UPLOAD.md',
@@ -125,8 +129,10 @@ const RULES = [
 
   // ---- NEXT_VERSION_PROPOSAL ----
   {
+    // 这句写着「本文更新为下一轮的取舍…对应 <当前版本>」，跟版本号一起走。
+    // （早先这里硬编码 0.4.0，文档改过之后就对不上了。）
     file: 'NEXT_VERSION_PROPOSAL.md',
-    from: `对应 0.4.0。`,
+    from: `对应 ${OLD_VERSION}。`,
     to: `对应 ${NEW_VERSION}。`,
   },
   {
@@ -148,6 +154,13 @@ const RULES = [
   },
 
   // ---- 构建脚本本体（放最后，避免中途改动影响上面的读取） ----
+  {
+    // 本文件顶部注释里的「已用过的编号」清单是这份表之外唯一的版本号真相，
+    // 之前靠人记得手改（1.0.1 那次就漏了）。这条规则把它追加进来自动维护。
+    file: 'tools/bump-version.cjs',
+    from: `、${OLD_VERSION}=${OLD_CODE}。`,
+    to: `、${OLD_VERSION}=${OLD_CODE}、${NEW_VERSION}=${NEW_CODE_NUM}。`,
+  },
   {
     file: 'tools/pack-taptap.cjs',
     from: `const VERSION = '${OLD_VERSION}';`,

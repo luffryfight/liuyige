@@ -1,6 +1,6 @@
 # TapTap 上传说明
 
-对应版本 **V1.0.1**（2026-09-13）
+对应版本 **V1.0.2**（2026-09-13）
 
 ---
 
@@ -157,12 +157,17 @@ ad.show();          // 返回 Promise，没加载完会 reject，要 ad.load() �
 H5 包跑在 WebView 里，APK 也跑在 WebView 里 —— **同一份游戏文件**，区别只是容器归谁。所以这条路没改游戏代码，`android/` 下那一个 Java 文件就是全部。
 
 ```
-dist/liuyige.apk   89 KB
+dist/liuyige.apk   97 KB
 包名               com.liuyige.game
-版本               1.0.1 (versionCode 1001)
+应用名             留一格：回忆收纳师
+版本               1.0.2 (versionCode 1002)
 minSdk / targetSdk 24 (Android 7.0) / 34
 签名               v1 + v2 + v3，自签名
 ```
+
+> 应用名取自 `android/res/values/strings.xml` 的 `app_name`，显示在桌面图标下，
+> 要和 TapTap 商店页里的应用名一致（别写成简称「留一格」）。改完要重新编译 APK 才生效，
+> 用 `aapt2 dump badging dist/liuyige.apk` 能看到 `application-label`。
 
 构建链不用 Gradle，直接调 Android SDK 的 `aapt2 → javac → d8 → zipalign → apksigner`。原因和那几条「构建全绿、装上却白屏」的坑（aapt2 在 Windows 上往条目名里写反斜杠、d8 覆盖而非追加、XML 注释里的 `--`、HEAD 报的 `content-length` 会偏小）都记在 `android/README.md`。
 
@@ -281,11 +286,11 @@ taptap-cli upload-h5-package dist/liuyige.zip --screen-orientation 1 --yes
 |---|---|
 | 创建游戏 → 游玩提供方式 | 小游戏（H5） |
 | 包体管理 → 上传包体 | 路线 A 交目录给 MCP；路线 C 传 `dist/liuyige.zip` |
-| 版本设置 → 版本号 | `V1.0.1`（格式 `V x.y.z`，每段是整数） |
+| 版本设置 → 版本号 | `V1.0.2`（格式 `V x.y.z`，每段是整数） |
 | 游戏资料 → **隐私政策链接** | `https://luffryfight.github.io/liuyige/privacy.html`（开启步骤见第七之二节） |
 | 商店 → 商店资料 | 走完基础信息 + 物料，再提交审核 |
 
-版本号规则：新版本必须**高于**旧版本，且提审／发布的版本号不能与已上线或审核中的重复。所以 0.4.1 和 0.5.0 都用掉了，这次传的是 1.0.1，下次再传就得从 1.0.2 起。
+版本号规则：新版本必须**高于**旧版本，且提审／发布的版本号不能与已上线或审核中的重复。用掉的编号统一记在 `tools/bump-version.cjs` 顶部（升档时会自己补上新号，不用在这里往下堆）；**本次传的是 V1.0.2，下次再传就得从 V1.0.3 起**。
 
 当前版本号散在 8 个文件里（README / 本文件 / TEST_REPORT / DEVELOPMENT_PLAN / NEXT_VERSION_PROPOSAL / android/README / pack-taptap / build-apk），手工改必漏。用升档器一次改齐：
 
@@ -409,7 +414,7 @@ Pages 用的是 `github.io`，国内访问偶有不稳。审核是在浏览器�
 - [ ] TapTap 开发者账号**已完成认证**（官方 FAQ 里上传失败的头号原因）
 - [ ] 图标／封面／宣传图／录屏／三份文案齐了
 - [ ] 小游戏前置备案已启动
-- [ ] 版本号填 `V1.0.1`（下次传从 V1.0.2 起，编号不能重复）
+- [ ] 版本号填 `V1.0.2`（下次传从 V1.0.3 起，编号不能重复）
 - [ ] **隐私政策链接已填**，且真的用浏览器（最好手机）点开过一次能正常显示
 - [ ] **App 内首次启动有隐私弹窗**，两个按钮是明确的「同意」/「拒绝」
 - [ ] 激励视频广告位：要么在后台建好并把 ID 填进 `ads.js`，要么确认 `AD_UNIT_ID` 仍为空、按「未接入」放行

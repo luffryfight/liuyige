@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- 桌面图标下显示的应用名。与 TapTap 商店里的名字保持一致（留一格：回忆收纳师），
+     不要写简称「留一格」——装到手机上会和商店页面显示的名字对不上。 -->
 <resources>
-    <string name="app_name">留一格</string>
+    <string name="app_name">留一格：回忆收纳师</string>
 </resources>
