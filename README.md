@@ -112,12 +112,36 @@ HTML + 原生 JavaScript + Canvas 2D 的可玩版本，1.0.2，2026-09-13。
 | tools/_verify-mobile.cjs | 真浏览器验收手机版式（35 项）：切到窄屏版式、量棋盘格 / 箱子格 / 每排件数、七个按钮可见且在两排、游戏区排到最前、真 PointerEvent 点选放置、320 窄屏复验、**桌面矮窗口仍是原设计稿**、全程无 JS 报错。假 DOM 能核对数字，但「按钮在手机上真的在两排吗」「有没有横向溢出」只有真浏览器算数 |
 | tools/overflow.cjs | 窄视口体检：在 12 个宽度下用 **iframe 造真实视口**渲染，报出 `scrollWidth` 与每个越界元素，并可另存窄视口截图。之所以用 iframe，是因为无头 Chrome 的 `--window-size` 有 500px 下限，直接开窄窗口只会得到「按 500 排版再裁图」的假象 |
 | tools/layout-sweep.cjs | 版式对照表：13 档屏幕各是多大（画布宽 / 棋盘格 / 箱子格 / 物品栏形态 / 画布高 / 横向余量），并把两套稿接缝处的跳变幅度量出来。数字全部问 `GameDebug.layout()` 要，不另抄一份公式——所以「工具说没问题、游戏里其实不是这样」不会发生 |
+| promo/ | TapTap 宣传片的分镜（`promo.html` / `promo.css` / `promo.js`）：为「不得与实机视频高度雷同」另写的一套 16 秒横屏动画，复用 `art.js` 的旧物画法与 `core.js` 里每件旧物自己的记忆文案，但全程没有指针、按钮、状态栏和操作过程 |
+| tools/make-promo.cjs、promo-preview.cjs | 录宣传片并自检 22 项。`promo-preview.cjs` 只渲染若干时间点的画面、不录制——改分镜先跑它，比等 16 秒重录快得多。自检分两层「看成品」：① 自己拆 MP4 盒子；② 让 Chrome 真播一遍这个文件、读元数据并 seek 出 5 张截图（解析盒子证明不了「真的能解码」） |
 | tools/music-check.cjs | 背景音乐离线体检：用假 AudioContext 推着调度器走完两个循环，核对每小节的和弦数、循环有没有绕回去、音高与包络是否合法 |
 | tools/music-probe.html | 真实浏览器探针：确认真实的 ConvolverNode / DynamicsCompressor / 指数斜坡都建得起来（假 context 证不了这一半） |
 | tests/*.test.cjs | 单元与回归测试（见下） |
 | DEVELOPMENT_PLAN.md | 画风、技术方案、范围、排期与 TapTap 发布路线 |
 | NEXT_VERSION_PROPOSAL.md | 下一版候选功能与取舍 |
 | TAPTAP_UPLOAD.md | 上传包结构、自检说明、三条承载路线的取舍、控制台字段、物料清单与上传前检查清单 |
+
+## 宣传片（TapTap 首页推荐物料）
+
+`dist/liuyige-promo.mp4` —— 由 `node tools/make-promo.cjs` 现场生成，不是实机录屏。
+
+| 项 | 值 |
+|---|---|
+| 时长 | 16.0s（判据是「不少于 15s」，见下） |
+| 画面 | 1920×1080，16:9，30fps |
+| 编码 | H.264（`avc1.640033`）+ AAC 音轨 |
+| 体积 | 6.73 MB（上限 5GB） |
+
+五场分镜：旧物浮现 → 九件归位 → 特写蒙太奇（相机 / 耳机 / 来信，各配一句它自己的记忆）→ 合箱只剩一格 → 品牌落版。
+背景音乐是 Web Audio 现场合成的，和游戏里同一套写法，不挂音频文件。
+
+**为什么是 16 秒**：判据是「不少于 15s」，而录出来正好 15.000 就卡在边界上——MediaRecorder 的时间戳取整、
+播放器按时长四舍五入，都可能被读成 14.99。末场定格多留一秒，余量就出来了。要正好 15 秒的话，
+把 `promo/promo.js` 里的 `TOTAL` 和落版那场的 `dur` 一起调回去、重录一次即可。
+
+**为什么不用 ffmpeg**：这台机器上没有 ffmpeg。Chrome 126+ 的 MediaRecorder 支持 `video/mp4;codecs=avc1`，
+所以走 `canvas.captureStream(30)` 配 Web Audio 的 `MediaStreamDestination` 直接出 MP4。
+代价是录一次要等一个完整的 16 秒实时时长，所以改分镜先跑 `tools/promo-preview.cjs` 看画面。
 
 ## 验证
 

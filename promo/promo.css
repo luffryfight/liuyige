@@ -1,0 +1,19 @@
+/* 宣传片页面只是个渲染容器：画面全部画在 canvas 上，CSS 只负责把它摆正。
+   注意 canvas 的 width/height 属性（1920×1080）是位图尺寸，也是录制出来的分辨率；
+   下面的 max-width/max-height 只影响屏幕上看到的预览大小。 */
+html, body { margin: 0; height: 100%; background: #1b1916; overflow: hidden; }
+body { display: flex; align-items: center; justify-content: center; }
+#stage {
+  max-width: 100vw;
+  max-height: 100vh;
+  width: auto;
+  height: auto;
+  display: block;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, .45);
+}
+#hud {
+  position: fixed; left: 14px; top: 10px;
+  color: #cfc8b8; opacity: .55;
+  font: 13px/1.5 "Microsoft YaHei", sans-serif;
+  pointer-events: none; white-space: pre;
+}
