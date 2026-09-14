@@ -18,6 +18,7 @@ const FILES = [
   'freeze.test.cjs',
   'ads.test.cjs',
   'rotate.test.cjs',
+  'skins.test.cjs',
 ];
 
 const lines = [];

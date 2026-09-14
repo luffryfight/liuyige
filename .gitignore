@@ -13,6 +13,10 @@ tools/shots/*
 !tools/shots/lv100-auto.png
 !tools/shots/music-probe.png
 !tools/shots/vp-390.png
+# 皮肤那组里尺寸达标的这两张被 TAPTAP_UPLOAD.md 的「物料清单」直接引用（可当商店截图），
+# 由 `node tools/_verify-skins.cjs` 生成；其余 skin-*.png 是 448×448 的棋盘方块，只做内部复核
+!tools/shots/skin-phone-panel.png
+!tools/shots/skin-level45-iron.png
 
 # ---- 脚手架临时输出 ----
 # 下划线开头的多数是 tools/ 里比对、试跑时留下的中间文件，不是交付物。

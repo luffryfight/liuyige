@@ -94,7 +94,9 @@ function game(initialSave, consent = 'yes', opts = {}) {
     setTimeout: (fn, ms) => { const id = ++timerSeq; timers.set(id, { fn, ms }); return id; },
     ResizeObserver: class { observe() {} },
   });
-  const files = ['core.js', 'music.js'];
+  // art.js 必须一起加载：皮肤调色板（A.SKINS / A.skin）住在那里，game.js 的
+  // render() 和导出作品图都要用它。以前这里塞的是个空对象，等于「皮肤这块从没被测过」。
+  const files = ['core.js', 'art.js', 'music.js'];
   if (opts.ads) files.push('ads.js');
   files.push('game.js');
   for (const file of files) {
@@ -108,6 +110,7 @@ function game(initialSave, consent = 'yes', opts = {}) {
     }
     vm.runInContext(source, context, { filename: file });
     if (file === 'core.js') context.Keepsake = window.Keepsake;
+    if (file === 'art.js') context.KeepsakeArt = window.KeepsakeArt;
   }
   const debug = window.GameDebug;
   const state = () => JSON.parse(JSON.stringify(debug.getState()));

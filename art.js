@@ -60,5 +60,118 @@
     }
     c.restore();
   }
-  window.KeepsakeArt={rr,line,circle,label,draw};
+  // ══ 工作台皮肤 ══════════════════════════════════════════════════════════
+  // 皮肤改的是「工作台」本身——画布底、木框、台面、格线、隔板、图钉、提示色——
+  // **一个字都不动旧物的画法**。原因很实际：下面 draw() 那套配色是按浅色台面
+  // 调的（浅底 + 墨绿描边 + 半透明的纸背），台面一压暗，旧物就糊成一团。
+  // 所以每款皮肤的台面都留在「浅到中」这一段，戏做在背景、框和强调色上。
+  //
+  // 调色板不是手写 40 个色值，而是「10 个种子色 + 派生」：
+  // 换一款皮肤只要改一组种子色，整张台子的层次关系自己跟着走，
+  // 也不会出现「改了台面忘了改隔板」这种半拉子皮肤。
+  const h2=n=>Math.max(0,Math.min(255,Math.round(n))).toString(16).padStart(2,'0');
+  const toRgb=a=>'#'+a.map(h2).join('');
+  const hex=c=>{const v=c.replace('#','');return[parseInt(v.slice(0,2),16),parseInt(v.slice(2,4),16),parseInt(v.slice(4,6),16)];};
+  const mix=(a,b,t)=>{const A=hex(a),B=hex(b);return toRgb([0,1,2].map(i=>A[i]+(B[i]-A[i])*t));};
+  // 往黑（t<0）或白（t>0）推。alpha 后缀直接拼在六位色值后面。
+  const key=(c,t)=>mix(c,t<0?'#000000':'#ffffff',Math.abs(t));
+  const lum=c=>{const[r,g,b]=hex(c);return(0.2126*r+0.7152*g+0.0722*b)/255;};
+
+  // 一款皮肤的完整调色板 = derive(seed) → 再被 fix 覆盖。
+  // 默认那款（oak）把每一个色值都在 fix 里写死成原稿的值，所以「默认皮肤 =
+  // 改版前的观感」是**结构上**保证的，不是靠派生函数碰巧算对。
+  function derive(s){
+    const onBg=lum(s.bg)<.5, dkSurf=lum(s.surface)<.5;
+    const surf=t=>key(s.surface,dkSurf?t:-t);
+    return {
+      bg:s.bg,
+      speckle:mix(s.wood,s.bg,.5)+(onBg?'22':'20'),
+      ink:s.ink,
+      shadow:mix(s.wood,onBg?'#000000':'#6d4f30',.5)+'30',
+      frameOut:s.wood, frameIn:s.wood2,
+      frameEdge:key(s.wood,-.18),
+      rings:mix(s.wood2,onBg?'#ffffff':'#000000',onBg?.32:.1)+(onBg?'55':'66'),
+      boardEdge:key(s.wood,-.3),
+      surface:s.surface,
+      surfaceGreen:mix(s.accent,'#ffffff',.76),
+      surfaceEdge:surf(.08),
+      surfaceGreenEdge:mix(s.accent,'#ffffff',.58),
+      zone1Fill:mix(s.accent,'#ffffff',.68), zone1Line:mix(s.accent,'#000000',.02),
+      zone2Fill:mix(s.warm,'#ffffff',.64), zone2Line:mix(s.warm,'#000000',.05),
+      grid:surf(.09), gridGreen:mix(s.accent,'#ffffff',.76),
+      blockFill:mix(s.wood,'#ffffff',.44),
+      blockEdge:key(mix(s.wood,'#ffffff',.44),-.2),
+      blockStripe:mix(s.wood,'#ffffff',.68),
+      handle:key(s.wood,lum(s.wood)<.45?.32:-.14),
+      handleLine:key(key(s.wood,lum(s.wood)<.45?.32:-.14),lum(s.wood)<.45?.34:-.24),
+      sel:key(s.accent,lum(s.accent)<.32?.12:0),
+      lockLine:mix(s.warm,'#ffffff',.18),
+      pin:mix(s.warm,'#ffffff',.46), pinEdge:mix(s.warm,'#000000',.28),
+      hintOk:key(s.accent,-.14), hintWarn:mix(s.warm,'#a0432a',.5),
+      hintOkText:key(s.accent,.1), hintWarnText:mix(s.warm,'#7a3a22',.45),
+      hintBar:mix(s.ink,s.accent,.35),
+      sep:surf(.11), labL:s.ink, labR:mix(s.ink,s.accent,.45),
+      tile:key(s.surface,.3), tileSel:mix(s.accent,'#ffffff',.87),
+      tileFixed:mix(s.warm,'#ffffff',.87), tilePlaced:surf(.22),
+      tileSelEdge:mix(s.accent,'#ffffff',.56), tileEdge:surf(.15),
+      markFixed:mix(s.warm,'#000000',.06), markPlaced:mix(s.accent,'#ffffff',.34),
+      nameInk:mix(s.ink,'#3a4038',.45), nameDoneInk:mix(s.ink,'#ffffff',.22),
+      mustInk:mix(s.warm,'#a0331a',.55),
+      zoneTag1:mix(s.accent,'#000000',.06), zoneTag2:mix(s.warm,'#000000',.12),
+      flash:mix(s.accent,'#ffffff',.5),
+      // 导出作品图（savePicture）用的那几档。单独一组是因为它画在 900×800 的白纸上，
+      // 不是画在台面上，明度关系跟画布不一样。
+      picBg:key(s.surface,.5), picTitle:key(s.accent,-.3), picSub:s.ink, picFrame:s.wood,
+      picKeep:mix(s.accent,'#ffffff',.34), picScore:key(s.accent,-.25),
+      picMeta:mix(s.ink,s.accent,.35), picReward:mix(s.ink,s.accent,.35), picFoot:s.ink,
+    };
+  }
+
+  const OAK={ // 原稿（2026-09 之前的唯一一套配色），一个值都不许漂
+    speckle:'#8e7d5420', shadow:'#6d4f3020',
+    frameOut:'#c7a982', frameIn:'#d5bb96', frameEdge:'#b39875', rings:'#bea17b66', boardEdge:'#a9916e',
+    surface:'#f0e5c8', surfaceGreen:'#d2dcc5', surfaceEdge:'#e7d8b9', surfaceGreenEdge:'#b8c4ad',
+    zone1Fill:'#b6d1c3', zone1Line:'#74998d', zone2Fill:'#e7c5aa', zone2Line:'#b78d71',
+    grid:'#d9caab', gridGreen:'#b8c6ab',
+    blockFill:'#b89a75', blockEdge:'#937852', blockStripe:'#d4b58d',
+    handle:'#9b825f', handleLine:'#d2b990',
+    sel:'#536f5a', lockLine:'#9a8358', pin:'#c19a68', pinEdge:'#8a6f42',
+    hintOk:'#457b64', hintWarn:'#b9745b', hintOkText:'#52745b', hintWarnText:'#a9613f', hintBar:'#75846d',
+    sep:'#d1c8b6', labL:'#868570', labR:'#68785f',
+    tile:'#f4eedf', tileSel:'#e0e6d1', tileFixed:'#e6dcc6', tilePlaced:'#e7e1d2',
+    tileSelEdge:'#9aab8b', tileEdge:'#e0d7c4',
+    markFixed:'#a08a5f', markPlaced:'#8a957c', nameInk:'#6b7160', nameDoneInk:'#a09f8a',
+    mustInk:'#ad684f', zoneTag1:'#54786c', zoneTag2:'#946c50', flash:'#92a77d',
+    picBg:'#f4efe3', picTitle:'#425a49', picSub:'#8a8c76', picFrame:'#cbb08b', picKeep:'#677d69',
+    picScore:'#4f6350', picMeta:'#7f8a72', picReward:'#7a826b', picFoot:'#8b937c',
+  };
+
+  // 皮肤清单。名字按用户要求取「响亮」的那一路——店是安静的，台子可以不安静。
+  //   unlock.kind:'free'   默认就有
+  //   unlock.kind:'levels' 通关 n 份委托（saved.completed 的数量）
+  //   unlock.kind:'codex'  解锁 n 段回忆（saved.codex 的数量）
+  //   adUnlock:false       这一款**不接广告解锁**，只能靠自己拿到，免得「什么都能看广告买」
+  const SKINS=[
+    {id:'oak',name:'栖湾原木台',tagline:'试营业的第一张台子',unlock:{kind:'free'},
+      adUnlock:false,seed:{bg:'#eee7d7',wood:'#c7a982',wood2:'#d5bb96',surface:'#f0e5c8',ink:'#93917c',accent:'#536f5a',warm:'#b78d71'},fix:OAK},
+    {id:'iron',name:'玄铁九鼎案',tagline:'寒铁冷银，落子生风',unlock:{kind:'levels',n:10},adUnlock:true,
+      seed:{bg:'#cfd7d7',wood:'#3f474d',wood2:'#828e95',surface:'#e0e6e3',ink:'#6f7a79',accent:'#2f5c5a',warm:'#8a7a63'}},
+    {id:'lacquer',name:'赤霄朱漆台',tagline:'朱漆描金，一寸不让',unlock:{kind:'levels',n:25},adUnlock:true,
+      seed:{bg:'#f2e0d2',wood:'#9c3225',wood2:'#c95a41',surface:'#f5e7d2',ink:'#9c7050',accent:'#7c2c21',warm:'#c08a3e'}},
+    {id:'jade',name:'青玉藏龙案',tagline:'青玉为面，龙纹在底',unlock:{kind:'levels',n:45},adUnlock:true,
+      seed:{bg:'#dfeae3',wood:'#2f5f52',wood2:'#5f9082',surface:'#e4eee7',ink:'#67857a',accent:'#27564a',warm:'#a3763c'}},
+    {id:'gold',name:'鎏金万象案',tagline:'墨底鎏金，万物归位',unlock:{kind:'levels',n:70},adUnlock:true,
+      seed:{bg:'#2c2823',wood:'#bd9440',wood2:'#d9b567',surface:'#efe5cd',ink:'#c0ad7c',accent:'#7d5d1f',warm:'#9b5a2b'}},
+    {id:'star',name:'长夜星砂台',tagline:'攒满十八段回忆才亮得起来',unlock:{kind:'codex',n:18},
+      adUnlock:false,adLockNote:'这一款不接广告，只能把回忆图鉴攒到 18 段',seed:{bg:'#111524',wood:'#6a7488',wood2:'#9aa5b8',
+      surface:'#c8cfe2',ink:'#8f98b0',accent:'#4a5a94',warm:'#8f6f92'}},
+  ];
+  const PALETTES={};
+  for(const s of SKINS)PALETTES[s.id]=Object.assign(derive(s.seed),s.fix||{});
+  const byId=id=>SKINS.find(s=>s.id===id)||null;
+  const DEFAULT=SKINS[0].id;
+  // 认不出来的 id（存档被改过、版本回退、拼错）一律退回默认款，绝不抛。
+  const skin=id=>PALETTES[byId(id)?id:DEFAULT];
+
+  window.KeepsakeArt={rr,line,circle,label,draw,SKINS,PALETTES,skin,skinById:byId,DEFAULT_SKIN:DEFAULT};
 })();

@@ -72,3 +72,19 @@ button,a{touch-action:manipulation}
 #rotate-fab:focus-visible{outline:3px solid #bd7459;outline-offset:3px}
 @media(min-width:651px){#rotate-fab{display:none!important}}
 
+/* ---- 收纳工作台皮肤面板 ----
+   每张卡里是一块真画出来的迷你台子（game.js 的 paintSkinPreview，同一套调色板、
+   同一套画法），所以「预览里是什么样，铺下去就是什么样」。卡上只有一个动作按钮，
+   点起来不用犹豫：能用的写「铺上这张」，能看广告的写「看广告解锁」。 */
+.skin-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:14px 0 0;max-height:52vh;overflow:auto}
+.skin-card{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:11px;padding:8px;background:#f7f3e8}
+.skin-card.got{background:#e9efe2;border-color:#c9d4bd}
+.skin-card.current{box-shadow:inset 0 0 0 2px var(--green)}
+.skin-prev{display:block;width:100%;height:auto;border:1px solid #ddd6c2;border-radius:7px}
+.skin-name{font-size:13px;font-weight:600;letter-spacing:1px;margin:8px 0 2px;color:#3f5148}
+.skin-tag{font-size:11px;color:#8d917f;margin:0 0 6px}
+.skin-note{flex:1;font-size:11px;line-height:1.6;margin:0 0 8px;color:#6c7364}
+.skin-use{width:100%;padding:7px 10px;font-size:12px}
+.skin-tip{font-size:11px;line-height:1.7;margin:14px 0 18px;color:var(--muted)}
+@media(max-width:650px){.skin-grid{max-height:46vh;gap:8px}.skin-note{font-size:10px}.skin-name{font-size:12px}}
+
