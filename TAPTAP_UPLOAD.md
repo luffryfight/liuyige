@@ -145,7 +145,7 @@ ad.show();          // 返回 Promise，没加载完会 reject，要 ad.load() �
 所以 `ads.js` 按「拿不到就降级」写，`AD_UNIT_ID` 留空即视为未接入：
 
 - 拿不到广告 → 直接放行（`STRICT = false`），并在状态栏说明原因。网页版、WebView 版、APK 都能照常玩，不会出现「点了没反应」。
-- 正式变现时，去 TapTap 开发者后台（或 Dirichlet 媒体管理平台）建一个「激励视频」广告位，把 ID 填进 `ads.js` 的 `AD_UNIT_ID`；要把「拿不到广告就不给奖励」打开，再把 `STRICT` 改成 `true`。
+- 正式变现时：先在 TapTap 开发者后台把游戏的**屏幕方向**设成竖屏——广告位按方向匹配，而这套「编辑应用信息」的接口只对**关卡类型**应用开放，本应用只能走后台（MCP 会以 400「该游戏不是关卡类型」拒绝，包内 `game.json` 的 `deviceOrientation` 只管客户端，不是服务端那层设置）。设好之后重新 `check_ads_status`，服务端会下发 `space_id`，再用 `node tools/set-ad-unit.cjs <space_id>` 写入 `ads.js`；要把「拿不到广告就不给奖励」打开，再把 `STRICT` 改成 `true`。
 - 状态栏会给明确的失败原因：`ended / skipped / unavailable / load-failed / timeout / busy`，不会静默失败。
 
 另外，「消除一件」在播广告**之前**就先算好了要消哪件，并且用求解器验过「消掉之后这一关仍然可解」——不会让玩家看完广告才被告知这件消不得。取舍关尤其需要这一层：玩家人手只放 `keepCount` 件，能凑满格数的挑法本来就少。
